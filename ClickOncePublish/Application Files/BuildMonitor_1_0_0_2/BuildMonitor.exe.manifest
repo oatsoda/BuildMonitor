@@ -1,0 +1,113 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<asmv1:assembly xsi:schemaLocation="urn:schemas-microsoft-com:asm.v1 assembly.adaptive.xsd" manifestVersion="1.0" xmlns:asmv1="urn:schemas-microsoft-com:asm.v1" xmlns="urn:schemas-microsoft-com:asm.v2" xmlns:asmv2="urn:schemas-microsoft-com:asm.v2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:co.v1="urn:schemas-microsoft-com:clickonce.v1" xmlns:asmv3="urn:schemas-microsoft-com:asm.v3" xmlns:dsig="http://www.w3.org/2000/09/xmldsig#" xmlns:co.v2="urn:schemas-microsoft-com:clickonce.v2">
+  <asmv1:assemblyIdentity name="BuildMonitor.exe" version="1.0.0.2" publicKeyToken="f8dd926336d8f3b6" language="neutral" processorArchitecture="msil" type="win32" />
+  <application />
+  <entryPoint>
+    <assemblyIdentity name="BuildMonitor" version="1.0.0.0" language="neutral" processorArchitecture="msil" />
+    <commandLine file="BuildMonitor.exe" parameters="" />
+  </entryPoint>
+  <trustInfo>
+    <security>
+      <applicationRequestMinimum>
+        <PermissionSet Unrestricted="true" ID="Custom" SameSite="site" />
+        <defaultAssemblyRequest permissionSetReference="Custom" />
+      </applicationRequestMinimum>
+      <requestedPrivileges xmlns="urn:schemas-microsoft-com:asm.v3">
+        <!--
+          UAC Manifest Options
+          If you want to change the Windows User Account Control level replace the 
+          requestedExecutionLevel node with one of the following.
+
+        <requestedExecutionLevel  level="asInvoker" uiAccess="false" />
+        <requestedExecutionLevel  level="requireAdministrator" uiAccess="false" />
+        <requestedExecutionLevel  level="highestAvailable" uiAccess="false" />
+
+         If you want to utilize File and Registry Virtualization for backward 
+         compatibility then delete the requestedExecutionLevel node.
+    -->
+        <requestedExecutionLevel level="asInvoker" uiAccess="false" />
+      </requestedPrivileges>
+    </security>
+  </trustInfo>
+  <dependency>
+    <dependentOS>
+      <osVersionInfo>
+        <os majorVersion="5" minorVersion="1" buildNumber="2600" servicePackMajor="0" />
+      </osVersionInfo>
+    </dependentOS>
+  </dependency>
+  <dependency>
+    <dependentAssembly dependencyType="preRequisite" allowDelayedBinding="true">
+      <assemblyIdentity name="Microsoft.Windows.CommonLanguageRuntime" version="4.0.30319.0" />
+    </dependentAssembly>
+  </dependency>
+  <dependency>
+    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="BuildMonitor.exe" size="32696">
+      <assemblyIdentity name="BuildMonitor" version="1.0.0.0" language="neutral" processorArchitecture="msil" />
+      <hash>
+        <dsig:Transforms>
+          <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
+        </dsig:Transforms>
+        <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
+        <dsig:DigestValue>KnM+HRkUym62105c5gJuqZvUeljkhFK2y35ardw6m24=</dsig:DigestValue>
+      </hash>
+    </dependentAssembly>
+  </dependency>
+  <dependency>
+    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="BuildMonitor.Core.dll" size="10240">
+      <assemblyIdentity name="BuildMonitor.Core" version="1.0.0.0" language="neutral" processorArchitecture="msil" />
+      <hash>
+        <dsig:Transforms>
+          <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
+        </dsig:Transforms>
+        <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
+        <dsig:DigestValue>i0yq+6jE8LwL5IAhXZ0WEi7jqQHQrO0i4xW7JgM4YV8=</dsig:DigestValue>
+      </hash>
+    </dependentAssembly>
+  </dependency>
+  <dependency>
+    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="BuildMonitor.Tfs.dll" size="9728">
+      <assemblyIdentity name="BuildMonitor.Tfs" version="1.0.0.0" language="neutral" processorArchitecture="msil" />
+      <hash>
+        <dsig:Transforms>
+          <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
+        </dsig:Transforms>
+        <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
+        <dsig:DigestValue>c8OAIqHGr2HGaDaoq1gESnPNdicKvafu0uuXJ6CvOt4=</dsig:DigestValue>
+      </hash>
+    </dependentAssembly>
+  </dependency>
+  <dependency>
+    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="BuildMonitor.TfsOnline.dll" size="5632">
+      <assemblyIdentity name="BuildMonitor.TfsOnline" version="1.0.0.0" language="neutral" processorArchitecture="msil" />
+      <hash>
+        <dsig:Transforms>
+          <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
+        </dsig:Transforms>
+        <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
+        <dsig:DigestValue>3zqTdDXOcLMGIW53+F85g1Bv0H8N/19rYSULfYzlN7s=</dsig:DigestValue>
+      </hash>
+    </dependentAssembly>
+  </dependency>
+  <dependency>
+    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="Newtonsoft.Json.dll" size="513536">
+      <assemblyIdentity name="Newtonsoft.Json" version="6.0.0.0" publicKeyToken="30AD4FE6B2A6AEED" language="neutral" processorArchitecture="msil" />
+      <hash>
+        <dsig:Transforms>
+          <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
+        </dsig:Transforms>
+        <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
+        <dsig:DigestValue>Um9pFC7cgMsfJhrNt8c849uEHSGsJr7mcV9gTIoji+E=</dsig:DigestValue>
+      </hash>
+    </dependentAssembly>
+  </dependency>
+  <file name="BuildMonitor.exe.config" size="188">
+    <hash>
+      <dsig:Transforms>
+        <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
+      </dsig:Transforms>
+      <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
+      <dsig:DigestValue>Ww40t7NNYIhOF9EiIo8odhaoHgdDPR/We3F57G+eivI=</dsig:DigestValue>
+    </hash>
+  </file>
+<publisherIdentity name="CN=KILNTOP\Andrew" issuerKeyHash="55a2343641899dd0c13e9938c4fe43f9066c1348" /><Signature Id="StrongNameSignature" xmlns="http://www.w3.org/2000/09/xmldsig#"><SignedInfo><CanonicalizationMethod Algorithm="http://www.w3.org/2001/10/xml-exc-c14n#" /><SignatureMethod Algorithm="http://www.w3.org/2000/09/xmldsig#rsa-sha256" /><Reference URI=""><Transforms><Transform Algorithm="http://www.w3.org/2000/09/xmldsig#enveloped-signature" /><Transform Algorithm="http://www.w3.org/2001/10/xml-exc-c14n#" /></Transforms><DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" /><DigestValue>M/bTPuBi1+mUDeCoDa0uCdFNnhFgNscSZ1DkC/jKVrw=</DigestValue></Reference></SignedInfo><SignatureValue>VjXQXuQnSX/C2KGCWDDjHxg2h0iO8ck1r8kwU4p5XmK7O8xzkK3anGWNcKbSwHMeInLLwqa1AQiX8LbGhWUZQAx5n4KNkRsjTI0lu3z6GO6AKyyQWJKG4i/yoEDDAEqB6BEh2aTTbegYEoYVx1RrYEkIPPQn5qq+HQ5zLrVc688=</SignatureValue><KeyInfo Id="StrongNameKeyInfo"><KeyValue><RSAKeyValue><Modulus>stNOmUuowCSNpeg8Q9+PH5xmP+I60OqWd7XKZo1wqxrsDpquxLL2ND57H2pl1zMadFIGk3CUS+C7iJyKHQ46NdKQzDn5oy35mLc3RZhyKpqJC5deGI98RPamAFTllkY7FEd6jnSPNTVDgZQBOsMK5TsBPU2duvRFqTdq7Hyp+hM=</Modulus><Exponent>AQAB</Exponent></RSAKeyValue></KeyValue><msrel:RelData xmlns:msrel="http://schemas.microsoft.com/windows/rel/2005/reldata"><r:license xmlns:r="urn:mpeg:mpeg21:2003:01-REL-R-NS" xmlns:as="http://schemas.microsoft.com/windows/pki/2005/Authenticode"><r:grant><as:ManifestInformation Hash="bc56caf80be4506712c73660119e4dd1092ead0da8e00d94e9d762e03ed3f633" Description="" Url=""><as:assemblyIdentity name="BuildMonitor.exe" version="1.0.0.2" publicKeyToken="f8dd926336d8f3b6" language="neutral" processorArchitecture="msil" type="win32" /></as:ManifestInformation><as:SignedBy /><as:AuthenticodePublisher><as:X509SubjectName>CN=KILNTOP\Andrew</as:X509SubjectName></as:AuthenticodePublisher></r:grant><r:issuer><Signature Id="AuthenticodeSignature" xmlns="http://www.w3.org/2000/09/xmldsig#"><SignedInfo><CanonicalizationMethod Algorithm="http://www.w3.org/2001/10/xml-exc-c14n#" /><SignatureMethod Algorithm="http://www.w3.org/2000/09/xmldsig#rsa-sha256" /><Reference URI=""><Transforms><Transform Algorithm="http://www.w3.org/2000/09/xmldsig#enveloped-signature" /><Transform Algorithm="http://www.w3.org/2001/10/xml-exc-c14n#" /></Transforms><DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" /><DigestValue>D9TtZptR5qAli4h0Ajx6eUhvqTmEA0OJnorlgBj5xVA=</DigestValue></Reference></SignedInfo><SignatureValue>fakDMK7uXXBwo/0UbQx37cFzhGOd362cYigNAz98atLu1wru+JrRLuw/vC34qv0JoIwdZ9YptFvjSXPg1FbLCBlb9dLL2QZzgi7g92qpCJ+K0vvI6y94FdYVYkUUxM6Sf8gAi8QwcarisUYpmHTOyJ4rdbIJ41CrwFPX3vz3SoQ=</SignatureValue><KeyInfo><KeyValue><RSAKeyValue><Modulus>stNOmUuowCSNpeg8Q9+PH5xmP+I60OqWd7XKZo1wqxrsDpquxLL2ND57H2pl1zMadFIGk3CUS+C7iJyKHQ46NdKQzDn5oy35mLc3RZhyKpqJC5deGI98RPamAFTllkY7FEd6jnSPNTVDgZQBOsMK5TsBPU2duvRFqTdq7Hyp+hM=</Modulus><Exponent>AQAB</Exponent></RSAKeyValue></KeyValue><X509Data><X509Certificate>MIIB0TCCATqgAwIBAgIQVRRCMvRkCL5KAfmDH4dmxzANBgkqhkiG9w0BAQsFADAnMSUwIwYDVQQDHhwASwBJAEwATgBUAE8AUABcAEEAbgBkAHIAZQB3MB4XDTE1MDQxNTE3MTAzM1oXDTE2MDQxNDIzMTAzM1owJzElMCMGA1UEAx4cAEsASQBMAE4AVABPAFAAXABBAG4AZAByAGUAdzCBnzANBgkqhkiG9w0BAQEFAAOBjQAwgYkCgYEAstNOmUuowCSNpeg8Q9+PH5xmP+I60OqWd7XKZo1wqxrsDpquxLL2ND57H2pl1zMadFIGk3CUS+C7iJyKHQ46NdKQzDn5oy35mLc3RZhyKpqJC5deGI98RPamAFTllkY7FEd6jnSPNTVDgZQBOsMK5TsBPU2duvRFqTdq7Hyp+hMCAwEAATANBgkqhkiG9w0BAQsFAAOBgQCnyrs+IdisMZeCjhYsq/lQ6njT5ylQEYe5RqDl5u2JOtTIlVsnfYLDgA5WXerNueU5+hR6Xb7sU+bpWI++9n07EQlPOx6qESbNttMbgB7wLllnrTu3v3m4Uulox85MHC4Hd9y188fLtGOfD8z2PQI71XWm670p1obMR7N9sg2YFw==</X509Certificate></X509Data></KeyInfo></Signature></r:issuer></r:license></msrel:RelData></KeyInfo></Signature></asmv1:assembly>
