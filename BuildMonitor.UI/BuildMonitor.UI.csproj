@@ -8,7 +8,7 @@
     <OutputType>WinExe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>BuildMonitor.UI</RootNamespace>
-    <AssemblyName>BuildMonitor</AssemblyName>
+    <AssemblyName>BuildMonitor.UI</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <IsWebBootstrapper>true</IsWebBootstrapper>
@@ -192,4 +192,7 @@
   <Target Name="AfterBuild">
   </Target>
   -->
+  <Target Name="BeforePublish">
+    <!--<Exec Command="&quot;C:\Program Files (x86)\Microsoft SDKs\Windows\v7.0A\bin\signtool.exe&quot; sign /f &quot;$(ProjectDir)TestWin8CO_TemporaryKey.pfx&quot; /p nightbird /v &quot;$(ProjectDir)obj\x86\$(ConfigurationName)\$(TargetFileName)&quot;" />-->
+  </Target>
 </Project>
