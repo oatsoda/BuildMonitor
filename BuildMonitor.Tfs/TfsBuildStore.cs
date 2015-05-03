@@ -9,8 +9,13 @@ namespace BuildMonitor.Tfs
 {
     public class TfsBuildStore : IBuildStore
     {
-        protected readonly NetworkCredential m_SpecificCredentials;
-        protected readonly Uri m_BaseUrl;
+        private readonly NetworkCredential m_SpecificCredentials;
+        private readonly Uri m_BaseUrl;
+
+        protected NetworkCredential SpecificCredentials
+        {
+            get { return m_SpecificCredentials; }
+        }
 
         public TfsBuildStore(IMonitorOptions options)
         {
@@ -46,7 +51,6 @@ namespace BuildMonitor.Tfs
             if (!builds.Any())
                 return null;
 
-            //var b = builds.Single();
             var b = builds.OrderByDescending(t => t["finishTime"]).First();
 
             return new BuildStatus
@@ -101,25 +105,5 @@ namespace BuildMonitor.Tfs
                     throw new ArgumentOutOfRangeException("statusString");
             }
         }
-    }
-
-    public class BuildDefinition : IBuildDefinition
-    {
-        public int Id { get; set; }
-        public string Name { get; set; }
-        public string Url { get; set; }
-        public string TriggerType { get; set; }
-        public string DropLocation { get; set; }
-    }
-
-    public class BuildStatus : IBuildStatus
-    {
-        public int Id { get; set; }
-        public string Name { get; set; }
-        public string Url { get; set; }
-        public DateTime Start { get; set; }
-        public DateTime Finish { get; set; }
-        public Status Status { get; set; }
-        public string RequestedBy { get; set; }
     }
 }

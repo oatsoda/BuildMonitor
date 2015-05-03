@@ -20,26 +20,15 @@ namespace BuildMonitor.TfsOnline
 
         protected override string GetJson(string queryPath)
         {
-            //var basicCred = new BasicAuthCredential(m_SpecificCredentials);
-            //var tfsCred = new TfsClientCredentials(basicCred);
-            //tfsCred.AllowInteractive = false;
-
-            //var tpc = new TfsTeamProjectCollection(
-            //    m_BaseUrl,
-            //    tfsCred);
-
-            //tpc.Authenticate();
-
             using (var client = new HttpClient())
             {
-
                 client.DefaultRequestHeaders.Accept.Add(
                     new MediaTypeWithQualityHeaderValue("application/json"));
 
                 client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic",
                     Convert.ToBase64String(
                         Encoding.ASCII.GetBytes(
-                            string.Format("{0}:{1}", m_SpecificCredentials.UserName, m_SpecificCredentials.Password))));
+                            string.Format("{0}:{1}", SpecificCredentials.UserName, SpecificCredentials.Password))));
 
                 using (var response = client.GetAsync(FormatUrl(queryPath)).Result)
                 {
