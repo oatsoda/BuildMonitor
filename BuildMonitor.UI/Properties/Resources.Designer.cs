@@ -61,32 +61,42 @@ namespace BuildMonitor.UI.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        ///   Looks up a localized resource of type System.Drawing.Icon similar to (Icon).
         /// </summary>
-        internal static System.Drawing.Bitmap Failed {
+        internal static System.Drawing.Icon _0006_Cross {
             get {
-                object obj = ResourceManager.GetObject("Failed", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
+                object obj = ResourceManager.GetObject("_0006_Cross", resourceCulture);
+                return ((System.Drawing.Icon)(obj));
             }
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        ///   Looks up a localized resource of type System.Drawing.Icon similar to (Icon).
         /// </summary>
-        internal static System.Drawing.Bitmap PartiallySucceeded {
+        internal static System.Drawing.Icon _0007_Tick {
             get {
-                object obj = ResourceManager.GetObject("PartiallySucceeded", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
+                object obj = ResourceManager.GetObject("_0007_Tick", resourceCulture);
+                return ((System.Drawing.Icon)(obj));
             }
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        ///   Looks up a localized resource of type System.Drawing.Icon similar to (Icon).
         /// </summary>
-        internal static System.Drawing.Bitmap Succeeded {
+        internal static System.Drawing.Icon _0010_Alert {
             get {
-                object obj = ResourceManager.GetObject("Succeeded", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
+                object obj = ResourceManager.GetObject("_0010_Alert", resourceCulture);
+                return ((System.Drawing.Icon)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Icon similar to (Icon).
+        /// </summary>
+        internal static System.Drawing.Icon _0032_Screw_Driver {
+            get {
+                object obj = ResourceManager.GetObject("_0032_Screw_Driver", resourceCulture);
+                return ((System.Drawing.Icon)(obj));
             }
         }
     }

@@ -15,7 +15,7 @@
     <PublishUrl>D:\Source\Repos\BuildMonitor\ClickOncePublish\</PublishUrl>
     <Install>true</Install>
     <InstallFrom>Web</InstallFrom>
-    <UpdateEnabled>true</UpdateEnabled>
+    <UpdateEnabled>false</UpdateEnabled>
     <UpdateMode>Foreground</UpdateMode>
     <UpdateInterval>7</UpdateInterval>
     <UpdateIntervalUnits>Days</UpdateIntervalUnits>
@@ -76,45 +76,45 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="BitmapExtensions.cs" />
-    <Compile Include="BuildDetailControl.cs">
+    <Compile Include="Controls\BuildDetailControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="BuildDetailControl.Designer.cs">
+    <Compile Include="Controls\BuildDetailControl.Designer.cs">
       <DependentUpon>BuildDetailControl.cs</DependentUpon>
     </Compile>
-    <Compile Include="BuildDefinitionsListForm.cs">
+    <Compile Include="Controls\BuildDefinitionsListForm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="BuildDefinitionsListForm.Designer.cs">
+    <Compile Include="Controls\BuildDefinitionsListForm.Designer.cs">
       <DependentUpon>BuildDefinitionsListForm.cs</DependentUpon>
     </Compile>
-    <Compile Include="ControlExtensions.cs" />
-    <Compile Include="ProtectionMethods.cs" />
-    <Compile Include="MonitorOptions.cs" />
-    <Compile Include="PopupStatusForm.cs">
+    <Compile Include="Helpers\ControlExtensions.cs" />
+    <Compile Include="Helpers\StartupSettingHelper.cs" />
+    <Compile Include="Protection\ProtectionMethods.cs" />
+    <Compile Include="Options\MonitorOptions.cs" />
+    <Compile Include="Controls\PopupStatusForm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="PopupStatusForm.Designer.cs">
+    <Compile Include="Controls\PopupStatusForm.Designer.cs">
       <DependentUpon>PopupStatusForm.cs</DependentUpon>
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="ProtectedInformation.cs" />
-    <Compile Include="SettingsForm.cs">
+    <Compile Include="Protection\ProtectedInformation.cs" />
+    <Compile Include="Options\SettingsForm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="SettingsForm.Designer.cs">
+    <Compile Include="Options\SettingsForm.Designer.cs">
       <DependentUpon>SettingsForm.cs</DependentUpon>
     </Compile>
-    <Compile Include="StatusExtensions.cs" />
-    <EmbeddedResource Include="BuildDetailControl.resx">
+    <Compile Include="Helpers\StatusExtensions.cs" />
+    <EmbeddedResource Include="Controls\BuildDetailControl.resx">
       <DependentUpon>BuildDetailControl.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="BuildDefinitionsListForm.resx">
+    <EmbeddedResource Include="Controls\BuildDefinitionsListForm.resx">
       <DependentUpon>BuildDefinitionsListForm.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="PopupStatusForm.resx">
+    <EmbeddedResource Include="Controls\PopupStatusForm.resx">
       <DependentUpon>PopupStatusForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
@@ -127,10 +127,9 @@
       <DependentUpon>Resources.resx</DependentUpon>
       <DesignTime>True</DesignTime>
     </Compile>
-    <EmbeddedResource Include="SettingsForm.resx">
+    <EmbeddedResource Include="Options\SettingsForm.resx">
       <DependentUpon>SettingsForm.cs</DependentUpon>
     </EmbeddedResource>
-    <None Include="BuildMonitor.UI_TemporaryKey.pfx" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
@@ -140,9 +139,6 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\BuildMonitor.Core\BuildMonitor.Core.csproj">
@@ -157,15 +153,6 @@
       <Project>{608DFB50-39EC-4EE6-9298-4FEDCAEEC24D}</Project>
       <Name>BuildMonitor.Tfs</Name>
     </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\Failed.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\PartiallySucceeded.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\Succeeded.png" />
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include=".NETFramework,Version=v4.5">
@@ -183,6 +170,18 @@
       <ProductName>.NET Framework 3.5 SP1</ProductName>
       <Install>false</Install>
     </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\_0006_Cross.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\_0007_Tick.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\_0010_Alert.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\_0032_Screw-Driver.ico" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
