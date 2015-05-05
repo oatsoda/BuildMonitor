@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Wix xmlns="http://wixtoolset.org/schemas/v4/wxs">
+	<Product Id="*" 
+           Name="Build Monitor" 
+           Language="1033" 
+           Version="1.0.0.0" 
+           Manufacturer="Andrew Milne" 
+           UpgradeCode="e3c1dc46-3b01-437a-8e9c-aae2e7046c6c">
+		<Package InstallerVersion="200" Compressed="yes" InstallScope="perMachine" />
+
+		<MajorUpgrade DowngradeErrorMessage="A newer version of [ProductName] is already installed." />
+		<MediaTemplate EmbedCab="yes" />
+
+    <UI Id="UserInterface">
+      <Property Id="WIXUI_INSTALLDIR" Value="TARGETDIR" />
+      <Property Id="WixUI_Mode" Value="Custom" />
+
+      <TextStyle Id="WixUI_Font_Normal" FaceName="Tahoma" Size="8" />
+      <TextStyle Id="WixUI_Font_Bigger" FaceName="Tahoma" Size="9" Bold="yes" />
+      <TextStyle Id="WixUI_Font_Title"  FaceName="Tahoma" Size="9" Bold="yes" />
+
+      <Property Id="DefaultUIFont" Value="WixUI_Font_Normal" />
+
+      <DialogRef Id="ProgressDlg" />
+      <DialogRef Id="ErrorDlg" />
+      <DialogRef Id="FilesInUse" />
+      <DialogRef Id="FatalError" />
+      <DialogRef Id="UserExit" />
+
+      <Publish Dialog="ExitDialog" Control="Finish" Event="EndDialog" Value="Return" Order="999">1</Publish>
+      <Publish Dialog="WelcomeDlg" Control="Next" Event="EndDialog" Value="Return" Order="2"></Publish>
+
+    </UI>
+    <UIRef Id="WixUI_Common" />
+      
+		<Feature Id="ProductFeature" Title="Build Monitor" Level="1">
+			<ComponentGroupRef Id="ProductComponents" />
+      <!-- Add Start Menu -->
+      <ComponentRef Id="AppShortcut" />
+		</Feature>
+   
+    <Directory Id="TARGETDIR" Name="SourceDir">
+			<Directory Id="ProgramFilesFolder">
+				<Directory Id="INSTALLFOLDER" Name="Build Monitor" />
+			</Directory>
+      
+      <!--Start Menu Folder-->
+      <Directory Id="ProgramMenuFolder" Name="Programs">
+          <Directory Id="AppProgramsFolder" Name="Build Monitor"/>
+      </Directory>  
+		</Directory>
+  
+    <DirectoryRef Id="AppProgramsFolder">
+      <Component Id="AppShortcut" Guid="A91F4FDE-D4A4-4E1F-8C1C-20DE11918365">
+          <Shortcut Id="AppStartMenuShortcut" 
+                    Name="Build Monitor"
+                    Description="Tray Application to Monitor Builds"
+                    Target="[INSTALLLOCATION]"
+                    WorkingDirectory="INSTALLDIR"/> <!-- $(var.BuildMonitor.UI.TargetPath) APPLICATIONROOTDIRECTORY  -->
+          <RemoveFolder Id="AppProgramsFolder" On="uninstall"/>
+          <RegistryValue Root="HKCU" Key="Software\AndrewMilne\BuildMonitor" 
+                         Name="installed" 
+                         Type="integer" Value="1" 
+                         KeyPath="yes"/>
+      </Component>
+    </DirectoryRef>
+    
+    <ComponentGroup Id="ProductComponents" Directory="INSTALLFOLDER">
+			<!-- TODO: Remove the comments around this Component element and 
+      the ComponentRef below in order to add resources to this installer. -->
+			 <Component Id="ProductComponent"> 
+				<File Source="$(var.BuildMonitor.UI.TargetPath)" />
+			 </Component> 
+			 <Component Id="CoreComponenet">
+				<File Source="$(var.BuildMonitor.UI.TargetDir)BuildMonitor.Core.dll" />
+			 </Component> 
+			 <Component Id="TfsComponent">
+				<File Source="$(var.BuildMonitor.UI.TargetDir)BuildMonitor.Tfs.dll" />
+			 </Component> 
+			 <Component Id="TfsOnlineComponent">
+				<File Source="$(var.BuildMonitor.UI.TargetDir)BuildMonitor.TfsOnline.dll" />
+			 </Component> 
+			 <Component Id="JsonComponent">
+				<File Source="$(var.BuildMonitor.UI.TargetDir)Newtonsoft.Json.dll" />
+			 </Component> 
+    
+      
+      <!--http://stackoverflow.com/questions/14583509/wix-installer-start-menu-shortcut-not-appearing-->
+       <!--<Component Id="ProductTextFile">
+        <File Source="blankText.txt" KeyPath="yes">
+          <Shortcut Id="startMenuShotcut" Directory="ApplicationProgramsFolder"
+                    Name="BuildMonitor" WorkingDirectory="INSTALLFOLDER"
+                    Advertise="yes">
+            <Icon Id="icon2.txt" SourceFile="blankText.txt"/>
+          </Shortcut>
+        </File>      
+      </Component>-->
+		</ComponentGroup>
+      
+	</Product>
+
+</Wix>
