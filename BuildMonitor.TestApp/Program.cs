@@ -19,26 +19,37 @@ namespace BuildMonitor.TestApp
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
             
-            var defnMoq = new Mock<IBuildDefinition>();
-            defnMoq
+            var defnOneMoq = new Mock<IBuildDefinition>();
+            defnOneMoq
                 .SetupGet(d => d.Id)
                 .Returns(1);
-            defnMoq
+            defnOneMoq
                 .SetupGet(d => d.Name)
-                .Returns("Test");
+                .Returns("Test 1");
+
+            var defnTwoMoq = new Mock<IBuildDefinition>();
+            defnTwoMoq
+                .SetupGet(d => d.Id)
+                .Returns(2);
+            defnTwoMoq
+                .SetupGet(d => d.Name)
+                .Returns("Test 2");
 
             var storeMoq = new Mock<IBuildStore>();
             storeMoq
                 .Setup(s => s.GetDefinitions(It.IsAny<string>()))
-                .Returns(new[] { defnMoq.Object });
+                .Returns(new[] { defnOneMoq.Object, defnTwoMoq.Object });
             storeMoq
                 .Setup(s => s.GetLatestBuild(It.Is<IBuildDefinition>(d => d.Id == 1)))
-                .Returns(GetRandomStatus);
+                .Returns(GetRandomStatus(1));
+            storeMoq
+                .Setup(s => s.GetLatestBuild(It.Is<IBuildDefinition>(d => d.Id == 2)))
+                .Returns(GetRandomStatus(2));
 
             var optionsMoq = new Mock<IMonitorOptions>();
             optionsMoq
                 .SetupGet(o => o.IntervalSeconds)
-                .Returns(60);
+                .Returns(30);
 
             var factoryMoq = new Mock<IBuildStoreFactory>();
             factoryMoq
@@ -50,10 +61,11 @@ namespace BuildMonitor.TestApp
             Application.Run(new BuildDefinitionsListForm(monitor, optionsMoq.Object));
         }
 
-        private static IBuildStatus GetRandomStatus()
+        private static IBuildStatus GetRandomStatus(int id)
         {
             var statusMoq = new Mock<IBuildStatus>();
-            statusMoq.Setup(s => s.Status).Returns((Status) s_Random.Next(1, 3));
+            statusMoq.Setup(s => s.Status).Returns((Status) s_Random.Next(1, 4));
+            statusMoq.Setup(s => s.Id).Returns(id);
             return statusMoq.Object;
         }
     }

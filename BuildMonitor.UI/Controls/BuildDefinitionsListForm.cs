@@ -45,52 +45,16 @@ namespace BuildMonitor.UI.Controls
             ApplyOptions();
         }
 
+        #region Private Methods
+
         private void ApplyOptions()
         {
             Controls.Clear();
-
-            //if (string.IsNullOrWhiteSpace(m_CurrentMonitorOptions.TfsApiUrl))
-            //{
-            //    SetMessageOnly("No TFS URL configured...");
-            //    return;
-            //}
 
             SetMessageOnly("Loading builds...");
             
             m_Monitor.Start(m_CurrentMonitorOptions);
         }
-
-        #region Build Definition Monitor
-
-        private void OnBuildMonitorOnUpdated(object sender, List<BuildDetail> list)
-        {
-            this.InvokeIfRequired(() =>
-            {
-                UpdateBuildControls(list);
-                SetSizeAndPosition();
-            });
-        }
-
-        private void OnBuildMonitorOnExceptionOccurred(object sender, Exception exception)
-        {
-            this.InvokeIfRequired(() =>
-            {
-                notifyIcon.BalloonTipText = string.Format("Failed to monitor server: {0}", exception);
-                notifyIcon.ShowBalloonTip(20000);
-            });
-        }
-
-        private void OnBuildMonitorOnOverallStatusChanged(object sender, BuildDetail buildDetail)
-        {
-            this.InvokeIfRequired(() =>
-            {
-                notifyIcon.Icon = buildDetail.Status.Status.ToIcon();
-
-                new PopupStatusForm(buildDetail).Show();
-            });
-        }
-
-        #endregion
 
         private void UpdateBuildControls(IEnumerable<BuildDetail> buildDetails)
         {
@@ -113,6 +77,7 @@ namespace BuildMonitor.UI.Controls
                 if (x <= buildDetailControls.Count)
                 {
                     c = buildDetailControls[x - 1];
+                    c.DisplayDetail(detail);
                 }
                 else
                 {
@@ -185,6 +150,39 @@ namespace BuildMonitor.UI.Controls
             var y = (bounds.Height - Height) - OFFSET_Y;
             SetDesktopLocation(x, y);
         }
+
+        #endregion
+
+        #region Build Definition Monitor Events
+
+        private void OnBuildMonitorOnUpdated(object sender, List<BuildDetail> list)
+        {
+            this.InvokeIfRequired(() =>
+            {
+                UpdateBuildControls(list);
+                SetSizeAndPosition();
+            });
+        }
+
+        private void OnBuildMonitorOnExceptionOccurred(object sender, Exception exception)
+        {
+            this.InvokeIfRequired(() =>
+            {
+                notifyIcon.BalloonTipText = string.Format("Failed to monitor server: {0}", exception);
+                notifyIcon.ShowBalloonTip(20000);
+            });
+        }
+
+        private void OnBuildMonitorOnOverallStatusChanged(object sender, BuildDetail buildDetail)
+        {
+            this.InvokeIfRequired(() =>
+            {
+                notifyIcon.Icon = buildDetail.Status.Status.ToIcon();
+                new PopupStatusForm(buildDetail).Show();
+            });
+        }
+
+        #endregion
 
         #region Form Events
 
