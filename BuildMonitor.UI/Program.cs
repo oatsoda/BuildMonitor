@@ -1,6 +1,9 @@
 ﻿using System;
 using System.Windows.Forms;
+using BuildMonitor.Core;
+using BuildMonitor.TfsOnline;
 using BuildMonitor.UI.Controls;
+using BuildMonitor.UI.Options;
 
 namespace BuildMonitor.UI
 {
@@ -14,7 +17,13 @@ namespace BuildMonitor.UI
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new BuildDefinitionsListForm());
+
+            IBuildStoreFactory buildStoreFactory = new TfsOnlineBuildStoreFactory();
+            IBuildDefinitionMonitor monitor = new BuildDefinitionMonitor(buildStoreFactory);
+
+            var options = new MonitorOptions();
+
+            Application.Run(new BuildDefinitionsListForm(monitor, options));
         }
     }
 }

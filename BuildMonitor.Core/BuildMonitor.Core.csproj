@@ -42,8 +42,10 @@
     <Compile Include="BuildDefinitionMonitor.cs" />
     <Compile Include="BuildDetail.cs" />
     <Compile Include="IBuildDefinition.cs" />
+    <Compile Include="IBuildDefinitionMonitor.cs" />
     <Compile Include="IBuildStatus.cs" />
     <Compile Include="IBuildStore.cs" />
+    <Compile Include="IBuildStoreFactory.cs" />
     <Compile Include="IMonitorOptions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Status.cs" />

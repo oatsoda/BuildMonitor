@@ -42,6 +42,7 @@
   <ItemGroup>
     <Compile Include="TfsOnlineBuildStore.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="TfsOnlineBuildStoreFactory.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\BuildMonitor.Core\BuildMonitor.Core.csproj">

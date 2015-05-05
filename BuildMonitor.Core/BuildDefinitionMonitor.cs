@@ -6,13 +6,16 @@ using System.Threading.Tasks;
 
 namespace BuildMonitor.Core
 {
-    public sealed class BuildDefinitionMonitor : IDisposable
+    public sealed class BuildDefinitionMonitor : IBuildDefinitionMonitor, IDisposable
     {
-        private readonly IBuildStore m_BuildStore;
-        private readonly IMonitorOptions m_Options;
         private readonly bool m_ThrowExceptions;
 
-        private bool m_Running;
+        private bool m_RequestStop;
+        private bool m_Stopped;
+        private readonly ManualResetEvent m_StopWaitHandle;
+
+        private readonly IBuildStoreFactory m_BuildStoreFactory;
+        private IMonitorOptions m_Options;
         
         private Status m_OverallStatus;
         private List<IBuildDefinition> m_MonitoredDefinitions;
@@ -23,45 +26,57 @@ namespace BuildMonitor.Core
         public event EventHandler<Exception> ExceptionOccurred;
         public event EventHandler<List<BuildDetail>> Updated;
 
-        public BuildDefinitionMonitor(IBuildStore buildStore, IMonitorOptions options, bool throwExceptions = false)
+        public BuildDefinitionMonitor(IBuildStoreFactory buildStoreFactory, bool throwExceptions = false)
         {
-            m_BuildStore = buildStore;
-            m_Options = options;
+            m_BuildStoreFactory = buildStoreFactory;
             m_ThrowExceptions = throwExceptions;
+
+            m_Stopped = true;
+            m_StopWaitHandle = new ManualResetEvent(true); // Initial value is Signalled.
         }
 
-        public void Start()
+        public void Start(IMonitorOptions options)
         {
-            if (m_Running)
-                throw new InvalidOperationException("Cannot call Start when already running.");
+            Stop();
+            // First time this is already signalled so will immediately pass.
+            // Subsequent calls to Start will wait for it to stop first.
+            m_StopWaitHandle.WaitOne();
+            
+            m_Options = options;
 
             m_LatestStatuses = new Dictionary<int, IBuildStatus>();
-            m_Running = true;
+            m_RequestStop = false;
+            m_Stopped = true;
             Task.Factory.StartNew(Run);
         }
 
         public void Stop()
         {
-            m_Running = false;
+            if (m_Stopped)
+                m_RequestStop = true;
         }
         
         private void Run()
         {
+            m_StopWaitHandle.Reset();
+
             try
             {
-                while (m_Running)
+                while (!m_RequestStop)
                 {
-                    if (m_Running)
-                        RefreshDefinitionsIfRequired();
+                    var buildStore = m_BuildStoreFactory.GetBuildStore(m_Options);
 
-                    if (m_Running)
-                        RefreshStatuses();
+                    if (!m_RequestStop)
+                        RefreshDefinitionsIfRequired(buildStore);
 
-                    if (m_Running)
+                    if (!m_RequestStop)
+                        RefreshStatuses(buildStore);
+
+                    if (!m_RequestStop)
                         RaiseUpdated();
 
-                    if (m_Running)
-                        Thread.Sleep(m_Options.Interval);
+                    if (!m_RequestStop)
+                        Thread.Sleep(m_Options.IntervalSeconds * 1000);
                 }
             }
             catch (Exception ex)
@@ -71,6 +86,12 @@ namespace BuildMonitor.Core
 
                 if (ExceptionOccurred != null)
                     ExceptionOccurred(this, ex);
+            }
+            finally
+            {
+                m_RequestStop = false;
+                m_Stopped = true;
+                m_StopWaitHandle.Set();
             }
         }
 
@@ -91,33 +112,33 @@ namespace BuildMonitor.Core
                 )
                 .OrderBy(d => d.Definition.Name)
                 .ToList();
-        } 
+        }
 
-        private void RefreshDefinitionsIfRequired()
+        private void RefreshDefinitionsIfRequired(IBuildStore buildStore)
         {
             if (m_MonitoredDefinitions == null)
-                RefreshDefinitions();
+                RefreshDefinitions(buildStore);
 
             if (!m_Options.RefreshDefintions)
                 return;
 
-            if (DateTime.UtcNow.Subtract(m_LastDefinitionRefresh).Seconds > m_Options.RefreshDefinitionInterval)
-                RefreshDefinitions();
+            if (DateTime.UtcNow.Subtract(m_LastDefinitionRefresh).Seconds > m_Options.RefreshDefinitionIntervalSeconds)
+                RefreshDefinitions(buildStore);
         }
 
-        private void RefreshDefinitions()
+        private void RefreshDefinitions(IBuildStore buildStore)
         {
-            m_MonitoredDefinitions = m_BuildStore.GetDefinitions(m_Options.ProjectName).ToList();
+            m_MonitoredDefinitions = buildStore.GetDefinitions(m_Options.ProjectName).ToList();
             m_LastDefinitionRefresh = DateTime.UtcNow;
         }
 
-        private void RefreshStatuses()
+        private void RefreshStatuses(IBuildStore buildStore)
         {
             BuildDetail worstNew = null;
 
             foreach (var definition in m_MonitoredDefinitions)
             {
-                var status = m_BuildStore.GetLatestBuild(definition);
+                var status = buildStore.GetLatestBuild(definition);
 
                 if (status == null)
                     continue;

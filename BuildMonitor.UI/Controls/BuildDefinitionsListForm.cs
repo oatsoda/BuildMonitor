@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
 using BuildMonitor.Core;
-using BuildMonitor.TfsOnline;
 using BuildMonitor.UI.Helpers;
 using BuildMonitor.UI.Options;
 
@@ -18,23 +17,29 @@ namespace BuildMonitor.UI.Controls
         private int m_CalculatedWidth;
         private int m_CalculatedHeight;
 
-        private MonitorOptions m_MonitorOptions;
+        private IMonitorOptions m_CurrentMonitorOptions;
 
-        private BuildDefinitionMonitor m_Monitor;
+        private readonly IBuildDefinitionMonitor m_Monitor;
 
         private IEnumerable<BuildDetailControl> BuildDetailControls
         {
             get { return Controls.OfType<BuildDetailControl>(); }
         } 
 
-        public BuildDefinitionsListForm()
+        public BuildDefinitionsListForm(IBuildDefinitionMonitor monitor, IMonitorOptions currentOptions)
         {
             InitializeComponent();
+
+            m_Monitor = monitor;
+            m_CurrentMonitorOptions = currentOptions;
+
+            m_Monitor.OverallStatusChanged += OnBuildMonitorOnOverallStatusChanged;
+            m_Monitor.ExceptionOccurred += OnBuildMonitorOnExceptionOccurred;
+            m_Monitor.Updated += OnBuildMonitorOnUpdated;
 
             TopMost = true;
             notifyIcon.Icon = Icon;
 
-            m_MonitorOptions = new MonitorOptions(); // TODO: settings upgrade
             m_CalculatedHeight = m_CalculatedWidth = 0;
 
             ApplyOptions();
@@ -44,23 +49,15 @@ namespace BuildMonitor.UI.Controls
         {
             Controls.Clear();
 
-            if (string.IsNullOrWhiteSpace(m_MonitorOptions.TfsApiUrl))
-            {
-                SetMessageOnly("No TFS URL configured...");
-                return;
-            }
+            //if (string.IsNullOrWhiteSpace(m_CurrentMonitorOptions.TfsApiUrl))
+            //{
+            //    SetMessageOnly("No TFS URL configured...");
+            //    return;
+            //}
 
             SetMessageOnly("Loading builds...");
             
-            var buildStore = new TfsOnlineBuildStore(m_MonitorOptions);
-
-            m_Monitor = new BuildDefinitionMonitor(buildStore, m_MonitorOptions);
-
-            m_Monitor.OverallStatusChanged += OnBuildMonitorOnOverallStatusChanged;
-            m_Monitor.ExceptionOccurred += OnBuildMonitorOnExceptionOccurred;
-            m_Monitor.Updated += OnBuildMonitorOnUpdated;
-
-            m_Monitor.Start();
+            m_Monitor.Start(m_CurrentMonitorOptions);
         }
 
         #region Build Definition Monitor
@@ -212,20 +209,26 @@ namespace BuildMonitor.UI.Controls
 
             notifyIcon.Visible = false;
             notifyIcon.Dispose();
+            
+            m_Monitor.OverallStatusChanged -= OnBuildMonitorOnOverallStatusChanged;
+            m_Monitor.ExceptionOccurred -= OnBuildMonitorOnExceptionOccurred;
+            m_Monitor.Updated -= OnBuildMonitorOnUpdated;
+
+            m_Monitor.Dispose();
 
             Close();
         }
 
         private void settingsToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            using (var settingsForm = new SettingsForm(m_MonitorOptions))
+            using (var settingsForm = new SettingsForm(m_CurrentMonitorOptions))
             {
                 settingsForm.ShowDialog(this);
 
                 if (settingsForm.DialogResult != DialogResult.OK)
                     return;
 
-                m_MonitorOptions = settingsForm.Options;
+                m_CurrentMonitorOptions = settingsForm.Options;
             }
 
             ApplyOptions();

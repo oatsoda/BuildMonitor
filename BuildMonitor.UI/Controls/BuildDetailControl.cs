@@ -72,7 +72,7 @@ namespace BuildMonitor.UI.Controls
         private static string GetRequestedByDescr(IBuildStatus status)
         {
             const int len = 18;
-            if (status == null)
+            if (status == null || status.RequestedBy == null)
                 return "-";
 
             if (status.RequestedBy.Length > len)

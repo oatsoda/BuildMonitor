@@ -24,10 +24,10 @@ namespace BuildMonitor.UI.Options
         
         [UserScopedSetting]
         [DefaultSettingValue("30")]
-        public int Interval
+        public int IntervalSeconds
         {
-            get { return (int)this["Interval"]; }
-            set { this["Interval"] = value; }
+            get { return (int)this["IntervalSeconds"]; }
+            set { this["IntervalSeconds"] = value; }
         }
 
         [UserScopedSetting]
@@ -40,10 +40,10 @@ namespace BuildMonitor.UI.Options
 
         [UserScopedSetting]
         [DefaultSettingValue("3600")]
-        public int RefreshDefinitionInterval
+        public int RefreshDefinitionIntervalSeconds
         {
-            get { return (int)this["RefreshDefinitionInterval"]; }
-            set { this["RefreshDefinitionInterval"] = value; }
+            get { return (int)this["RefreshDefinitionIntervalSeconds"]; }
+            set { this["RefreshDefinitionIntervalSeconds"] = value; }
         }
 
         [UserScopedSetting]
@@ -111,6 +111,26 @@ namespace BuildMonitor.UI.Options
                 Password = value.DataHash;
                 PasswordEntropy = value.DataEntropy;
             }
+        }
+
+        public MonitorOptions()
+        {
+            
+        }
+
+        public MonitorOptions(IMonitorOptions existingOptions)
+        {
+            TfsApiUrl = existingOptions.TfsApiUrl;
+            ProjectName = existingOptions.ProjectName;
+            IntervalSeconds = existingOptions.IntervalSeconds;
+            RefreshDefintions = existingOptions.RefreshDefintions;
+            RefreshDefinitionIntervalSeconds = existingOptions.RefreshDefinitionIntervalSeconds;
+            UseCredentials = existingOptions.UseCredentials;
+            //Credential
+            Username = existingOptions.Username;
+            UsernameEntropy = existingOptions.UsernameEntropy;
+            Password = existingOptions.Password;
+            PasswordEntropy = existingOptions.PasswordEntropy;
         }
     }
 }
