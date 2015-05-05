@@ -33,8 +33,7 @@
             // 
             // buildDetailControl
             // 
-            this.buildDetailControl.AutoSize = true;
-            this.buildDetailControl.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
+            this.buildDetailControl.BackColor = System.Drawing.SystemColors.Control;
             this.buildDetailControl.Location = new System.Drawing.Point(0, 0);
             this.buildDetailControl.Margin = new System.Windows.Forms.Padding(0);
             this.buildDetailControl.Name = "buildDetailControl";
@@ -54,12 +53,12 @@
             this.ShowInTaskbar = false;
             this.Text = "PopupStatusForm";
             this.ResumeLayout(false);
-            this.PerformLayout();
 
         }
 
         #endregion
 
         private BuildDetailControl buildDetailControl;
+
     }
 }

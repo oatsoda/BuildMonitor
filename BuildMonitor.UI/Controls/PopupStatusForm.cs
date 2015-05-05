@@ -50,11 +50,11 @@ namespace BuildMonitor.UI.Controls
             var bounds = this.GetSreenBounds();
 
             m_ExpectedMinTop = bounds.Height;
-            m_ExpectedMaxTop = (bounds.Height - Height) + 2;
+            m_ExpectedMaxTop = (bounds.Height - Height) - 2;
 
             
             var x = (bounds.Width - Width) - BuildDefinitionsListForm.OFFSET_X;
-            var y = (bounds.Height - Height) - BuildDefinitionsListForm.OFFSET_Y;
+            var y = (bounds.Height) - BuildDefinitionsListForm.OFFSET_Y;
             SetDesktopLocation(x, y);
         
             Height = 0;
