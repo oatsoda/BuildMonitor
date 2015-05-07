@@ -11,6 +11,7 @@ namespace BuildMonitor.Tfs
     {
         private readonly NetworkCredential m_SpecificCredentials;
         private readonly Uri m_BaseUrl;
+        private readonly bool m_IncludeRunningBuilds;
 
         protected NetworkCredential SpecificCredentials
         {
@@ -21,6 +22,7 @@ namespace BuildMonitor.Tfs
         {
             m_BaseUrl = new Uri(options.TfsApiUrl);
             m_SpecificCredentials = options.UseCredentials ? options.Credential :  null;
+            m_IncludeRunningBuilds = options.IncludeRunningBuilds;
         }
 
         public IEnumerable<IBuildDefinition> GetDefinitions(string projectName)
@@ -43,8 +45,9 @@ namespace BuildMonitor.Tfs
         {
             var queryPath =
                 string.Format(
-                    "build/builds?api-version=1.0&definition={0}&status=Succeeded,PartiallySucceeded,Failed", //&$top=1
-                   WebUtility.UrlEncode(definition.Name));
+                    "build/builds?api-version=1.0&definition={0}&status=Succeeded,PartiallySucceeded,Failed{1}", //&$top=1
+                   WebUtility.UrlEncode(definition.Name),
+                   m_IncludeRunningBuilds ? ",InProgress" : "");
 
             var builds = GetTfsResult(queryPath);
 
@@ -100,6 +103,8 @@ namespace BuildMonitor.Tfs
                     return Status.PartiallySucceeded;
                 case "failed" :
                     return Status.Failed;
+                case "inprogress" :
+                    return Status.InProgress;
 
                 default :
                     throw new ArgumentOutOfRangeException("statusString");

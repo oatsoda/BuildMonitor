@@ -38,7 +38,6 @@
             this.txtInterval = new System.Windows.Forms.TextBox();
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tabGeneral = new System.Windows.Forms.TabPage();
-            this.cbStartup = new System.Windows.Forms.CheckBox();
             this.tabTfs = new System.Windows.Forms.TabPage();
             this.label5 = new System.Windows.Forms.Label();
             this.label4 = new System.Windows.Forms.Label();
@@ -46,9 +45,13 @@
             this.txtUsername = new System.Windows.Forms.TextBox();
             this.rdoSpecify = new System.Windows.Forms.RadioButton();
             this.rdoAuthIntegrated = new System.Windows.Forms.RadioButton();
+            this.tabWindows = new System.Windows.Forms.TabPage();
+            this.cbStartup = new System.Windows.Forms.CheckBox();
+            this.cbIncludeRunning = new System.Windows.Forms.CheckBox();
             this.tabControl1.SuspendLayout();
             this.tabGeneral.SuspendLayout();
             this.tabTfs.SuspendLayout();
+            this.tabWindows.SuspendLayout();
             this.SuspendLayout();
             // 
             // txtTfsApiUrl
@@ -129,6 +132,7 @@
             this.tabControl1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.tabControl1.Controls.Add(this.tabWindows);
             this.tabControl1.Controls.Add(this.tabGeneral);
             this.tabControl1.Controls.Add(this.tabTfs);
             this.tabControl1.Location = new System.Drawing.Point(12, 12);
@@ -139,7 +143,7 @@
             // 
             // tabGeneral
             // 
-            this.tabGeneral.Controls.Add(this.cbStartup);
+            this.tabGeneral.Controls.Add(this.cbIncludeRunning);
             this.tabGeneral.Controls.Add(this.label3);
             this.tabGeneral.Controls.Add(this.txtInterval);
             this.tabGeneral.Location = new System.Drawing.Point(4, 22);
@@ -147,18 +151,8 @@
             this.tabGeneral.Padding = new System.Windows.Forms.Padding(3);
             this.tabGeneral.Size = new System.Drawing.Size(509, 173);
             this.tabGeneral.TabIndex = 0;
-            this.tabGeneral.Text = "General";
+            this.tabGeneral.Text = "General Settings";
             this.tabGeneral.UseVisualStyleBackColor = true;
-            // 
-            // cbStartup
-            // 
-            this.cbStartup.AutoSize = true;
-            this.cbStartup.Location = new System.Drawing.Point(20, 18);
-            this.cbStartup.Name = "cbStartup";
-            this.cbStartup.Size = new System.Drawing.Size(197, 17);
-            this.cbStartup.TabIndex = 6;
-            this.cbStartup.Text = "Run automatically on Windows login";
-            this.cbStartup.UseVisualStyleBackColor = true;
             // 
             // tabTfs
             // 
@@ -238,6 +232,37 @@
             this.rdoAuthIntegrated.Text = "Windows Authentication";
             this.rdoAuthIntegrated.UseVisualStyleBackColor = true;
             // 
+            // tabWindows
+            // 
+            this.tabWindows.Controls.Add(this.cbStartup);
+            this.tabWindows.Location = new System.Drawing.Point(4, 22);
+            this.tabWindows.Name = "tabWindows";
+            this.tabWindows.Padding = new System.Windows.Forms.Padding(3);
+            this.tabWindows.Size = new System.Drawing.Size(509, 173);
+            this.tabWindows.TabIndex = 2;
+            this.tabWindows.Text = "Windows Preferences";
+            this.tabWindows.UseVisualStyleBackColor = true;
+            // 
+            // cbStartup
+            // 
+            this.cbStartup.AutoSize = true;
+            this.cbStartup.Location = new System.Drawing.Point(20, 18);
+            this.cbStartup.Name = "cbStartup";
+            this.cbStartup.Size = new System.Drawing.Size(197, 17);
+            this.cbStartup.TabIndex = 7;
+            this.cbStartup.Text = "Run automatically on Windows login";
+            this.cbStartup.UseVisualStyleBackColor = true;
+            // 
+            // cbIncludeRunning
+            // 
+            this.cbIncludeRunning.AutoSize = true;
+            this.cbIncludeRunning.Location = new System.Drawing.Point(20, 18);
+            this.cbIncludeRunning.Name = "cbIncludeRunning";
+            this.cbIncludeRunning.Size = new System.Drawing.Size(208, 17);
+            this.cbIncludeRunning.TabIndex = 9;
+            this.cbIncludeRunning.Text = "Include monitoring of builds in progress";
+            this.cbIncludeRunning.UseVisualStyleBackColor = true;
+            // 
             // SettingsForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -256,6 +281,8 @@
             this.tabGeneral.PerformLayout();
             this.tabTfs.ResumeLayout(false);
             this.tabTfs.PerformLayout();
+            this.tabWindows.ResumeLayout(false);
+            this.tabWindows.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -279,6 +306,8 @@
         private System.Windows.Forms.RadioButton rdoAuthIntegrated;
         private System.Windows.Forms.Label label5;
         private System.Windows.Forms.Label label4;
+        private System.Windows.Forms.TabPage tabWindows;
         private System.Windows.Forms.CheckBox cbStartup;
+        private System.Windows.Forms.CheckBox cbIncludeRunning;
     }
 }

@@ -64,7 +64,7 @@ namespace BuildMonitor.TestApp
         private static IBuildStatus GetRandomStatus(int id)
         {
             var statusMoq = new Mock<IBuildStatus>();
-            statusMoq.Setup(s => s.Status).Returns((Status) s_Random.Next(1, 4));
+            statusMoq.Setup(s => s.Status).Returns((Status) s_Random.Next(1, 5));
             statusMoq.Setup(s => s.Id).Returns(id);
             return statusMoq.Object;
         }

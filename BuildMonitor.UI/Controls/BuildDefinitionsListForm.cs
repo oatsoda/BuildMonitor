@@ -227,9 +227,16 @@ namespace BuildMonitor.UI.Controls
                     return;
 
                 m_CurrentMonitorOptions = settingsForm.Options;
+                Hide();
             }
 
             ApplyOptions();
+        }
+
+        private void aboutToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            using (var aboutForm = new AboutForm())
+                aboutForm.ShowDialog(this);
         }
 
         #endregion
@@ -255,5 +262,6 @@ namespace BuildMonitor.UI.Controls
         }
 
         #endregion
+
     }
 }

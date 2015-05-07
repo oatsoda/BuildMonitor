@@ -4,11 +4,15 @@ namespace BuildMonitor.Core
 {
     public interface IMonitorOptions
     {
-        string TfsApiUrl { get; }
-        string ProjectName { get; }
+        bool IncludeRunningBuilds { get; }
         int IntervalSeconds { get; }
+
         bool RefreshDefintions { get; }
         int RefreshDefinitionIntervalSeconds { get; }
+
+        string TfsApiUrl { get; }
+        string ProjectName { get; }
+
         bool UseCredentials { get; }
         NetworkCredential Credential { get; }
         string Username { get; }

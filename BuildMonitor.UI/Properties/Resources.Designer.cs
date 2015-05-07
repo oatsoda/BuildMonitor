@@ -99,5 +99,15 @@ namespace BuildMonitor.UI.Properties {
                 return ((System.Drawing.Icon)(obj));
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Icon similar to (Icon).
+        /// </summary>
+        internal static System.Drawing.Icon Play1Normal {
+            get {
+                object obj = ResourceManager.GetObject("Play1Normal", resourceCulture);
+                return ((System.Drawing.Icon)(obj));
+            }
+        }
     }
 }

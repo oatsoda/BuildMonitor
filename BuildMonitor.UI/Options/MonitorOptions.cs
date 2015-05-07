@@ -10,21 +10,15 @@ namespace BuildMonitor.UI.Options
     internal sealed class MonitorOptions : ApplicationSettingsBase, IMonitorOptions
     {
         [UserScopedSetting]
-        public string TfsApiUrl
+        [DefaultSettingValue("false")]
+        public bool IncludeRunningBuilds
         {
-            get { return (string)this["TfsApiUrl"]; }
-            set { this["TfsApiUrl"] = value; }
+            get { return (bool)this["IncludeRunningBuilds"]; }
+            set { this["IncludeRunningBuilds"] = value; }
         }
 
         [UserScopedSetting]
-        public string ProjectName
-        {
-            get { return (string)this["ProjectName"]; }
-            set { this["ProjectName"] = value; }
-        }
-        
-        [UserScopedSetting]
-        [DefaultSettingValue("30")]
+        [DefaultSettingValue("60")]
         public int IntervalSeconds
         {
             get { return (int)this["IntervalSeconds"]; }
@@ -45,6 +39,20 @@ namespace BuildMonitor.UI.Options
         {
             get { return (int)this["RefreshDefinitionIntervalSeconds"]; }
             set { this["RefreshDefinitionIntervalSeconds"] = value; }
+        }
+
+        [UserScopedSetting]
+        public string TfsApiUrl
+        {
+            get { return (string)this["TfsApiUrl"]; }
+            set { this["TfsApiUrl"] = value; }
+        }
+
+        [UserScopedSetting]
+        public string ProjectName
+        {
+            get { return (string)this["ProjectName"]; }
+            set { this["ProjectName"] = value; }
         }
 
         [UserScopedSetting]
@@ -125,11 +133,14 @@ namespace BuildMonitor.UI.Options
 
         public MonitorOptions(IMonitorOptions existingOptions)
         {
-            TfsApiUrl = existingOptions.TfsApiUrl;
-            ProjectName = existingOptions.ProjectName;
+            IncludeRunningBuilds = existingOptions.IncludeRunningBuilds;
             IntervalSeconds = existingOptions.IntervalSeconds;
             RefreshDefintions = existingOptions.RefreshDefintions;
             RefreshDefinitionIntervalSeconds = existingOptions.RefreshDefinitionIntervalSeconds;
+
+            TfsApiUrl = existingOptions.TfsApiUrl;
+            ProjectName = existingOptions.ProjectName;
+
             UseCredentials = existingOptions.UseCredentials;
             //Credential
             Username = existingOptions.Username;

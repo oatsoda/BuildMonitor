@@ -51,6 +51,8 @@ namespace BuildMonitor.UI.Options
             if (DialogResult == DialogResult.Cancel)
                 return;
 
+            m_Options.IncludeRunningBuilds = cbIncludeRunning.Checked;
+
             m_Options.IntervalSeconds = Convert.ToInt32(txtInterval.Text);
 
             m_Options.TfsApiUrl = txtTfsApiUrl.Text;

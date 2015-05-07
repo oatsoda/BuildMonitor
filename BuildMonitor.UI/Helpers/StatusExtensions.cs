@@ -25,6 +25,8 @@ namespace BuildMonitor.UI.Helpers
                     return Resources._0010_Alert;
                 case Status.Failed:
                     return Resources._0006_Cross;
+                case Status.InProgress:
+                    return Resources.Play1Normal;
                 default:
                     throw new ArgumentOutOfRangeException("status");
             }

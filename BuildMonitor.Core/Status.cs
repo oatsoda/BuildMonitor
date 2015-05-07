@@ -3,7 +3,9 @@
     public enum Status
     {
         Unknown = 0,
-        Succeeded = 1,
+
+        InProgress = 1,
+        Succeeded,
         PartiallySucceeded,
         Failed
     }
