@@ -1,12 +1,13 @@
 ﻿using System.Configuration;
 using System.Net;
 using BuildMonitor.Core;
+using BuildMonitor.UI.Properties;
 using BuildMonitor.UI.Protection;
 
 namespace BuildMonitor.UI.Options
 {
 
-    internal class MonitorOptions : ApplicationSettingsBase, IMonitorOptions
+    internal sealed class MonitorOptions : ApplicationSettingsBase, IMonitorOptions
     {
         [UserScopedSetting]
         public string TfsApiUrl
@@ -115,7 +116,11 @@ namespace BuildMonitor.UI.Options
 
         public MonitorOptions()
         {
-            
+            if (!Settings.Default.UpgradeSettings) 
+                return;
+
+            Upgrade();
+            Settings.Default.UpgradeSettings = false;
         }
 
         public MonitorOptions(IMonitorOptions existingOptions)

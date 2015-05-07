@@ -3,7 +3,7 @@
 	<Product Id="*" 
            Name="Build Monitor" 
            Language="1033" 
-           Version="1.0.0.1" 
+           Version="1.0.2.0" 
            Manufacturer="Andrew Milne" 
            UpgradeCode="e3c1dc46-3b01-437a-8e9c-aae2e7046c6c">
 		<Package InstallerVersion="200" Compressed="yes" InstallScope="perMachine" />
@@ -37,6 +37,8 @@
 			<ComponentGroupRef Id="ProductComponents" />
       <!-- Add Start Menu -->
       <ComponentRef Id="AppShortcut" />
+      <!-- Add Desktop Shortcut-->
+      <ComponentRef Id="ApplicationShortcutDesktop" />
 		</Feature>
    
     <Directory Id="TARGETDIR" Name="SourceDir">
@@ -48,6 +50,10 @@
       <Directory Id="ProgramMenuFolder" Name="Programs">
           <Directory Id="AppProgramsFolder" Name="Build Monitor"/>
       </Directory>  
+    
+      <!-- Desktop Folder-->
+      <Directory Id="DesktopFolder" Name="Desktop" />
+    
 		</Directory>
   
     <DirectoryRef Id="AppProgramsFolder">
@@ -55,13 +61,31 @@
           <Shortcut Id="AppStartMenuShortcut" 
                     Name="Build Monitor"
                     Description="Tray Application to Monitor Builds"
-                    Target="[INSTALLLOCATION]"
-                    WorkingDirectory="INSTALLDIR"/> <!-- $(var.BuildMonitor.UI.TargetPath) APPLICATIONROOTDIRECTORY  -->
+                    Target="[INSTALLFOLDER]$(var.BuildMonitor.UI.TargetFileName)"
+                    WorkingDirectory="INSTALLFOLDER"/> <!-- $(var.BuildMonitor.UI.TargetPath) APPLICATIONROOTDIRECTORY  -->
           <RemoveFolder Id="AppProgramsFolder" On="uninstall"/>
           <RegistryValue Root="HKCU" Key="Software\AndrewMilne\BuildMonitor" 
                          Name="installed" 
                          Type="integer" Value="1" 
                          KeyPath="yes"/>
+      </Component>
+    </DirectoryRef>
+    
+    <DirectoryRef Id="DesktopFolder">
+      <Component Id="ApplicationShortcutDesktop" Guid="*">
+        <Shortcut Id="ApplicationDesktopShortcut"
+           Name="Build Monitor"
+           Description="Tray Application to Monitor Builds"
+           Target="[INSTALLFOLDER]$(var.BuildMonitor.UI.TargetFileName)"
+           WorkingDirectory="INSTALLFOLDER"/>
+        <RemoveFolder Id="DesktopFolder" On="uninstall"/>
+        <RegistryValue
+          Root="HKCU"
+          Key="Software\AndrewMilne\BuildMonitor"
+          Name="installed"
+          Type="integer"
+          Value="1"
+          KeyPath="yes"/>
       </Component>
     </DirectoryRef>
     
