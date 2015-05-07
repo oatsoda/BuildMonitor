@@ -93,9 +93,9 @@ namespace BuildMonitor.UI.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Icon similar to (Icon).
         /// </summary>
-        internal static System.Drawing.Icon _0032_Screw_Driver {
+        internal static System.Drawing.Icon _0031_Tools {
             get {
-                object obj = ResourceManager.GetObject("_0032_Screw_Driver", resourceCulture);
+                object obj = ResourceManager.GetObject("_0031_Tools", resourceCulture);
                 return ((System.Drawing.Icon)(obj));
             }
         }

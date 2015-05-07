@@ -70,6 +70,7 @@ Global
 		{348A9F74-0A5A-43F3-BEDD-E8AA871A099A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{348A9F74-0A5A-43F3-BEDD-E8AA871A099A}.Release|Any CPU.Build.0 = Release|Any CPU
 		{348A9F74-0A5A-43F3-BEDD-E8AA871A099A}.Release|x86.ActiveCfg = Release|Any CPU
+		{348A9F74-0A5A-43F3-BEDD-E8AA871A099A}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
