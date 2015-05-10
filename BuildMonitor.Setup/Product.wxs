@@ -3,7 +3,7 @@
 	<Product Id="*" 
            Name="Build Monitor" 
            Language="1033" 
-           Version="1.0.4.0" 
+           Version="1.0.5.0" 
            Manufacturer="Andrew Milne" 
            UpgradeCode="e3c1dc46-3b01-437a-8e9c-aae2e7046c6c">
 		<Package InstallerVersion="200" Compressed="yes" InstallScope="perMachine" />
