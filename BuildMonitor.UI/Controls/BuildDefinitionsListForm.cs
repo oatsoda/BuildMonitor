@@ -17,6 +17,8 @@ namespace BuildMonitor.UI.Controls
         private int m_CalculatedWidth;
         private int m_CalculatedHeight;
 
+        private bool m_FirstStatusUpdate;
+
         private IMonitorOptions m_CurrentMonitorOptions;
 
         private readonly IBuildDefinitionMonitor m_Monitor;
@@ -29,6 +31,8 @@ namespace BuildMonitor.UI.Controls
         public BuildDefinitionsListForm(IBuildDefinitionMonitor monitor, IMonitorOptions currentOptions)
         {
             InitializeComponent();
+
+            m_FirstStatusUpdate = true;
 
             m_Monitor = monitor;
             m_CurrentMonitorOptions = currentOptions;
@@ -178,7 +182,11 @@ namespace BuildMonitor.UI.Controls
             this.InvokeIfRequired(() =>
             {
                 notifyIcon.Icon = buildDetail.Status.Status.ToIcon();
-                new PopupStatusForm(buildDetail).Show();
+
+                if (!m_FirstStatusUpdate || buildDetail.Status.Status != Status.Succeeded) // Don't notify if first load is Succeeded
+                    new PopupStatusForm(buildDetail).Show();
+
+                m_FirstStatusUpdate = false;
             });
         }
 
