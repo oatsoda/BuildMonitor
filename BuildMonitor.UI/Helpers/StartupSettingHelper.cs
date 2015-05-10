@@ -10,6 +10,7 @@ namespace BuildMonitor.UI.Helpers
 
         public static bool RunOnStartup
         {
+// ReSharper disable once PossibleNullReferenceException - Expect Key to always be there (std Windows thing)
             get { return Registry.CurrentUser.OpenSubKey(_REG_KEY).GetValue(_APP_NAME) != null; }
         }
         
@@ -17,10 +18,12 @@ namespace BuildMonitor.UI.Helpers
         {
             var key = Registry.CurrentUser.OpenSubKey(_REG_KEY, true);
 
+            // ReSharper disable PossibleNullReferenceException - Expect Key to always be there (std Windows thing)
             if (runOnStartup)
                 key.SetValue(_APP_NAME, Application.ExecutablePath);
             else
                 key.DeleteValue(_APP_NAME, false);
+            // ReSharper restore PossibleNullReferenceException - Expect Key to always be there (std Windows thing)
         }
     }
 }
