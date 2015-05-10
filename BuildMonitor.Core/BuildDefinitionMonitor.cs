@@ -9,7 +9,8 @@ namespace BuildMonitor.Core
     public sealed class BuildDefinitionMonitor : IBuildDefinitionMonitor, IDisposable
     {
         private readonly bool m_ThrowExceptions;
-
+        private bool m_FirstRun;
+        
         private bool m_RequestStop;
         private bool m_Stopped;
         private readonly ManualResetEvent m_StopWaitHandle;
@@ -28,6 +29,8 @@ namespace BuildMonitor.Core
 
         public BuildDefinitionMonitor(IBuildStoreFactory buildStoreFactory, bool throwExceptions = false)
         {
+            m_FirstRun = true;
+
             m_BuildStoreFactory = buildStoreFactory;
             m_ThrowExceptions = throwExceptions;
 
@@ -74,6 +77,8 @@ namespace BuildMonitor.Core
 
                     if (!m_RequestStop)
                         RaiseUpdated();
+
+                    m_FirstRun = false;
 
                     if (!m_RequestStop)
                         Thread.Sleep(m_Options.IntervalSeconds * 1000);
@@ -159,7 +164,7 @@ namespace BuildMonitor.Core
                                             : Status.Unknown;
 
             if (currentWorstStatus != m_OverallStatus && 
-                !(currentWorstStatus == Status.Unknown && m_OverallStatus == Status.Succeeded)) // Ignore succeded on first load
+                !(m_FirstRun && m_OverallStatus == Status.Succeeded)) // Ignore succeded on first load
                 OnOverallStatusChanged(updatedStatus);
 
             m_OverallStatus = currentWorstStatus;

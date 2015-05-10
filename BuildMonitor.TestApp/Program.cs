@@ -41,15 +41,15 @@ namespace BuildMonitor.TestApp
                 .Returns(new[] { defnOneMoq.Object, defnTwoMoq.Object });
             storeMoq
                 .Setup(s => s.GetLatestBuild(It.Is<IBuildDefinition>(d => d.Id == 1)))
-                .Returns(GetRandomStatus(1));
+                .Returns(() => GetRandomStatus(1));
             storeMoq
                 .Setup(s => s.GetLatestBuild(It.Is<IBuildDefinition>(d => d.Id == 2)))
-                .Returns(GetRandomStatus(2));
+                .Returns(() => GetRandomStatus(2));
 
             var optionsMoq = new Mock<IMonitorOptions>();
             optionsMoq
                 .SetupGet(o => o.IntervalSeconds)
-                .Returns(30);
+                .Returns(20);
 
             var factoryMoq = new Mock<IBuildStoreFactory>();
             factoryMoq

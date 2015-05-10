@@ -22,8 +22,12 @@ namespace BuildMonitor.UI.Options
 
             m_Options = new MonitorOptions(currentOptions);
 
-            // General Tab
+            // Windows Tab
             cbStartup.Checked = StartupSettingHelper.RunOnStartup;
+
+            // General Tab
+            cbIncludeRunning.Checked = currentOptions.IncludeRunningBuilds;
+
             txtInterval.Text = m_Options.IntervalSeconds.ToString(CultureInfo.InvariantCulture);
 
             // TFS Tab
@@ -51,10 +55,15 @@ namespace BuildMonitor.UI.Options
             if (DialogResult == DialogResult.Cancel)
                 return;
 
+            // Windows Tab
+            StartupSettingHelper.SetStartup(cbStartup.Checked);
+
+            // General Tab
             m_Options.IncludeRunningBuilds = cbIncludeRunning.Checked;
 
             m_Options.IntervalSeconds = Convert.ToInt32(txtInterval.Text);
 
+            // TFS Tab
             m_Options.TfsApiUrl = txtTfsApiUrl.Text;
             m_Options.ProjectName = txtTfsProjectName.Text;
 
@@ -65,10 +74,8 @@ namespace BuildMonitor.UI.Options
                 m_Options.UsernameProtected = ProtectionMethods.Protect(txtUsername.Text);
                 m_Options.PasswordProtected = ProtectionMethods.Protect(txtPassword.Text);
             }
-
+            
             m_Options.Save();
-
-            StartupSettingHelper.SetStartup(cbStartup.Checked);
         }
 
         private void rdoSpecify_CheckedChanged(object sender, EventArgs e)

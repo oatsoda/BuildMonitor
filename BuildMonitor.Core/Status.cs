@@ -4,9 +4,13 @@
     {
         Unknown = 0,
 
-        InProgress = 1,
-        Succeeded,
+        // Order is important here as a higher value is considered a "Worse" status
+        // so InProgress is made "Worst" so that it always gets reported (When that
+        // setting is enabled)
+        Succeeded = 1,
         PartiallySucceeded,
-        Failed
+        Failed,
+
+        InProgress,
     }
 }
