@@ -5,6 +5,7 @@ using System.Windows.Forms;
 using BuildMonitor.Core;
 using BuildMonitor.UI.Helpers;
 using BuildMonitor.UI.Options;
+using BuildMonitor.UI.Updater;
 
 namespace BuildMonitor.UI.Controls
 {
@@ -155,6 +156,22 @@ namespace BuildMonitor.UI.Controls
             SetDesktopLocation(x, y);
         }
 
+        private void CloseApplication()
+        {
+            m_Closing = true;
+
+            notifyIcon.Visible = false;
+            notifyIcon.Dispose();
+
+            m_Monitor.OverallStatusChanged -= OnBuildMonitorOnOverallStatusChanged;
+            m_Monitor.ExceptionOccurred -= OnBuildMonitorOnExceptionOccurred;
+            m_Monitor.Updated -= OnBuildMonitorOnUpdated;
+
+            m_Monitor.Dispose();
+
+            Close();
+        }
+
         #endregion
 
         #region Build Definition Monitor Events
@@ -211,18 +228,14 @@ namespace BuildMonitor.UI.Controls
         
         private void exitToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            m_Closing = true;
-
-            notifyIcon.Visible = false;
-            notifyIcon.Dispose();
-            
-            m_Monitor.OverallStatusChanged -= OnBuildMonitorOnOverallStatusChanged;
-            m_Monitor.ExceptionOccurred -= OnBuildMonitorOnExceptionOccurred;
-            m_Monitor.Updated -= OnBuildMonitorOnUpdated;
-
-            m_Monitor.Dispose();
-
-            Close();
+            CloseApplication();
+        }
+        
+        private void updateToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            var updater = new AppUpdater();
+            if (updater.CheckForUpdates())
+                CloseApplication();
         }
 
         private void settingsToolStripMenuItem_Click(object sender, EventArgs e)
@@ -270,6 +283,7 @@ namespace BuildMonitor.UI.Controls
         }
 
         #endregion
+
 
     }
 }
