@@ -9,7 +9,7 @@ namespace BuildMonitor.Tfs
         public string Name { get; set; }
         public string Url { get; set; }
         public DateTime Start { get; set; }
-        public DateTime Finish { get; set; }
+        public DateTime? Finish { get; set; }
         public Status Status { get; set; }
         public string RequestedBy { get; set; }
     }

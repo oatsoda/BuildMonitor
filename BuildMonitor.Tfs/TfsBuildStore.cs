@@ -62,7 +62,7 @@ namespace BuildMonitor.Tfs
                 Name = b["buildNumber"].Value<string>(),
                 Url = b["url"].Value<string>(),
                 Start = b["startTime"].Value<DateTime>(),
-                Finish = b["finishTime"].Value<DateTime>(),
+                Finish = b["finishTime"] == null ? (DateTime?)null : b["finishTime"].Value<DateTime>(),
                 Status = StatusFromString(b["status"].Value<string>()),
                 RequestedBy = b["requests"][0]["requestedFor"]["displayName"].Value<string>()
             };
@@ -103,7 +103,7 @@ namespace BuildMonitor.Tfs
                     return Status.PartiallySucceeded;
                 case "failed" :
                     return Status.Failed;
-                case "inprogress" :
+                case "inProgress" :
                     return Status.InProgress;
 
                 default :

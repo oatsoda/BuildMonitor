@@ -8,7 +8,7 @@ namespace BuildMonitor.Core
         string Name { get; }
         string Url { get; }
         DateTime Start { get; }
-        DateTime Finish { get; }
+        DateTime? Finish { get; }
         Status Status { get; }
         string RequestedBy { get; }
     }
