@@ -55,7 +55,7 @@ namespace BuildMonitor.UI.Controls
             if (status == null)
                 return "-";
 
-            var diff = DateTime.Now.Subtract(status.Start);
+            var diff = DateTime.UtcNow.Subtract(status.Start);
 
             if (diff.TotalHours >= 48)
                 return string.Format("{0} days ago", (int)diff.TotalDays);
