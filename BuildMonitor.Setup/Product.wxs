@@ -101,8 +101,11 @@
       the ComponentRef below in order to add resources to this installer. -->
 			 <Component Id="ProductComponent"> 
 				<File Source="$(var.BuildMonitor.UI.TargetPath)" />
-			 </Component> 
-			 <Component Id="CoreComponenet">
+			 </Component>
+      <Component Id="ProductConfigComponent">
+        <File Source="$(var.BuildMonitor.UI.TargetPath).config" />
+      </Component>
+      <Component Id="CoreComponenet">
 				<File Source="$(var.BuildMonitor.UI.TargetDir)BuildMonitor.Core.dll" />
 			 </Component> 
 			 <Component Id="TfsComponent">
