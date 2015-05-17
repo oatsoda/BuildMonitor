@@ -54,7 +54,7 @@ namespace BuildMonitor.Tfs
             if (!builds.Any())
                 return null;
 
-            var b = builds.OrderByDescending(t => t["finishTime"]).First();
+            var b = builds.OrderByDescending(t => t["startTime"]).First();
 
             return new BuildStatus
             {
