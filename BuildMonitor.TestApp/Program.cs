@@ -40,10 +40,10 @@ namespace BuildMonitor.TestApp
                 .Setup(s => s.GetDefinitions(It.IsAny<string>()))
                 .Returns(new[] { defnOneMoq.Object, defnTwoMoq.Object });
             storeMoq
-                .Setup(s => s.GetLatestBuild(It.Is<IBuildDefinition>(d => d.Id == 1)))
+                .Setup(s => s.GetLatestBuild(It.IsAny<string>(), It.Is<IBuildDefinition>(d => d.Id == 1)))
                 .Returns(() => GetRandomStatus(1));
             storeMoq
-                .Setup(s => s.GetLatestBuild(It.Is<IBuildDefinition>(d => d.Id == 2)))
+                .Setup(s => s.GetLatestBuild(It.IsAny<string>(), It.Is<IBuildDefinition>(d => d.Id == 2)))
                 .Returns(() => GetRandomStatus(2));
 
             var optionsMoq = new Mock<IMonitorOptions>();

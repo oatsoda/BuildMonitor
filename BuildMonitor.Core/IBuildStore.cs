@@ -5,6 +5,6 @@ namespace BuildMonitor.Core
     public interface IBuildStore
     {
         IEnumerable<IBuildDefinition> GetDefinitions(string projectName);
-        IBuildStatus GetLatestBuild(IBuildDefinition definition);
+        IBuildStatus GetLatestBuild(string projectName, IBuildDefinition definition);
     }
 }

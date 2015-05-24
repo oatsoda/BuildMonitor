@@ -138,7 +138,7 @@ namespace BuildMonitor.Core
 
             foreach (var definition in m_MonitoredDefinitions)
             {
-                var status = buildStore.GetLatestBuild(definition);
+                var status = buildStore.GetLatestBuild(m_Options.ProjectName, definition);
 
                 if (status == null)
                     continue;

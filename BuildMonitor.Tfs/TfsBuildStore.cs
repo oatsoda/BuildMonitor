@@ -41,11 +41,12 @@ namespace BuildMonitor.Tfs
             }).ToList();
         }
 
-        public IBuildStatus GetLatestBuild(IBuildDefinition definition)
+        public IBuildStatus GetLatestBuild(string projectName, IBuildDefinition definition)
         {
             var queryPath =
                 string.Format(
-                    "build/builds?api-version=1.0&definition={0}&status=Succeeded,PartiallySucceeded,Failed{1}", //&$top=1
+                    "build/builds?api-version=1.0&projectname={0}&definition={1}&status=Succeeded,PartiallySucceeded,Failed{2}", //&$top=1
+                   WebUtility.UrlEncode(projectName),
                    WebUtility.UrlEncode(definition.Name),
                    m_IncludeRunningBuilds ? ",InProgress" : "");
 
