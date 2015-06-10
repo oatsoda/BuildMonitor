@@ -60,6 +60,8 @@ namespace BuildMonitor.Core
         {
             m_StopWaitHandle.Reset();
 
+            var restartAfterException = false;
+
             try
             {
                 while (!m_RequestStop)
@@ -86,12 +88,23 @@ namespace BuildMonitor.Core
 
                 if (ExceptionOccurred != null)
                     ExceptionOccurred(this, ex);
+
+                if (!m_RequestStop && !m_Stopped)
+                    restartAfterException = true;
             }
             finally
             {
-                m_RequestStop = false;
-                m_Stopped = true;
-                m_StopWaitHandle.Set();
+                if (restartAfterException)
+                {
+                    Thread.Sleep(10000); // Wait for 10 secs before starting again
+                    Run();
+                }
+                else
+                {
+                    m_RequestStop = false;
+                    m_Stopped = true;
+                    m_StopWaitHandle.Set();
+                }
             }
         }
 
@@ -134,8 +147,6 @@ namespace BuildMonitor.Core
 
         private void RefreshStatuses(IBuildStore buildStore)
         {
-            BuildDetail worstNew = null;
-
             foreach (var definition in m_MonitoredDefinitions)
             {
                 var status = buildStore.GetLatestBuild(m_Options.ProjectName, definition);
@@ -143,13 +154,20 @@ namespace BuildMonitor.Core
                 if (status == null)
                     continue;
 
-                if (worstNew == null || status.Status > worstNew.Status.Status)
-                    worstNew = new BuildDetail(definition, status);
-
                 m_LatestStatuses[definition.Id] = status;
             }
 
-            UpdateOverallStatus(worstNew);
+            var worst = m_LatestStatuses
+                .OrderByDescending(s => s.Value.Status)
+                .ThenByDescending(s => s.Value.Finish)
+                .First();
+
+            var worstDefn = m_MonitoredDefinitions.Single(d => d.Id == worst.Key);
+            var worstStatus = worst.Value;
+
+            UpdateOverallStatus(
+                new BuildDetail(worstDefn, worstStatus)
+                );
         }
 
         private void UpdateOverallStatus(BuildDetail updatedStatus)
