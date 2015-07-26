@@ -46,13 +46,13 @@ namespace BuildMonitor.Core
 
             m_LatestStatuses = new Dictionary<int, IBuildStatus>();
             m_RequestStop = false;
-            m_Stopped = true;
+            m_Stopped = false;
             Task.Factory.StartNew(Run);
         }
 
         public void Stop()
         {
-            if (m_Stopped)
+            if (!m_Stopped)
                 m_RequestStop = true;
         }
         

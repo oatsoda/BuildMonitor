@@ -11,8 +11,14 @@ namespace BuildMonitor.UI.Controls
 {
     public partial class BuildDefinitionsListForm : Form
     {
+        #region Public Constants
+
         public const int OFFSET_X = 10;
         public const int OFFSET_Y = 3;
+
+        #endregion
+
+        #region Private Fields & Properties
 
         private bool m_Closing;
         private int m_CalculatedWidth;
@@ -24,10 +30,15 @@ namespace BuildMonitor.UI.Controls
 
         private readonly IBuildDefinitionMonitor m_Monitor;
 
+
         private IEnumerable<BuildDetailControl> BuildDetailControls
         {
             get { return Controls.OfType<BuildDetailControl>(); }
         } 
+
+        #endregion
+
+        #region Constructor
 
         public BuildDefinitionsListForm(IBuildDefinitionMonitor monitor, IMonitorOptions currentOptions)
         {
@@ -49,6 +60,8 @@ namespace BuildMonitor.UI.Controls
 
             ApplyOptions();
         }
+
+        #endregion
 
         #region Private Methods
 
@@ -170,6 +183,22 @@ namespace BuildMonitor.UI.Controls
             m_Monitor.Dispose();
 
             Close();
+        }
+
+        #endregion
+
+        #region Base Form Overrides
+
+        protected override void SetVisibleCore(bool value)
+        {
+            if (!IsHandleCreated)
+            {
+                // First time, don't make visible but still create the handle
+                // http://stackoverflow.com/a/3742980/868159
+                value = false;
+                CreateHandle();
+            }
+            base.SetVisibleCore(value);
         }
 
         #endregion
