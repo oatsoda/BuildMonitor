@@ -136,7 +136,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <Compile Include="Properties\Resources.Designer.cs">
@@ -190,19 +189,13 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\_0006_Cross.ico" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\_0007_Tick.ico" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\_0010_Alert.ico" />
-  </ItemGroup>
-  <ItemGroup>
     <None Include="Resources\_0031_Tools.ico" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Resources\Play1Normal.ico" />
+    <Content Include="Resources\1437954459_cancel_24.ico" />
+    <Content Include="Resources\1437954464_warning_24.ico" />
+    <Content Include="Resources\1437954472_arrow_right_24.ico" />
+    <Content Include="Resources\1437954485_accepted_24.ico" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

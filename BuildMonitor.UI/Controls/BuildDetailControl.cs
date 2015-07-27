@@ -17,15 +17,15 @@ namespace BuildMonitor.UI.Controls
         {
             if (!show)
             {
-                groupBox1.Visible = false;
+                panelLine.Visible = false;
             }
             else
             {
-                groupBox1.Width = Width;
-                groupBox1.Height = 1;
-                groupBox1.Left = 0;
-                groupBox1.Top = Height - 1;
-                groupBox1.Visible = true;
+                panelLine.Width = Width;
+                panelLine.Height = 1;
+                panelLine.Left = 0;
+                panelLine.Top = Height - 1;
+                panelLine.Visible = true;
             }
         }
 

@@ -33,18 +33,18 @@
             // 
             // buildDetailControl
             // 
-            this.buildDetailControl.BackColor = System.Drawing.SystemColors.Control;
+            this.buildDetailControl.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(37)))), ((int)(((byte)(37)))), ((int)(((byte)(38)))));
             this.buildDetailControl.Location = new System.Drawing.Point(0, 0);
             this.buildDetailControl.Margin = new System.Windows.Forms.Padding(0);
             this.buildDetailControl.Name = "buildDetailControl";
-            this.buildDetailControl.Size = new System.Drawing.Size(257, 48);
+            this.buildDetailControl.Size = new System.Drawing.Size(257, 38);
             this.buildDetailControl.TabIndex = 0;
             // 
             // PopupStatusForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(257, 48);
+            this.ClientSize = new System.Drawing.Size(257, 38);
             this.ControlBox = false;
             this.Controls.Add(this.buildDetailControl);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;

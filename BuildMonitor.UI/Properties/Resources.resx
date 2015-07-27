@@ -118,19 +118,19 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
-  <data name="Play1Normal" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\Play1Normal.ico;System.Drawing.Icon, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="_0006_Cross" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\_0006_Cross.ico;System.Drawing.Icon, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="_0007_Tick" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\_0007_Tick.ico;System.Drawing.Icon, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="_0010_Alert" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\_0010_Alert.ico;System.Drawing.Icon, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
   <data name="_0031_Tools" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\_0031_Tools.ico;System.Drawing.Icon, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="_1437954459_cancel_24" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\1437954459_cancel_24.ico;System.Drawing.Icon, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="_1437954464_warning_24" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\1437954464_warning_24.ico;System.Drawing.Icon, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="_1437954472_arrow_right_24" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\1437954472_arrow_right_24.ico;System.Drawing.Icon, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="_1437954485_accepted_24" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\1437954485_accepted_24.ico;System.Drawing.Icon, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
 </root>

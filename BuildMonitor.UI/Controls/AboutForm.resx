@@ -117,4 +117,15 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="textBox1.Text" xml:space="preserve">
+    <value>Icons:
+
+Spanner + Screwdrive icon
+http://www.softicons.com/toolbar-icons/build-icons-by-design-kindle
+
+Status Icons
+128 raster icons by Liam McKay. Free for commercial use
+https://www.iconfinder.com/iconsets/function_icon_set
+</value>
+  </data>
 </root>

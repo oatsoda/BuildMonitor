@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(AboutForm));
             this.label1 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
             this.textBox1 = new System.Windows.Forms.TextBox();
@@ -64,9 +65,7 @@
             this.textBox1.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
             this.textBox1.Size = new System.Drawing.Size(472, 113);
             this.textBox1.TabIndex = 2;
-            this.textBox1.Text = "Icons:\r\n\r\nhttp://www.softicons.com/toolbar-icons/build-icons-by-design-kindle\r\n\r\n" +
-    "http://www.softicons.com/toolbar-icons/vista-play-stop-pause-icons-by-icons-land" +
-    "\r\nhttp://www.icons-land.com/ \r\n";
+            this.textBox1.Text = resources.GetString("textBox1.Text");
             // 
             // lblVersion
             // 
