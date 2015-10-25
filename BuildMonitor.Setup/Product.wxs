@@ -14,6 +14,15 @@
     <Icon Id="icon.ico" SourceFile="..\BuildMonitor.UI\Resources\_0031_Tools.ico"/>
     <Property Id="ARPPRODUCTICON" Value="icon.ico" />
 
+    <!-- Run on finish
+    <!- Add "Launch" checkbox to UI ->
+    <Property Id="WIXUI_EXITDIALOGOPTIONALCHECKBOXTEXT" Value="Launch BuildMonitor" />
+    
+    <!- Custom Action to run ->
+    <Property Id="WixShellExecTarget" Value="[#myapplication.exe]" />
+    <CustomAction Id="LaunchApplication" BinaryKey="WixCA" DllEntry="WixShellExec" Impersonate="yes" />
+    -->
+    
     <UI Id="UserInterface">
       <Property Id="WIXUI_INSTALLDIR" Value="TARGETDIR" />
       <Property Id="WixUI_Mode" Value="Custom" />
@@ -30,6 +39,12 @@
       <DialogRef Id="FatalError" />
       <DialogRef Id="UserExit" />
 
+      <!-- Run on finish
+      <Publish Dialog="ExitDialog"
+        Control="Finish"
+        Event="DoAction"
+        Value="LaunchApplication">WIXUI_EXITDIALOGOPTIONALCHECKBOX = 1 and NOT Installed</Publish>
+      -->
       <Publish Dialog="ExitDialog" Control="Finish" Event="EndDialog" Value="Return" Order="999">1</Publish>
       <Publish Dialog="WelcomeDlg" Control="Next" Event="EndDialog" Value="Return" Order="2"></Publish>
 
