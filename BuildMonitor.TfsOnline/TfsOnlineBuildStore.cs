@@ -1,8 +1,10 @@
 ﻿using BuildMonitor.Core;
 using BuildMonitor.Tfs;
 using System;
+using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
+using System.Security.Authentication;
 using System.Text;
 
 namespace BuildMonitor.TfsOnline
@@ -32,6 +34,8 @@ namespace BuildMonitor.TfsOnline
 
                 using (var response = client.GetAsync(FormatUrl(queryPath)).Result)
                 {
+                    if (response.StatusCode == HttpStatusCode.Unauthorized)
+                        throw new AuthenticationException();
 
                     response.EnsureSuccessStatusCode();
                     var t = response.Content.ReadAsStringAsync();

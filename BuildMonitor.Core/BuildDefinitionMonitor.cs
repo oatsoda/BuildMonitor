@@ -24,6 +24,7 @@ namespace BuildMonitor.Core
 
         public event EventHandler<BuildDetail> OverallStatusChanged;
         public event EventHandler<Exception> ExceptionOccurred;
+        public event EventHandler<string> MonitoringStopped;
         public event EventHandler<List<BuildDetail>> Updated;
 
         public BuildDefinitionMonitor(IBuildStoreFactory buildStoreFactory, bool throwExceptions = false)
@@ -44,9 +45,18 @@ namespace BuildMonitor.Core
             
             m_Options = options;
 
+            m_MonitoredDefinitions = null;
             m_LatestStatuses = new Dictionary<int, IBuildStatus>();
             m_RequestStop = false;
             m_Stopped = false;
+
+            if (!options.ValidOptions)
+            {
+                m_Stopped = true;
+                OnMonitoringStopped("Settings are incomplete");
+                return;
+            }
+
             Task.Factory.StartNew(Run);
         }
 
@@ -185,6 +195,13 @@ namespace BuildMonitor.Core
         private void OnOverallStatusChanged(BuildDetail e)
         {
             var handler = OverallStatusChanged;
+            if (handler != null)
+                handler(this, e);
+        }
+
+        private void OnMonitoringStopped(string e)
+        {
+            var handler = MonitoringStopped;
             if (handler != null)
                 handler(this, e);
         }

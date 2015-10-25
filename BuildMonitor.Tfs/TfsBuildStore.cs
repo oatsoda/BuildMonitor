@@ -25,6 +25,15 @@ namespace BuildMonitor.Tfs
             m_IncludeRunningBuilds = options.IncludeRunningBuilds;
         }
 
+        public IEnumerable<string> GetProjects()
+        {
+            var queryPath = "projects?api-version=1.0&statefilter=wellFormed";
+
+            var projects = GetTfsResult(queryPath);
+
+            return projects.Select(p => p["name"].Value<string>());
+        }
+
         public IEnumerable<IBuildDefinition> GetDefinitions(string projectName)
         {
             var queryPath = string.Format("build/definitions?api-version=1.0&projectname={0}", WebUtility.UrlEncode(projectName));

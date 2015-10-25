@@ -90,7 +90,16 @@ namespace BuildMonitor.UI.Options
             get { return (string)this["PasswordEntropy"]; }
             set { this["PasswordEntropy"] = value; }
         }
-        
+
+        [UserScopedSetting]
+        [DefaultSettingValue("false")]
+        public bool ValidOptions
+        {
+            get { return (bool)this["ValidOptions"]; }
+            set { this["ValidOptions"] = value; }
+        }
+
+
         public NetworkCredential Credential
         {
             get 
@@ -147,6 +156,7 @@ namespace BuildMonitor.UI.Options
             UsernameEntropy = existingOptions.UsernameEntropy;
             Password = existingOptions.Password;
             PasswordEntropy = existingOptions.PasswordEntropy;
+            ValidOptions = existingOptions.ValidOptions;
         }
     }
 }

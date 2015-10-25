@@ -19,5 +19,6 @@ namespace BuildMonitor.Core
         string UsernameEntropy { get; }
         string Password { get; }
         string PasswordEntropy { get; }
+        bool ValidOptions { get; }
     }
 }

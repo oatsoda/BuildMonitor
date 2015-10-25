@@ -58,7 +58,7 @@ namespace BuildMonitor.TestApp
 
             IBuildDefinitionMonitor monitor = new BuildDefinitionMonitor(factoryMoq.Object);
 
-            Application.Run(new BuildDefinitionsListForm(monitor, optionsMoq.Object));
+            Application.Run(new BuildDefinitionsListForm(monitor, optionsMoq.Object, factoryMoq.Object));
         }
 
         private static IBuildStatus GetRandomStatus(int id)

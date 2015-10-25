@@ -29,7 +29,7 @@ namespace BuildMonitor.UI
 
             var options = new MonitorOptions();
 
-            Application.Run(new BuildDefinitionsListForm(monitor, options));
+            Application.Run(new BuildDefinitionsListForm(monitor, options, buildStoreFactory));
         }
     }
 }

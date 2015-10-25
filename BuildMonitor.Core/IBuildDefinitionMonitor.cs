@@ -7,6 +7,7 @@ namespace BuildMonitor.Core
     {
         event EventHandler<BuildDetail> OverallStatusChanged;
         event EventHandler<Exception> ExceptionOccurred;
+        event EventHandler<string> MonitoringStopped;
         event EventHandler<List<BuildDetail>> Updated;
         void Start(IMonitorOptions options);
         void Stop();

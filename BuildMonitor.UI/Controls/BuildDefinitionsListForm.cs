@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
 using BuildMonitor.Core;
@@ -27,6 +28,7 @@ namespace BuildMonitor.UI.Controls
         private bool m_FirstStatusUpdate;
 
         private IMonitorOptions m_CurrentMonitorOptions;
+        private readonly IBuildStoreFactory m_BuildStoreFactory;
 
         private readonly IBuildDefinitionMonitor m_Monitor;
 
@@ -40,7 +42,9 @@ namespace BuildMonitor.UI.Controls
 
         #region Constructor
 
-        public BuildDefinitionsListForm(IBuildDefinitionMonitor monitor, IMonitorOptions currentOptions)
+        public BuildDefinitionsListForm(IBuildDefinitionMonitor monitor, 
+                                        IMonitorOptions currentOptions, 
+                                        IBuildStoreFactory buildStoreFactory)
         {
             InitializeComponent();
 
@@ -48,10 +52,12 @@ namespace BuildMonitor.UI.Controls
 
             m_Monitor = monitor;
             m_CurrentMonitorOptions = currentOptions;
+            m_BuildStoreFactory = buildStoreFactory;
 
             m_Monitor.OverallStatusChanged += OnBuildMonitorOnOverallStatusChanged;
             m_Monitor.ExceptionOccurred += OnBuildMonitorOnExceptionOccurred;
             m_Monitor.Updated += OnBuildMonitorOnUpdated;
+            m_Monitor.MonitoringStopped += OnBuildMonitorMonitoringStopped;
 
             TopMost = true;
             notifyIcon.Icon = Icon;
@@ -60,7 +66,7 @@ namespace BuildMonitor.UI.Controls
 
             ApplyOptions();
         }
-
+        
         #endregion
 
         #region Private Methods
@@ -144,9 +150,14 @@ namespace BuildMonitor.UI.Controls
 
         private void SetMessageOnly(string message)
         {
+            Controls.Clear();
+
             var label = new Label
             {
-                Text = message
+                AutoSize = true,
+                Text = message,
+                Dock = DockStyle.Fill,
+                MaximumSize = new Size(Width, 0)
             };
 
             Controls.Add(label);
@@ -218,7 +229,22 @@ namespace BuildMonitor.UI.Controls
         {
             this.InvokeIfRequired(() =>
             {
-                notifyIcon.BalloonTipText = string.Format("Failed to monitor server: {0}", exception);
+                var aggEx = exception as AggregateException;
+                if (aggEx != null)
+                    exception = aggEx.Flatten();
+
+                SetMessageOnly(exception.ToString());
+                notifyIcon.BalloonTipText = string.Format("Monitor error: {0}", exception);
+                notifyIcon.ShowBalloonTip(20000);
+            });
+        }
+
+        private void OnBuildMonitorMonitoringStopped(object sender, string stoppedReason)
+        {
+            this.InvokeIfRequired(() =>
+            {
+                SetMessageOnly(stoppedReason);
+                notifyIcon.BalloonTipText = string.Format("Monitor stopped: {0}", stoppedReason);
                 notifyIcon.ShowBalloonTip(20000);
             });
         }
@@ -269,7 +295,7 @@ namespace BuildMonitor.UI.Controls
 
         private void settingsToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            using (var settingsForm = new SettingsForm(m_CurrentMonitorOptions))
+            using (var settingsForm = new SettingsForm(m_CurrentMonitorOptions, m_BuildStoreFactory))
             {
                 settingsForm.ShowDialog(this);
 
