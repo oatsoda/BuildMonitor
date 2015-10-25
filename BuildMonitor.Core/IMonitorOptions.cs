@@ -10,6 +10,9 @@ namespace BuildMonitor.Core
         bool RefreshDefintions { get; }
         int RefreshDefinitionIntervalSeconds { get; }
 
+        bool HideStaleDefinitions { get; }
+        int StaleDefinitionDays { get; }
+
         string TfsApiUrl { get; }
         string ProjectName { get; }
 

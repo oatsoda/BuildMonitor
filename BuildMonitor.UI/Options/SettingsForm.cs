@@ -6,7 +6,6 @@ using System.Security.Authentication;
 using System.Windows.Forms;
 using BuildMonitor.Core;
 using BuildMonitor.UI.Helpers;
-using BuildMonitor.UI.Properties;
 using BuildMonitor.UI.Protection;
 
 namespace BuildMonitor.UI.Options
@@ -34,9 +33,13 @@ namespace BuildMonitor.UI.Options
             cbStartup.Checked = StartupSettingHelper.RunOnStartup;
 
             // General Tab
+            txtInterval.Text = m_Options.IntervalSeconds.ToString(CultureInfo.InvariantCulture);
+
             cbIncludeRunning.Checked = currentOptions.IncludeRunningBuilds;
 
-            txtInterval.Text = m_Options.IntervalSeconds.ToString(CultureInfo.InvariantCulture);
+            cbRefreshDefinitions.Checked = currentOptions.RefreshDefintions;
+            txtDefinitionInterval.Text = m_Options.RefreshDefinitionIntervalSeconds.ToString(CultureInfo.InvariantCulture);
+            txtDefinitionInterval.Enabled = currentOptions.RefreshDefintions;
 
             // TFS Tab
             if (!string.IsNullOrEmpty(m_Options.TfsApiUrl)) // Show defaults when not set
@@ -77,13 +80,21 @@ namespace BuildMonitor.UI.Options
         private void RetrieveOptions(MonitorOptions options)
         {
             // General Tab
-            options.IncludeRunningBuilds = cbIncludeRunning.Checked;
-
             options.IntervalSeconds = Convert.ToInt32(txtInterval.Text);
 
+            options.IncludeRunningBuilds = cbIncludeRunning.Checked;
+
+            options.RefreshDefintions = cbRefreshDefinitions.Checked;
+            options.RefreshDefinitionIntervalSeconds = Convert.ToInt32(txtDefinitionInterval.Text);
+            
+
             // TFS Tab
+            if (!m_SavedSettingsValidated) // Tab never loaded, so don't overwrite
+                return;
+
             options.TfsApiUrl = txtTfsApiUrl.Text;
-            options.ProjectName = (string)cboTfsProjectName.SelectedItem;
+                
+            options.ProjectName = (string) cboTfsProjectName.SelectedItem;
 
             options.UseCredentials = rdoSpecify.Checked;
 
@@ -157,6 +168,11 @@ namespace BuildMonitor.UI.Options
 
             cboTfsProjectName.Enabled = false;
             btnOk.Enabled = false;
+        }
+
+        private void cbRefreshDefinitions_CheckedChanged(object sender, EventArgs e)
+        {
+            txtDefinitionInterval.Enabled = cbRefreshDefinitions.Enabled;
         }
     }
 }

@@ -39,6 +39,9 @@
             this.tabWindows = new System.Windows.Forms.TabPage();
             this.cbStartup = new System.Windows.Forms.CheckBox();
             this.tabGeneral = new System.Windows.Forms.TabPage();
+            this.label6 = new System.Windows.Forms.Label();
+            this.txtDefinitionInterval = new System.Windows.Forms.TextBox();
+            this.cbRefreshDefinitions = new System.Windows.Forms.CheckBox();
             this.cbIncludeRunning = new System.Windows.Forms.CheckBox();
             this.tabTfs = new System.Windows.Forms.TabPage();
             this.imgBox = new System.Windows.Forms.PictureBox();
@@ -108,7 +111,7 @@
             // label3
             // 
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(17, 48);
+            this.label3.Location = new System.Drawing.Point(17, 17);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(89, 13);
             this.label3.TabIndex = 7;
@@ -116,11 +119,11 @@
             // 
             // txtInterval
             // 
-            this.txtInterval.Location = new System.Drawing.Point(115, 45);
+            this.txtInterval.Location = new System.Drawing.Point(115, 14);
             this.txtInterval.Name = "txtInterval";
             this.txtInterval.Size = new System.Drawing.Size(36, 20);
             this.txtInterval.TabIndex = 8;
-            this.txtInterval.Text = "30";
+            this.txtInterval.Text = "60";
             // 
             // tabControl
             // 
@@ -160,6 +163,9 @@
             // 
             // tabGeneral
             // 
+            this.tabGeneral.Controls.Add(this.label6);
+            this.tabGeneral.Controls.Add(this.txtDefinitionInterval);
+            this.tabGeneral.Controls.Add(this.cbRefreshDefinitions);
             this.tabGeneral.Controls.Add(this.cbIncludeRunning);
             this.tabGeneral.Controls.Add(this.label3);
             this.tabGeneral.Controls.Add(this.txtInterval);
@@ -171,10 +177,38 @@
             this.tabGeneral.Text = "General Settings";
             this.tabGeneral.UseVisualStyleBackColor = true;
             // 
+            // label6
+            // 
+            this.label6.AutoSize = true;
+            this.label6.Location = new System.Drawing.Point(45, 87);
+            this.label6.Name = "label6";
+            this.label6.Size = new System.Drawing.Size(136, 13);
+            this.label6.TabIndex = 11;
+            this.label6.Text = "Refresh Definition Seconds";
+            // 
+            // txtDefinitionInterval
+            // 
+            this.txtDefinitionInterval.Location = new System.Drawing.Point(187, 84);
+            this.txtDefinitionInterval.Name = "txtDefinitionInterval";
+            this.txtDefinitionInterval.Size = new System.Drawing.Size(36, 20);
+            this.txtDefinitionInterval.TabIndex = 12;
+            this.txtDefinitionInterval.Text = "3600";
+            // 
+            // cbRefreshDefinitions
+            // 
+            this.cbRefreshDefinitions.AutoSize = true;
+            this.cbRefreshDefinitions.Location = new System.Drawing.Point(20, 63);
+            this.cbRefreshDefinitions.Name = "cbRefreshDefinitions";
+            this.cbRefreshDefinitions.Size = new System.Drawing.Size(158, 17);
+            this.cbRefreshDefinitions.TabIndex = 10;
+            this.cbRefreshDefinitions.Text = "Also refresh list of definitions";
+            this.cbRefreshDefinitions.UseVisualStyleBackColor = true;
+            this.cbRefreshDefinitions.CheckedChanged += new System.EventHandler(this.cbRefreshDefinitions_CheckedChanged);
+            // 
             // cbIncludeRunning
             // 
             this.cbIncludeRunning.AutoSize = true;
-            this.cbIncludeRunning.Location = new System.Drawing.Point(20, 18);
+            this.cbIncludeRunning.Location = new System.Drawing.Point(20, 40);
             this.cbIncludeRunning.Name = "cbIncludeRunning";
             this.cbIncludeRunning.Size = new System.Drawing.Size(208, 17);
             this.cbIncludeRunning.TabIndex = 9;
@@ -334,5 +368,8 @@
         private System.Windows.Forms.ComboBox cboTfsProjectName;
         private System.Windows.Forms.Button btnValidate;
         private System.Windows.Forms.PictureBox imgBox;
+        private System.Windows.Forms.CheckBox cbRefreshDefinitions;
+        private System.Windows.Forms.Label label6;
+        private System.Windows.Forms.TextBox txtDefinitionInterval;
     }
 }

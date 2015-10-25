@@ -42,6 +42,22 @@ namespace BuildMonitor.UI.Options
         }
 
         [UserScopedSetting]
+        [DefaultSettingValue("true")]
+        public bool HideStaleDefinitions
+        {
+            get { return (bool)this["HideStaleDefinitions"]; }
+            set { this["HideStaleDefinitions"] = value; }
+        }
+
+        [UserScopedSetting]
+        [DefaultSettingValue("14")]
+        public int StaleDefinitionDays
+        {
+            get { return (int)this["StaleDefinitionDays"]; }
+            set { this["StaleDefinitionDays"] = value; }
+        }
+
+        [UserScopedSetting]
         public string TfsApiUrl
         {
             get { return (string)this["TfsApiUrl"]; }
