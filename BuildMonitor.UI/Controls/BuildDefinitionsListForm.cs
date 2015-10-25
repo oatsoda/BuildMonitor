@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 using BuildMonitor.Core;
 using BuildMonitor.UI.Helpers;
@@ -77,7 +78,7 @@ namespace BuildMonitor.UI.Controls
 
             SetMessageOnly("Loading builds...");
             
-            m_Monitor.Start(m_CurrentMonitorOptions);
+            Task.Run(() => m_Monitor.Start(m_CurrentMonitorOptions));
         }
 
         private void UpdateBuildControls(IEnumerable<BuildDetail> buildDetails)

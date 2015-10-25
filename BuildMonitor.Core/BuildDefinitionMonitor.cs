@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Security.Authentication;
 using System.Threading;
 using System.Threading.Tasks;
+using BuildMonitor.Core.InterfaceExtensions;
 
 namespace BuildMonitor.Core
 {
@@ -25,6 +27,24 @@ namespace BuildMonitor.Core
         public event EventHandler<Exception> ExceptionOccurred;
         public event EventHandler<string> MonitoringStopped;
         public event EventHandler<List<BuildDetail>> Updated;
+
+        private ReadOnlyDictionary<int, IBuildStatus> LatestStatuses
+        {
+            get
+            {
+                if (!m_Options.HideStaleDefinitions) // Option is not enabled
+                    return new ReadOnlyDictionary<int, IBuildStatus>(m_LatestStatuses);
+
+                return
+                    new ReadOnlyDictionary<int, IBuildStatus>(
+                        m_LatestStatuses
+                        .Where(kvp =>
+                            kvp.Value.TimeSpanSinceStart().TotalDays < m_Options.StaleDefinitionDays // Status is within days
+                        )
+                        .ToDictionary(pair => pair.Key, pair => pair.Value)
+                    );
+            }
+        }
 
         public BuildDefinitionMonitor(IBuildStoreFactory buildStoreFactory)
         {
@@ -129,9 +149,11 @@ namespace BuildMonitor.Core
         private List<BuildDetail> GetBuildDetails()
         {
             return m_MonitoredDefinitions
-                .Select(d =>
-                    new BuildDetail(d, m_LatestStatuses.ContainsKey(d.Id) ? m_LatestStatuses[d.Id] : null)
-                )
+                .Where(d => 
+                    !m_Options.HideStaleDefinitions || // Option is disabled
+                    LatestStatuses.ContainsKey(d.Id) // No status means either no status or stale status
+                    )
+                .Select(d => new BuildDetail(d, LatestStatuses.ContainsKey(d.Id) ? LatestStatuses[d.Id] : null))
                 .OrderBy(d => d.Definition.Name)
                 .ToList();
         }
@@ -166,7 +188,7 @@ namespace BuildMonitor.Core
                 m_LatestStatuses[definition.Id] = status;
             }
 
-            var worst = m_LatestStatuses
+            var worst = LatestStatuses
                 .OrderByDescending(s => s.Value.Status)
                 .ThenByDescending(s => s.Value.Finish)
                 .First();
@@ -181,8 +203,8 @@ namespace BuildMonitor.Core
 
         private void UpdateOverallStatus(BuildDetail updatedStatus)
         {
-            var currentWorstStatus = m_LatestStatuses.Any()
-                                            ? m_LatestStatuses.Values.Max(s => s.Status)
+            var currentWorstStatus = LatestStatuses.Any()
+                                            ? LatestStatuses.Values.Max(s => s.Status)
                                             : Status.Unknown;
 
             if (currentWorstStatus != m_OverallStatus)

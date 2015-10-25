@@ -35,11 +35,15 @@ namespace BuildMonitor.UI.Options
             // General Tab
             txtInterval.Text = m_Options.IntervalSeconds.ToString(CultureInfo.InvariantCulture);
 
-            cbIncludeRunning.Checked = currentOptions.IncludeRunningBuilds;
+            cbIncludeRunning.Checked = m_Options.IncludeRunningBuilds;
 
-            cbRefreshDefinitions.Checked = currentOptions.RefreshDefintions;
+            cbRefreshDefinitions.Checked = m_Options.RefreshDefintions;
             txtDefinitionInterval.Text = m_Options.RefreshDefinitionIntervalSeconds.ToString(CultureInfo.InvariantCulture);
-            txtDefinitionInterval.Enabled = currentOptions.RefreshDefintions;
+            txtDefinitionInterval.Enabled = m_Options.RefreshDefintions;
+
+            cbHideStale.Checked = m_Options.HideStaleDefinitions;
+            txtStaleDays.Text = m_Options.StaleDefinitionDays.ToString(CultureInfo.InvariantCulture);
+            txtStaleDays.Enabled = m_Options.HideStaleDefinitions;
 
             // TFS Tab
             if (!string.IsNullOrEmpty(m_Options.TfsApiUrl)) // Show defaults when not set
@@ -86,7 +90,9 @@ namespace BuildMonitor.UI.Options
 
             options.RefreshDefintions = cbRefreshDefinitions.Checked;
             options.RefreshDefinitionIntervalSeconds = Convert.ToInt32(txtDefinitionInterval.Text);
-            
+
+            options.HideStaleDefinitions = cbHideStale.Checked;
+            options.StaleDefinitionDays = Convert.ToInt32(txtStaleDays.Text);
 
             // TFS Tab
             if (!m_SavedSettingsValidated) // Tab never loaded, so don't overwrite

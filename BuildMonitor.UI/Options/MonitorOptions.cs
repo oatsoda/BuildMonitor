@@ -50,7 +50,7 @@ namespace BuildMonitor.UI.Options
         }
 
         [UserScopedSetting]
-        [DefaultSettingValue("14")]
+        [DefaultSettingValue("30")]
         public int StaleDefinitionDays
         {
             get { return (int)this["StaleDefinitionDays"]; }

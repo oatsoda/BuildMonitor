@@ -10,7 +10,7 @@ namespace BuildMonitor.Core.InterfaceExtensions
             if (status == null)
                 return "-";
 
-            var diff = DateTime.UtcNow.Subtract(status.Start);
+            var diff = status.TimeSpanSinceStart();
 
             if (diff.TotalHours >= 48)
                 return string.Format("{0} days ago", (int)diff.TotalDays);
@@ -36,6 +36,11 @@ namespace BuildMonitor.Core.InterfaceExtensions
                 return string.Format("{0}...", status.RequestedBy.Substring(0, trimLen));
 
             return status.RequestedBy;
+        }
+
+        public static TimeSpan TimeSpanSinceStart(this IBuildStatus status)
+        {
+            return DateTime.UtcNow.Subtract(status.Start);
         }
     }
 }
