@@ -211,6 +211,7 @@
             this.cbHideStale.TabIndex = 13;
             this.cbHideStale.Text = "Hide stale build definitions";
             this.cbHideStale.UseVisualStyleBackColor = true;
+            this.cbHideStale.CheckedChanged += new System.EventHandler(this.cbHideStale_CheckedChanged);
             // 
             // label6
             // 

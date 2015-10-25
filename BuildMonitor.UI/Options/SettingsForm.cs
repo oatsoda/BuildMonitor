@@ -187,5 +187,10 @@ namespace BuildMonitor.UI.Options
         {
             txtDefinitionInterval.Enabled = cbRefreshDefinitions.Enabled;
         }
+
+        private void cbHideStale_CheckedChanged(object sender, EventArgs e)
+        {
+            txtStaleDays.Enabled = cbHideStale.Checked;
+        }
     }
 }
