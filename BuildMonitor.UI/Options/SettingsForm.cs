@@ -141,6 +141,13 @@ namespace BuildMonitor.UI.Options
             var tempOptions = new MonitorOptions();
             RetrieveOptions(tempOptions);
 
+            if (string.IsNullOrWhiteSpace(tempOptions.TfsApiUrl))
+            {
+                cboTfsProjectName.Enabled = false;
+                btnOk.Enabled = false;
+                return;
+            }
+
             var store = m_BuildStoreFactory.GetBuildStore(tempOptions);
 
             try
