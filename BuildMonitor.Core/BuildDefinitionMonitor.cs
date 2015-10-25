@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Authentication;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -8,8 +9,6 @@ namespace BuildMonitor.Core
 {
     public sealed class BuildDefinitionMonitor : IBuildDefinitionMonitor, IDisposable
     {
-        private readonly bool m_ThrowExceptions;
-        
         private bool m_RequestStop;
         private bool m_Stopped;
         private readonly ManualResetEvent m_StopWaitHandle;
@@ -27,10 +26,9 @@ namespace BuildMonitor.Core
         public event EventHandler<string> MonitoringStopped;
         public event EventHandler<List<BuildDetail>> Updated;
 
-        public BuildDefinitionMonitor(IBuildStoreFactory buildStoreFactory, bool throwExceptions = false)
+        public BuildDefinitionMonitor(IBuildStoreFactory buildStoreFactory)
         {
             m_BuildStoreFactory = buildStoreFactory;
-            m_ThrowExceptions = throwExceptions;
 
             m_Stopped = true;
             m_StopWaitHandle = new ManualResetEvent(true); // Initial value is Signalled.
@@ -88,14 +86,15 @@ namespace BuildMonitor.Core
                         RaiseUpdated();
 
                     if (!m_RequestStop)
-                        Thread.Sleep(m_Options.IntervalSeconds * 1000);
+                        Thread.Sleep(m_Options.IntervalSeconds*1000);
                 }
+            }
+            catch (AuthenticationException)
+            {
+                OnMonitoringStopped("Authentication failed.");
             }
             catch (Exception ex)
             {
-                if (m_ThrowExceptions)
-                    throw;
-
                 if (ExceptionOccurred != null)
                     ExceptionOccurred(this, ex);
 
