@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.Linq;
 using System.Security.Authentication;
 using System.Threading;
@@ -90,6 +91,9 @@ namespace BuildMonitor.Core
 
             var restartAfterException = false;
 
+            var sw = new Stopwatch();
+            var intervalMilliseconds = m_Options.IntervalSeconds*1000;
+
             try
             {
                 while (!m_RequestStop)
@@ -106,7 +110,19 @@ namespace BuildMonitor.Core
                         RaiseUpdated();
 
                     if (!m_RequestStop)
-                        Thread.Sleep(m_Options.IntervalSeconds*1000);
+                    {
+                        sw.Start();
+
+                        while (sw.ElapsedMilliseconds < intervalMilliseconds)
+                        {
+                            Thread.Sleep(1000);
+
+                            if (m_RequestStop)
+                                break;
+                        }
+
+                        sw.Reset();
+                    }
                 }
             }
             catch (AuthenticationException)
