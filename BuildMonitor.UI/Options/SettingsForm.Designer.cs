@@ -69,7 +69,7 @@
             this.txtTfsApiUrl.Name = "txtTfsApiUrl";
             this.txtTfsApiUrl.Size = new System.Drawing.Size(380, 20);
             this.txtTfsApiUrl.TabIndex = 0;
-            this.txtTfsApiUrl.Text = "https://voy-devtfs2.visualstudio.com/DefaultCollection/_apis/";
+            this.txtTfsApiUrl.Text = "https://voy-devtfs2.visualstudio.com/DefaultCollection/";
             // 
             // btnOk
             // 
