@@ -154,6 +154,7 @@ namespace BuildMonitor.UI.Options
 
             Upgrade();
             Settings.Default.UpgradeSettings = false;
+            Settings.Default.Save();
         }
 
         public MonitorOptions(IMonitorOptions existingOptions)
