@@ -34,10 +34,7 @@ namespace BuildMonitor.UI.Controls
         private readonly IBuildDefinitionMonitor m_Monitor;
 
 
-        private IEnumerable<BuildDetailControl> BuildDetailControls
-        {
-            get { return Controls.OfType<BuildDetailControl>(); }
-        } 
+        private IEnumerable<BuildDetailControl> BuildDetailControls => Controls.OfType<BuildDetailControl>();
 
         #endregion
 
@@ -48,6 +45,11 @@ namespace BuildMonitor.UI.Controls
                                         IBuildStoreFactory buildStoreFactory)
         {
             InitializeComponent();
+
+            // This ensures first click on notify icon displays the form. Otherwise the
+            // first call to SetDesktopLocation sets the WindowState back to Minimized even
+            // though we have just set it to Normal.
+            Visible = false; 
 
             m_FirstStatusUpdate = true;
 
@@ -76,7 +78,7 @@ namespace BuildMonitor.UI.Controls
         {
             Controls.Clear();
 
-            SetMessageOnly("Loading builds...");
+            SetMessageOnly("Waiting for builds...");
             
             Task.Run(() => m_Monitor.Start(m_CurrentMonitorOptions));
         }
@@ -235,7 +237,7 @@ namespace BuildMonitor.UI.Controls
                     exception = aggEx.Flatten();
 
                 SetMessageOnly(exception.ToString());
-                notifyIcon.BalloonTipText = string.Format("Monitor error: {0}", exception);
+                notifyIcon.BalloonTipText = $"Monitor error: {exception}";
                 notifyIcon.ShowBalloonTip(20000);
             });
         }
@@ -245,7 +247,7 @@ namespace BuildMonitor.UI.Controls
             this.InvokeIfRequired(() =>
             {
                 SetMessageOnly(stoppedReason);
-                notifyIcon.BalloonTipText = string.Format("Monitor stopped: {0}", stoppedReason);
+                notifyIcon.BalloonTipText = $"Monitor stopped: {stoppedReason}";
                 notifyIcon.ShowBalloonTip(20000);
             });
         }
