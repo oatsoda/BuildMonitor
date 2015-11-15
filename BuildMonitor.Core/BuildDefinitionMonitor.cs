@@ -104,7 +104,7 @@ namespace BuildMonitor.Core
                         RefreshDefinitionsIfRequired(buildStore);
 
                     if (!m_RequestStop)
-                        RefreshStatuses(buildStore);
+                        RefreshStatuses(buildStore).Wait(); // Async ends here at the mo.
 
                     if (!m_RequestStop)
                         RaiseUpdated();
@@ -131,8 +131,7 @@ namespace BuildMonitor.Core
             }
             catch (Exception ex)
             {
-                if (ExceptionOccurred != null)
-                    ExceptionOccurred(this, ex);
+                ExceptionOccurred?.Invoke(this, ex);
 
                 if (!m_RequestStop && !m_Stopped)
                     restartAfterException = true;
@@ -155,10 +154,7 @@ namespace BuildMonitor.Core
 
         private void RaiseUpdated()
         {
-            if (Updated == null)
-                return;
-
-            Updated(this, GetBuildDetails());
+            Updated?.Invoke(this, GetBuildDetails());
         }
 
 
@@ -176,27 +172,28 @@ namespace BuildMonitor.Core
 
         private void RefreshDefinitionsIfRequired(IBuildStore buildStore)
         {
-            if (m_MonitoredDefinitions == null)
-                RefreshDefinitions(buildStore);
+            // Don't refresh defns if: a) already loaded AND 
+            // ( b) option to refresh is off OR c) option is on but interval not exceeded
 
-            if (!m_Options.RefreshDefintions)
+            if (m_MonitoredDefinitions != null &&
+                (!m_Options.RefreshDefintions || DateTime.UtcNow.Subtract(m_LastDefinitionRefresh).Seconds < m_Options.RefreshDefinitionIntervalSeconds))
                 return;
 
-            if (DateTime.UtcNow.Subtract(m_LastDefinitionRefresh).Seconds > m_Options.RefreshDefinitionIntervalSeconds)
-                RefreshDefinitions(buildStore);
+            RefreshDefinitions(buildStore).Wait(); // Async ends here at the mo.
         }
 
-        private void RefreshDefinitions(IBuildStore buildStore)
+        private async Task RefreshDefinitions(IBuildStore buildStore)
         {
-            m_MonitoredDefinitions = buildStore.GetDefinitions(m_Options.ProjectName).ToList();
+            var definitions = await buildStore.GetDefinitions(m_Options.ProjectName);
+            m_MonitoredDefinitions = definitions.ToList();
             m_LastDefinitionRefresh = DateTime.UtcNow;
         }
 
-        private void RefreshStatuses(IBuildStore buildStore)
+        private async Task RefreshStatuses(IBuildStore buildStore)
         {
             foreach (var definition in m_MonitoredDefinitions)
             {
-                var status = buildStore.GetLatestBuild(m_Options.ProjectName, definition);
+                var status = await buildStore.GetLatestBuild(m_Options.ProjectName, definition);
 
                 if (status == null)
                     continue;
@@ -232,15 +229,13 @@ namespace BuildMonitor.Core
         private void OnOverallStatusChanged(BuildDetail e)
         {
             var handler = OverallStatusChanged;
-            if (handler != null)
-                handler(this, e);
+            handler?.Invoke(this, e);
         }
 
         private void OnMonitoringStopped(string e)
         {
             var handler = MonitoringStopped;
-            if (handler != null)
-                handler(this, e);
+            handler?.Invoke(this, e);
         }
 
         public void Dispose()

@@ -8,6 +8,7 @@ using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Security.Authentication;
 using System.Text;
+using System.Threading.Tasks;
 using Newtonsoft.Json.Linq;
 
 namespace BuildMonitor.TfsOnline
@@ -31,20 +32,25 @@ namespace BuildMonitor.TfsOnline
             m_IncludeRunningBuilds = options.IncludeRunningBuilds;
         }
 
-        public IEnumerable<string> GetProjects()
+        public async Task<IEnumerable<string>> GetProjects()
         {
             var queryPath = "_apis/projects?api-version=1.0&statefilter=wellFormed";
 
-            var projects = GetTfsResult(queryPath)["value"].Children();
+            var result = await GetTfsResult(queryPath);
+
+            var projects = result["value"].Children();
 
             return projects.Select(p => p["name"].Value<string>());
         }
 
-        public IEnumerable<IBuildDefinition> GetDefinitions(string projectName)
+        public async Task<IEnumerable<IBuildDefinition>> GetDefinitions(string projectName)
         {
-            var queryPath = string.Format("{0}/_apis/build/definitions?api-version=2.0", WebUtility.UrlEncode(projectName));
+            var projectNameEncoded = WebUtility.UrlEncode(projectName);
+            var queryPath = $"{projectNameEncoded}/_apis/build/definitions?api-version=2.0";
 
-            var definitions = GetTfsResult(queryPath)["value"].Children();
+            var result = await GetTfsResult(queryPath);
+
+            var definitions = result["value"].Children();
 
             var buildDefinitions = definitions.Select(b => new BuildDefinition
             {
@@ -52,16 +58,18 @@ namespace BuildMonitor.TfsOnline
                 Name = b["name"].Value<string>()
             });
 
-            return buildDefinitions.Select(d => GetDefinitionDetail(projectName, d))
-                .ToList();
+            return await Task.WhenAll(
+                buildDefinitions.Select(d => GetDefinitionDetail(projectName, d))
+                );
         }
+        
 
-        private IBuildDefinition GetDefinitionDetail(string projectName, BuildDefinition definition)
+        private async Task<IBuildDefinition> GetDefinitionDetail(string projectName, BuildDefinition definition)
         {
-            var queryPath = string.Format("{0}/_apis/build/definitions/{1}?api-version=2.0", 
-                WebUtility.UrlEncode(projectName), definition.Id);
+            var projectNameEncoded = WebUtility.UrlEncode(projectName);
+            var queryPath = $"{projectNameEncoded}/_apis/build/definitions/{definition.Id}?api-version=2.0";
 
-            var definitionDetail = GetTfsResult(queryPath);
+            var definitionDetail = await GetTfsResult(queryPath);
 
             definition.Url = definitionDetail["_links"]["web"]["href"].Value<string>();
             definition.DropLocation = definitionDetail["defaultDropLocation"].Value<string>();
@@ -70,16 +78,16 @@ namespace BuildMonitor.TfsOnline
             return definition;
         }
 
-        public IBuildStatus GetLatestBuild(string projectName, IBuildDefinition definition)
+        public async Task<IBuildStatus> GetLatestBuild(string projectName, IBuildDefinition definition)
         {
+            var projectNameEncoded = WebUtility.UrlEncode(projectName);
+            var includeRunningFilter = m_IncludeRunningBuilds ? ",inProgress" : "";
             var queryPath =
-                string.Format(
-                    "{0}/_apis/build/builds?api-version=2.0&definitions={1}&resultFilter=succeeded,partiallySucceeded,failed&statusFilter=completed{2}&$top=1",
-                   WebUtility.UrlEncode(projectName),
-                   definition.Id,
-                   m_IncludeRunningBuilds ? ",inProgress" : "");
+                $"{projectNameEncoded}/_apis/build/builds?api-version=2.0&definitions={definition.Id}&resultFilter=succeeded,partiallySucceeded,failed&statusFilter=completed{includeRunningFilter}&$top=1";
 
-            var builds = GetTfsResult(queryPath)["value"].Children();
+            var result = await GetTfsResult(queryPath);
+
+            var builds = result["value"].Children();
 
             if (!builds.Any())
                 return null;
@@ -92,20 +100,20 @@ namespace BuildMonitor.TfsOnline
                 Name = b["buildNumber"].Value<string>(),
                 Url = b["_links"]["web"]["href"].Value<string>(),
                 Start = b["startTime"].Value<DateTime>(),
-                Finish = b["finishTime"] == null ? (DateTime?)null : b["finishTime"].Value<DateTime>(),
+                Finish = b["finishTime"]?.Value<DateTime>(),
                 Status = StatusFromString((b["result"] ?? b["status"]).Value<string>()),
                 RequestedBy = b["requestedFor"]["displayName"].Value<string>()
             };
         }
 
-        private JObject GetTfsResult(string queryPath)
+        private async Task<JObject> GetTfsResult(string queryPath)
         {
-            var resultJson = GetJson(queryPath);
+            var resultJson = await GetJson(queryPath);
 
             return JObject.Parse(resultJson);
         }
         
-        private string GetJson(string queryPath)
+        private async Task<string> GetJson(string queryPath)
         {
             using (var client = new HttpClient())
             {
@@ -115,7 +123,7 @@ namespace BuildMonitor.TfsOnline
                 client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic",
                     Convert.ToBase64String(
                         Encoding.ASCII.GetBytes(
-                            string.Format("{0}:{1}", m_SpecificCredentials.UserName, m_SpecificCredentials.Password))));
+                            $"{m_SpecificCredentials.UserName}:{m_SpecificCredentials.Password}")));
 
                 using (var response = client.GetAsync(FormatUrl(queryPath)).Result)
                 {
@@ -123,9 +131,7 @@ namespace BuildMonitor.TfsOnline
                         throw new AuthenticationException();
 
                     response.EnsureSuccessStatusCode();
-                    var t = response.Content.ReadAsStringAsync();
-                    t.Wait();
-                    return t.Result;
+                    return await response.Content.ReadAsStringAsync();
                 }
             }
 
@@ -150,7 +156,7 @@ namespace BuildMonitor.TfsOnline
                     return Status.InProgress;
 
                 default:
-                    throw new ArgumentOutOfRangeException("statusString");
+                    throw new ArgumentOutOfRangeException(nameof(statusString));
             }
         }
 

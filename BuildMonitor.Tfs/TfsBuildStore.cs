@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
+using System.Threading.Tasks;
 using BuildMonitor.Core;
 using Newtonsoft.Json.Linq;
 
@@ -25,20 +26,20 @@ namespace BuildMonitor.Tfs
             m_IncludeRunningBuilds = options.IncludeRunningBuilds;
         }
 
-        public IEnumerable<string> GetProjects()
+        public async Task<IEnumerable<string>> GetProjects()
         {
             var queryPath = "projects?api-version=1.0&statefilter=wellFormed";
 
-            var projects = GetTfsResult(queryPath);
+            var projects = await GetTfsResult(queryPath);
 
             return projects.Select(p => p["name"].Value<string>());
         }
 
-        public IEnumerable<IBuildDefinition> GetDefinitions(string projectName)
+        public async Task<IEnumerable<IBuildDefinition>> GetDefinitions(string projectName)
         {
             var queryPath = string.Format("build/definitions?api-version=1.0&projectname={0}", WebUtility.UrlEncode(projectName));
 
-            var definitions = GetTfsResult(queryPath);
+            var definitions = await GetTfsResult(queryPath);
 
             return definitions.Select(b => new BuildDefinition
             {
@@ -50,7 +51,7 @@ namespace BuildMonitor.Tfs
             }).ToList();
         }
 
-        public IBuildStatus GetLatestBuild(string projectName, IBuildDefinition definition)
+        public async Task<IBuildStatus> GetLatestBuild(string projectName, IBuildDefinition definition)
         {
             var queryPath =
                 string.Format(
@@ -59,7 +60,7 @@ namespace BuildMonitor.Tfs
                    WebUtility.UrlEncode(definition.Name),
                    m_IncludeRunningBuilds ? ",InProgress" : "");
 
-            var builds = GetTfsResult(queryPath);
+            var builds = await GetTfsResult(queryPath);
 
             if (!builds.Any())
                 return null;
@@ -72,33 +73,34 @@ namespace BuildMonitor.Tfs
                 Name = b["buildNumber"].Value<string>(),
                 Url = b["url"].Value<string>(),
                 Start = b["startTime"].Value<DateTime>(),
-                Finish = b["finishTime"] == null ? (DateTime?)null : b["finishTime"].Value<DateTime>(),
+                Finish = b["finishTime"]?.Value<DateTime>(),
                 Status = StatusFromString(b["status"].Value<string>()),
                 RequestedBy = b["requests"][0]["requestedFor"]["displayName"].Value<string>()
             };
         }
         
-        private JEnumerable<JToken> GetTfsResult(string queryPath)
+        private async Task<JEnumerable<JToken>> GetTfsResult(string queryPath)
         {
-            var resultJson = GetJson(queryPath);
+            var resultJson = await GetJson(queryPath);
 
             var result = JObject.Parse(resultJson);
 
             return result["value"].Children();
         } 
 
-        protected virtual string GetJson(string queryPath)
+        private async Task<string> GetJson(string queryPath)
         {
             var url = FormatUrl(queryPath);
 
             using (var client = new WebClient())
             {
                 client.Credentials = m_SpecificCredentials ?? CredentialCache.DefaultCredentials;
-                return client.DownloadString(url);
+                var result = await client.DownloadStringTaskAsync(url);
+                return result;
             }
         }
 
-        protected Uri FormatUrl(string queryPath)
+        private Uri FormatUrl(string queryPath)
         {
             return new Uri(m_BaseUrl, queryPath.TrimStart('/'));
         }
@@ -117,7 +119,7 @@ namespace BuildMonitor.Tfs
                     return Status.InProgress;
 
                 default :
-                    throw new ArgumentOutOfRangeException("statusString");
+                    throw new ArgumentOutOfRangeException(nameof(statusString));
             }
         }
     }

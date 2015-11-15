@@ -3,6 +3,7 @@ using System.Drawing;
 using System.Globalization;
 using System.Linq;
 using System.Security.Authentication;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 using BuildMonitor.Core;
 using BuildMonitor.UI.Helpers;
@@ -136,8 +137,10 @@ namespace BuildMonitor.UI.Options
             m_SavedSettingsValidated = true;
         }
 
-        private void ValidateTfsSettings()
+        private async Task ValidateTfsSettings()
         {
+            tabTfs.Enabled = false;
+
             var tempOptions = new MonitorOptions();
             RetrieveOptions(tempOptions);
 
@@ -145,6 +148,7 @@ namespace BuildMonitor.UI.Options
             {
                 cboTfsProjectName.Enabled = false;
                 btnOk.Enabled = false;
+                tabTfs.Enabled = true;
                 return;
             }
 
@@ -152,11 +156,13 @@ namespace BuildMonitor.UI.Options
 
             try
             {
-                var projects = store.GetProjects();
+                var projects = await store.GetProjects();
                 cboTfsProjectName.Items.AddRange(projects.ToArray());
                 imgBox.Image = Status.Succeeded.ToBitmap(new Size(24, 24));
             }
-            catch (AuthenticationException)
+            // filters handle Aggregation Exception
+            catch(Exception ex) when (ex is AuthenticationException || 
+                    ex.GetBaseException() is AuthenticationException)
             {
                 cboTfsProjectName.Items.Clear();
                 imgBox.Image = Status.Failed.ToBitmap(new Size(24, 24));
@@ -176,11 +182,13 @@ namespace BuildMonitor.UI.Options
 
                 cboTfsProjectName.Enabled = true;
                 btnOk.Enabled = true;
+                tabTfs.Enabled = true;
                 return;
             }
 
             cboTfsProjectName.Enabled = false;
             btnOk.Enabled = false;
+            tabTfs.Enabled = true;
         }
 
         private void cbRefreshDefinitions_CheckedChanged(object sender, EventArgs e)
