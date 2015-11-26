@@ -41,9 +41,7 @@ namespace BuildMonitor.Tfs
             {
                 Id = b["id"].Value<int>(),
                 Name = b["name"].Value<string>(),
-                Url = b["url"].Value<string>(),
-                DropLocation = b["defaultDropLocation"].Value<string>(),
-                TriggerType = b["triggerType"].Value<string>()
+                Url = b["url"].Value<string>()
             }).ToList();
         }
 

@@ -75,8 +75,6 @@ namespace BuildMonitor.TfsOnline
             var definitionDetail = await GetTfsResult(queryPath);
 
             definition.Url = definitionDetail["_links"]["web"]["href"].Value<string>();
-            definition.DropLocation = definitionDetail["defaultDropLocation"].Value<string>();
-            definition.TriggerType = definitionDetail["triggerType"].Value<string>();
 
             return definition;
         }
