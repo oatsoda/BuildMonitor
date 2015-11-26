@@ -27,7 +27,10 @@ namespace BuildMonitor.TfsOnline
             if (options.Credential == null)
                 throw new ArgumentOutOfRangeException();
             
-            m_BaseUrl = new Uri(options.TfsApiUrl);
+            m_BaseUrl = new Uri(
+                string.Format($"https://{options.TfsApiUrl}.visualstudio.com/DefaultCollection/")
+                );
+            
             m_SpecificCredentials = options.UseCredentials ? options.Credential : null;
             m_IncludeRunningBuilds = options.IncludeRunningBuilds;
         }

@@ -54,8 +54,8 @@
             this.label4 = new System.Windows.Forms.Label();
             this.txtPassword = new System.Windows.Forms.TextBox();
             this.txtUsername = new System.Windows.Forms.TextBox();
-            this.rdoSpecify = new System.Windows.Forms.RadioButton();
-            this.rdoAuthIntegrated = new System.Windows.Forms.RadioButton();
+            this.label8 = new System.Windows.Forms.Label();
+            this.label9 = new System.Windows.Forms.Label();
             this.tabControl.SuspendLayout();
             this.tabWindows.SuspendLayout();
             this.tabGeneral.SuspendLayout();
@@ -65,17 +65,16 @@
             // 
             // txtTfsApiUrl
             // 
-            this.txtTfsApiUrl.Location = new System.Drawing.Point(113, 15);
+            this.txtTfsApiUrl.Location = new System.Drawing.Point(136, 15);
             this.txtTfsApiUrl.Name = "txtTfsApiUrl";
-            this.txtTfsApiUrl.Size = new System.Drawing.Size(380, 20);
+            this.txtTfsApiUrl.Size = new System.Drawing.Size(153, 20);
             this.txtTfsApiUrl.TabIndex = 0;
-            this.txtTfsApiUrl.Text = "https://voy-devtfs2.visualstudio.com/DefaultCollection/";
             // 
             // btnOk
             // 
             this.btnOk.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.btnOk.DialogResult = System.Windows.Forms.DialogResult.OK;
-            this.btnOk.Location = new System.Drawing.Point(373, 268);
+            this.btnOk.Location = new System.Drawing.Point(373, 254);
             this.btnOk.Name = "btnOk";
             this.btnOk.Size = new System.Drawing.Size(75, 23);
             this.btnOk.TabIndex = 6;
@@ -86,7 +85,7 @@
             // 
             this.btnCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.btnCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.btnCancel.Location = new System.Drawing.Point(454, 268);
+            this.btnCancel.Location = new System.Drawing.Point(454, 254);
             this.btnCancel.Name = "btnCancel";
             this.btnCancel.Size = new System.Drawing.Size(75, 23);
             this.btnCancel.TabIndex = 7;
@@ -98,14 +97,14 @@
             this.label1.AutoSize = true;
             this.label1.Location = new System.Drawing.Point(15, 18);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(56, 13);
+            this.label1.Size = new System.Drawing.Size(72, 13);
             this.label1.TabIndex = 3;
-            this.label1.Text = "Tfs Api Url";
+            this.label1.Text = "VSO Account";
             // 
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(34, 183);
+            this.label2.Location = new System.Drawing.Point(34, 168);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(71, 13);
             this.label2.TabIndex = 5;
@@ -139,7 +138,7 @@
             this.tabControl.Location = new System.Drawing.Point(12, 12);
             this.tabControl.Name = "tabControl";
             this.tabControl.SelectedIndex = 0;
-            this.tabControl.Size = new System.Drawing.Size(517, 250);
+            this.tabControl.Size = new System.Drawing.Size(517, 236);
             this.tabControl.TabIndex = 0;
             this.tabControl.SelectedIndexChanged += new System.EventHandler(this.tabControl_SelectedIndexChanged);
             // 
@@ -253,6 +252,8 @@
             // 
             // tabTfs
             // 
+            this.tabTfs.Controls.Add(this.label9);
+            this.tabTfs.Controls.Add(this.label8);
             this.tabTfs.Controls.Add(this.imgBox);
             this.tabTfs.Controls.Add(this.btnValidate);
             this.tabTfs.Controls.Add(this.cboTfsProjectName);
@@ -260,22 +261,20 @@
             this.tabTfs.Controls.Add(this.label4);
             this.tabTfs.Controls.Add(this.txtPassword);
             this.tabTfs.Controls.Add(this.txtUsername);
-            this.tabTfs.Controls.Add(this.rdoSpecify);
-            this.tabTfs.Controls.Add(this.rdoAuthIntegrated);
             this.tabTfs.Controls.Add(this.label1);
             this.tabTfs.Controls.Add(this.txtTfsApiUrl);
             this.tabTfs.Controls.Add(this.label2);
             this.tabTfs.Location = new System.Drawing.Point(4, 22);
             this.tabTfs.Name = "tabTfs";
             this.tabTfs.Padding = new System.Windows.Forms.Padding(3);
-            this.tabTfs.Size = new System.Drawing.Size(509, 224);
+            this.tabTfs.Size = new System.Drawing.Size(509, 210);
             this.tabTfs.TabIndex = 1;
-            this.tabTfs.Text = "TFS";
+            this.tabTfs.Text = "VSO";
             this.tabTfs.UseVisualStyleBackColor = true;
             // 
             // imgBox
             // 
-            this.imgBox.Location = new System.Drawing.Point(129, 138);
+            this.imgBox.Location = new System.Drawing.Point(129, 123);
             this.imgBox.Name = "imgBox";
             this.imgBox.Size = new System.Drawing.Size(24, 24);
             this.imgBox.TabIndex = 14;
@@ -283,7 +282,7 @@
             // 
             // btnValidate
             // 
-            this.btnValidate.Location = new System.Drawing.Point(171, 138);
+            this.btnValidate.Location = new System.Drawing.Point(171, 123);
             this.btnValidate.Name = "btnValidate";
             this.btnValidate.Size = new System.Drawing.Size(140, 23);
             this.btnValidate.TabIndex = 13;
@@ -294,7 +293,7 @@
             // cboTfsProjectName
             // 
             this.cboTfsProjectName.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.cboTfsProjectName.Location = new System.Drawing.Point(113, 180);
+            this.cboTfsProjectName.Location = new System.Drawing.Point(113, 165);
             this.cboTfsProjectName.Name = "cboTfsProjectName";
             this.cboTfsProjectName.Size = new System.Drawing.Size(203, 21);
             this.cboTfsProjectName.TabIndex = 12;
@@ -302,7 +301,7 @@
             // label5
             // 
             this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(218, 105);
+            this.label5.Location = new System.Drawing.Point(32, 81);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(53, 13);
             this.label5.TabIndex = 11;
@@ -311,7 +310,7 @@
             // label4
             // 
             this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(218, 79);
+            this.label4.Location = new System.Drawing.Point(32, 55);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(55, 13);
             this.label4.TabIndex = 10;
@@ -319,7 +318,7 @@
             // 
             // txtPassword
             // 
-            this.txtPassword.Location = new System.Drawing.Point(279, 102);
+            this.txtPassword.Location = new System.Drawing.Point(93, 78);
             this.txtPassword.Name = "txtPassword";
             this.txtPassword.PasswordChar = '*';
             this.txtPassword.Size = new System.Drawing.Size(188, 20);
@@ -327,39 +326,34 @@
             // 
             // txtUsername
             // 
-            this.txtUsername.Location = new System.Drawing.Point(279, 76);
+            this.txtUsername.Location = new System.Drawing.Point(93, 52);
             this.txtUsername.Name = "txtUsername";
             this.txtUsername.Size = new System.Drawing.Size(188, 20);
             this.txtUsername.TabIndex = 4;
             // 
-            // rdoSpecify
+            // label8
             // 
-            this.rdoSpecify.AutoSize = true;
-            this.rdoSpecify.Checked = true;
-            this.rdoSpecify.Location = new System.Drawing.Point(37, 77);
-            this.rdoSpecify.Name = "rdoSpecify";
-            this.rdoSpecify.Size = new System.Drawing.Size(118, 17);
-            this.rdoSpecify.TabIndex = 3;
-            this.rdoSpecify.TabStop = true;
-            this.rdoSpecify.Text = "Specific Credentials";
-            this.rdoSpecify.UseVisualStyleBackColor = true;
-            this.rdoSpecify.CheckedChanged += new System.EventHandler(this.rdoSpecify_CheckedChanged);
+            this.label8.AutoSize = true;
+            this.label8.Location = new System.Drawing.Point(93, 18);
+            this.label8.Name = "label8";
+            this.label8.Size = new System.Drawing.Size(43, 13);
+            this.label8.TabIndex = 15;
+            this.label8.Text = "https://";
             // 
-            // rdoAuthIntegrated
+            // label9
             // 
-            this.rdoAuthIntegrated.AutoSize = true;
-            this.rdoAuthIntegrated.Location = new System.Drawing.Point(37, 53);
-            this.rdoAuthIntegrated.Name = "rdoAuthIntegrated";
-            this.rdoAuthIntegrated.Size = new System.Drawing.Size(140, 17);
-            this.rdoAuthIntegrated.TabIndex = 2;
-            this.rdoAuthIntegrated.Text = "Windows Authentication";
-            this.rdoAuthIntegrated.UseVisualStyleBackColor = true;
+            this.label9.AutoSize = true;
+            this.label9.Location = new System.Drawing.Point(290, 18);
+            this.label9.Name = "label9";
+            this.label9.Size = new System.Drawing.Size(173, 13);
+            this.label9.TabIndex = 16;
+            this.label9.Text = ".visualstudio.com/DefaultCollection";
             // 
             // SettingsForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(541, 303);
+            this.ClientSize = new System.Drawing.Size(541, 289);
             this.ControlBox = false;
             this.Controls.Add(this.tabControl);
             this.Controls.Add(this.btnCancel);
@@ -394,8 +388,6 @@
         private System.Windows.Forms.TabPage tabTfs;
         private System.Windows.Forms.TextBox txtPassword;
         private System.Windows.Forms.TextBox txtUsername;
-        private System.Windows.Forms.RadioButton rdoSpecify;
-        private System.Windows.Forms.RadioButton rdoAuthIntegrated;
         private System.Windows.Forms.Label label5;
         private System.Windows.Forms.Label label4;
         private System.Windows.Forms.TabPage tabWindows;
@@ -410,5 +402,7 @@
         private System.Windows.Forms.Label label7;
         private System.Windows.Forms.TextBox txtStaleDays;
         private System.Windows.Forms.CheckBox cbHideStale;
+        private System.Windows.Forms.Label label9;
+        private System.Windows.Forms.Label label8;
     }
 }

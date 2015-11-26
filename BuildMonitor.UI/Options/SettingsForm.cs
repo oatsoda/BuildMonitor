@@ -18,10 +18,7 @@ namespace BuildMonitor.UI.Options
 
         private bool m_SavedSettingsValidated;
         
-        public IMonitorOptions Options
-        {
-            get { return m_Options; }
-        }
+        public IMonitorOptions Options => m_Options;
 
         public SettingsForm(IMonitorOptions currentOptions, IBuildStoreFactory buildStoreFactory)
         {
@@ -46,16 +43,24 @@ namespace BuildMonitor.UI.Options
             txtStaleDays.Text = m_Options.StaleDefinitionDays.ToString(CultureInfo.InvariantCulture);
             txtStaleDays.Enabled = m_Options.HideStaleDefinitions;
 
-            // TFS Tab
-            if (!string.IsNullOrEmpty(m_Options.TfsApiUrl)) // Show defaults when not set
+            // VSO Tab
+            // backwards compatibility
+            if (m_Options.TfsApiUrl != null &&
+                m_Options.TfsApiUrl.StartsWith("https://") &&
+                m_Options.TfsApiUrl.Contains("visualstudio.com"))
+            {
+                txtTfsApiUrl.Text = m_Options.TfsApiUrl.Substring(
+                    "https://".Length,
+                    (m_Options.TfsApiUrl.IndexOf("visualstudio.com", StringComparison.InvariantCultureIgnoreCase) - "https://".Length) - 1
+                    );
+            }
+            else
+            {
                 txtTfsApiUrl.Text = m_Options.TfsApiUrl;
+            }
 
-            if (!string.IsNullOrEmpty(m_Options.ProjectName)) // Show defaults when not set
-                cboTfsProjectName.SelectedItem = m_Options.ProjectName;
-
-            rdoSpecify.Checked = m_Options.UseCredentials;
-            rdoAuthIntegrated.Checked = !rdoSpecify.Checked;
-
+            cboTfsProjectName.SelectedItem = m_Options.ProjectName;
+            
             if (!string.IsNullOrWhiteSpace(m_Options.Username) &&
                 !string.IsNullOrWhiteSpace(m_Options.Password))
             {
@@ -95,15 +100,12 @@ namespace BuildMonitor.UI.Options
             options.HideStaleDefinitions = cbHideStale.Checked;
             options.StaleDefinitionDays = Convert.ToInt32(txtStaleDays.Text);
 
-            // TFS Tab
-            if (!m_SavedSettingsValidated) // Tab never loaded, so don't overwrite
-                return;
-
             options.TfsApiUrl = txtTfsApiUrl.Text;
-                
-            options.ProjectName = (string) cboTfsProjectName.SelectedItem;
 
-            options.UseCredentials = rdoSpecify.Checked;
+            if (m_SavedSettingsValidated) // Tab never loaded, so don't overwrite this setting because it will not be loaded
+                options.ProjectName = (string) cboTfsProjectName.SelectedItem;
+
+            options.UseCredentials = true;
 
             if (options.UseCredentials)
             {
@@ -113,15 +115,12 @@ namespace BuildMonitor.UI.Options
 
             options.ValidOptions = cboTfsProjectName.Enabled;
         }
-
-        private void rdoSpecify_CheckedChanged(object sender, EventArgs e)
-        {
-            txtUsername.Enabled = txtPassword.Enabled = rdoSpecify.Checked;
-        }
-
+        
         private void btnValidate_Click(object sender, EventArgs e)
         {
+#pragma warning disable 4014
             ValidateTfsSettings();
+#pragma warning restore 4014
         }
 
         private void tabControl_SelectedIndexChanged(object sender, EventArgs e)
@@ -132,11 +131,12 @@ namespace BuildMonitor.UI.Options
             if (m_SavedSettingsValidated)
                 return;
 
+#pragma warning disable 4014
             ValidateTfsSettings();
-
-            m_SavedSettingsValidated = true;
+#pragma warning restore 4014
         }
 
+        // ReSharper disable once UnusedMethodReturnValue.Local - not recommended to use void with async
         private async Task ValidateTfsSettings()
         {
             tabTfs.Enabled = false;
@@ -152,12 +152,12 @@ namespace BuildMonitor.UI.Options
                 return;
             }
 
-            var store = m_BuildStoreFactory.GetBuildStore(tempOptions);
 
             try
             {
+                var store = m_BuildStoreFactory.GetBuildStore(tempOptions);
                 var projects = await store.GetProjects();
-                cboTfsProjectName.Items.AddRange(projects.ToArray());
+                cboTfsProjectName.Items.AddRange(projects.Cast<object>().ToArray());
                 imgBox.Image = Status.Succeeded.ToBitmap(new Size(24, 24));
             }
             // filters handle Aggregation Exception
@@ -176,6 +176,7 @@ namespace BuildMonitor.UI.Options
 
             if (cboTfsProjectName.Items.Count > 0)
             {
+                m_SavedSettingsValidated = true;
                 cboTfsProjectName.SelectedItem = !string.IsNullOrWhiteSpace(m_Options.ProjectName) 
                     ? m_Options.ProjectName 
                     : cboTfsProjectName.Items[0];

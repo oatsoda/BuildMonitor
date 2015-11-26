@@ -10,19 +10,15 @@ namespace BuildMonitor.Tfs
 {
     public class TfsBuildStore : IBuildStore
     {
-        private readonly NetworkCredential m_SpecificCredentials;
         private readonly Uri m_BaseUrl;
         private readonly bool m_IncludeRunningBuilds;
 
-        protected NetworkCredential SpecificCredentials
-        {
-            get { return m_SpecificCredentials; }
-        }
+        private NetworkCredential SpecificCredentials { get; }
 
         public TfsBuildStore(IMonitorOptions options)
         {
             m_BaseUrl = new Uri(options.TfsApiUrl);
-            m_SpecificCredentials = options.UseCredentials ? options.Credential :  null;
+            SpecificCredentials = options.UseCredentials ? options.Credential :  null;
             m_IncludeRunningBuilds = options.IncludeRunningBuilds;
         }
 
@@ -94,7 +90,7 @@ namespace BuildMonitor.Tfs
 
             using (var client = new WebClient())
             {
-                client.Credentials = m_SpecificCredentials ?? CredentialCache.DefaultCredentials;
+                client.Credentials = SpecificCredentials ?? CredentialCache.DefaultCredentials;
                 var result = await client.DownloadStringTaskAsync(url);
                 return result;
             }
