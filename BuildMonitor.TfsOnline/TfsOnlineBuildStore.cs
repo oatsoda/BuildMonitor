@@ -83,8 +83,13 @@ namespace BuildMonitor.TfsOnline
         {
             var projectNameEncoded = WebUtility.UrlEncode(projectName);
             var includeRunningFilter = m_IncludeRunningBuilds ? ",inProgress" : "";
-            var queryPath =
-                $"{projectNameEncoded}/_apis/build/builds?api-version=2.0&definitions={definition.Id}&resultFilter=succeeded,partiallySucceeded,failed&statusFilter=completed{includeRunningFilter}&$top=1";
+            var queryPath = $"{projectNameEncoded}/_apis/build/builds?api-version=2.0";
+
+            queryPath = string.Join("&", 
+                queryPath, 
+                $"definitions={definition.Id}", 
+                "resultFilter=succeeded,partiallySucceeded,failed,", // final comma allows vNext builds with no result
+                $"statusFilter=completed{includeRunningFilter}", "$top=1");
 
             var result = await GetTfsResult(queryPath);
 
