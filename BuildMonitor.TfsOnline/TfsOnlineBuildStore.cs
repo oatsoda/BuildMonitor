@@ -88,7 +88,7 @@ namespace BuildMonitor.TfsOnline
             queryPath = string.Join("&", 
                 queryPath, 
                 $"definitions={definition.Id}", 
-                "resultFilter=succeeded,partiallySucceeded,failed,", // final comma allows vNext builds with no result
+                "resultFilter=succeeded,partiallySucceeded,failed",
                 $"statusFilter=completed{includeRunningFilter}", "$top=1");
 
             var result = await GetTfsResult(queryPath);
