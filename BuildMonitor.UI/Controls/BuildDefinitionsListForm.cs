@@ -33,9 +33,10 @@ namespace BuildMonitor.UI.Controls
         private readonly IAppUpdater m_AppUpdater;
 
         private readonly IBuildDefinitionMonitor m_Monitor;
-
-
+        
         private IEnumerable<BuildDetailControl> BuildDetailControls => Controls.OfType<BuildDetailControl>();
+
+        private ToolTip m_ToolTip;
 
         #endregion
 
@@ -71,6 +72,12 @@ namespace BuildMonitor.UI.Controls
             m_CalculatedHeight = m_CalculatedWidth = 0;
 
             ApplyOptions();
+
+            m_ToolTip = new ToolTip()
+            {
+                ShowAlways = true,
+                IsBalloon = true
+            };
         }
         
         #endregion
@@ -113,6 +120,7 @@ namespace BuildMonitor.UI.Controls
                 {
                     c = new BuildDetailControl();
                     c.Top = ((x - 1)*c.Height);
+                    c.ToolTip = m_ToolTip;
                     c.DisplayDetail(detail);
                     Controls.Add(c);
                 }

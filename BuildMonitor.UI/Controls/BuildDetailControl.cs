@@ -8,6 +8,8 @@ namespace BuildMonitor.UI.Controls
 {
     public partial class BuildDetailControl : UserControl
     {
+        public ToolTip ToolTip { get; set; }
+
         public BuildDetailControl()
         {
             InitializeComponent();
@@ -37,10 +39,12 @@ namespace BuildMonitor.UI.Controls
             var url = buildDetail.Status == null ? buildDetail.Definition.Url : buildDetail.Status.Url;
             
             lblLinkTitle.Text = buildDetail.Definition.Name;
+
             lblLinkTitle.Links.Clear();
             lblLinkTitle.Links.Add(0, lblLinkTitle.Text.Length, url);
-            //if (buildDetail.Status != null)
-            //    new ToolTip().SetToolTip(lblLinkTitle, buildDetail.Status.Name);
+
+            if (buildDetail.Status != null)
+                ToolTip.SetToolTip(lblLinkTitle, buildDetail.Status.Name);
 
             lblRequestedBy.Text = buildDetail.Status.ToRequestedByDescription(18);
             lblStart.Text = buildDetail.Status.ToCurrentTimeDescription();

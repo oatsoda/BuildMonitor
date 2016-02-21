@@ -22,10 +22,17 @@ namespace BuildMonitor.UI.Controls
         public PopupStatusForm(BuildDetail buildDetail)
         {
             InitializeComponent();
+
             TopMost = true;
             Width = buildDetailControl.Width;
             Height = buildDetailControl.Height;
             MinimumSize = new Size(Width, 0);
+
+            buildDetailControl.ToolTip = new ToolTip()
+            {
+                ShowAlways = true,
+                IsBalloon = true
+            };
 
             m_Timer = new Timer
             {
