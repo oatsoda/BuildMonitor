@@ -125,8 +125,11 @@
 			 </Component> 
 			 <Component Id="TfsOnlineComponent">
 				<File Source="$(var.BuildMonitor.App.TargetDir)BuildMonitor.TfsOnline.dll" />
-			 </Component> 
-			 <Component Id="JsonComponent">
+			 </Component>
+      <Component Id="UIComponent">
+        <File Source="$(var.BuildMonitor.App.TargetDir)BuildMonitor.UI.dll" />
+      </Component>
+      <Component Id="JsonComponent">
 				<File Source="$(var.BuildMonitor.App.TargetDir)Newtonsoft.Json.dll" />
 			 </Component> 
     

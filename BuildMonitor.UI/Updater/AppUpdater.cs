@@ -15,8 +15,8 @@ namespace BuildMonitor.UI.Updater
 
         public AppUpdater(string versionUrl, string installUrl)
         {
-            m_VersionUrl = versionUrl; //ConfigurationManager.AppSettings["VersionUrl"];
-            m_LatestBinaryUrl = installUrl; //ConfigurationManager.AppSettings["InstallUrl"];
+            m_VersionUrl = versionUrl;
+            m_LatestBinaryUrl = installUrl;
         }
 
         public bool CheckForUpdates()
@@ -26,9 +26,11 @@ namespace BuildMonitor.UI.Updater
             if (latestVersion <= CurrentVersion)
                 return false;
 
+            var msg = $"A newer version ({latestVersion}) of Build Monitor is available? Do you want to download and install it?";
+
             if (DialogResult.Cancel == MessageBox.Show(
-                "A newer version of Build Monitor is available? Do you want to download and install it?",
-                "New Version",
+                msg,
+                @"New Version",
                 MessageBoxButtons.OKCancel,
                 MessageBoxIcon.Information,
                 MessageBoxDefaultButton.Button2
