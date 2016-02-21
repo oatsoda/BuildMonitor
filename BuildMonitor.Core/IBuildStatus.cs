@@ -11,5 +11,7 @@ namespace BuildMonitor.Core
         DateTime? Finish { get; }
         Status Status { get; }
         string RequestedBy { get; }
+        int ErrorCount { get; }
+        int WarningCount { get; }
     }
 }

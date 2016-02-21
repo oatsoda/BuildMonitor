@@ -11,6 +11,9 @@ namespace BuildMonitor.UI.Controls
         public BuildDetailControl()
         {
             InitializeComponent();
+
+            imgErrors.Image = Status.Failed.ToBitmap(imgErrors.Size);
+            imgWarnings.Image = Status.PartiallySucceeded.ToBitmap(imgErrors.Size);
         }
 
         public void ToggleBorder(bool show)
@@ -41,6 +44,17 @@ namespace BuildMonitor.UI.Controls
 
             lblRequestedBy.Text = buildDetail.Status.ToRequestedByDescription(18);
             lblStart.Text = buildDetail.Status.ToCurrentTimeDescription();
+
+            if (buildDetail.Definition.IsVNext)
+            {
+                lblErrors.Text = buildDetail.Status?.ErrorCount.ToString() ?? "0";
+                lblWarnings.Text = buildDetail.Status?.WarningCount.ToString() ?? "0";
+            }
+
+            lblErrors.Visible = 
+            imgErrors.Visible = 
+            lblWarnings.Visible = 
+            imgWarnings.Visible = buildDetail.Definition.IsVNext;
 
             picStatus.Image = buildDetail.Status?.Status.ToBitmap(picStatus.Size);
         }

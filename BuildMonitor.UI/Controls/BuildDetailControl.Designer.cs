@@ -33,7 +33,13 @@
             this.lblStart = new System.Windows.Forms.Label();
             this.picStatus = new System.Windows.Forms.PictureBox();
             this.panelLine = new System.Windows.Forms.Panel();
+            this.lblErrors = new System.Windows.Forms.Label();
+            this.lblWarnings = new System.Windows.Forms.Label();
+            this.imgErrors = new System.Windows.Forms.PictureBox();
+            this.imgWarnings = new System.Windows.Forms.PictureBox();
             ((System.ComponentModel.ISupportInitialize)(this.picStatus)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.imgErrors)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.imgWarnings)).BeginInit();
             this.SuspendLayout();
             // 
             // lblLinkTitle
@@ -86,14 +92,57 @@
             this.panelLine.Name = "panelLine";
             this.panelLine.Size = new System.Drawing.Size(20, 1);
             this.panelLine.TabIndex = 4;
-            this.panelLine.TabStop = false;
             this.panelLine.Visible = false;
+            // 
+            // lblErrors
+            // 
+            this.lblErrors.AutoSize = true;
+            this.lblErrors.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(241)))), ((int)(((byte)(241)))), ((int)(((byte)(241)))));
+            this.lblErrors.Location = new System.Drawing.Point(191, 3);
+            this.lblErrors.Name = "lblErrors";
+            this.lblErrors.Size = new System.Drawing.Size(13, 13);
+            this.lblErrors.TabIndex = 5;
+            this.lblErrors.Text = "0";
+            this.lblErrors.Visible = false;
+            // 
+            // lblWarnings
+            // 
+            this.lblWarnings.AutoSize = true;
+            this.lblWarnings.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(241)))), ((int)(((byte)(241)))), ((int)(((byte)(241)))));
+            this.lblWarnings.Location = new System.Drawing.Point(229, 3);
+            this.lblWarnings.Name = "lblWarnings";
+            this.lblWarnings.Size = new System.Drawing.Size(13, 13);
+            this.lblWarnings.TabIndex = 6;
+            this.lblWarnings.Text = "0";
+            this.lblWarnings.Visible = false;
+            // 
+            // imgErrors
+            // 
+            this.imgErrors.Location = new System.Drawing.Point(179, 3);
+            this.imgErrors.Name = "imgErrors";
+            this.imgErrors.Size = new System.Drawing.Size(12, 12);
+            this.imgErrors.TabIndex = 7;
+            this.imgErrors.TabStop = false;
+            this.imgErrors.Visible = false;
+            // 
+            // imgWarnings
+            // 
+            this.imgWarnings.Location = new System.Drawing.Point(217, 3);
+            this.imgWarnings.Name = "imgWarnings";
+            this.imgWarnings.Size = new System.Drawing.Size(12, 12);
+            this.imgWarnings.TabIndex = 8;
+            this.imgWarnings.TabStop = false;
+            this.imgWarnings.Visible = false;
             // 
             // BuildDetailControl
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(37)))), ((int)(((byte)(37)))), ((int)(((byte)(38)))));
+            this.Controls.Add(this.imgWarnings);
+            this.Controls.Add(this.imgErrors);
+            this.Controls.Add(this.lblWarnings);
+            this.Controls.Add(this.lblErrors);
             this.Controls.Add(this.panelLine);
             this.Controls.Add(this.picStatus);
             this.Controls.Add(this.lblStart);
@@ -103,6 +152,8 @@
             this.Name = "BuildDetailControl";
             this.Size = new System.Drawing.Size(257, 38);
             ((System.ComponentModel.ISupportInitialize)(this.picStatus)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.imgErrors)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.imgWarnings)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -115,5 +166,9 @@
         private System.Windows.Forms.Label lblStart;
         private System.Windows.Forms.PictureBox picStatus;
         private System.Windows.Forms.Panel panelLine;
+        private System.Windows.Forms.Label lblErrors;
+        private System.Windows.Forms.Label lblWarnings;
+        private System.Windows.Forms.PictureBox imgErrors;
+        private System.Windows.Forms.PictureBox imgWarnings;
     }
 }

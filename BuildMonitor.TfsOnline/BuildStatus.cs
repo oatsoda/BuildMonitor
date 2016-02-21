@@ -1,7 +1,7 @@
 using System;
 using BuildMonitor.Core;
 
-namespace BuildMonitor.Tfs
+namespace BuildMonitor.TfsOnline
 {
     public class BuildStatus : IBuildStatus
     {
@@ -12,5 +12,7 @@ namespace BuildMonitor.Tfs
         public DateTime? Finish { get; set; }
         public Status Status { get; set; }
         public string RequestedBy { get; set; }
+        public int ErrorCount { get; set; }
+        public int WarningCount { get; set; }
     }
 }

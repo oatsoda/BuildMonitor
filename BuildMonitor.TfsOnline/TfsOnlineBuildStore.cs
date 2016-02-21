@@ -1,5 +1,4 @@
 ﻿using BuildMonitor.Core;
-using BuildMonitor.Tfs;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -58,7 +57,8 @@ namespace BuildMonitor.TfsOnline
             var buildDefinitions = definitions.Select(b => new BuildDefinition
             {
                 Id = b["id"].Value<int>(),
-                Name = b["name"].Value<string>()
+                Name = b["name"].Value<string>(),
+                IsVNext = b["type"]?.Value<string>() == "build"
             });
 
             return await Task.WhenAll(
@@ -100,7 +100,7 @@ namespace BuildMonitor.TfsOnline
 
             var b = builds.OrderByDescending(t => t["startTime"]).First();
 
-            return new BuildStatus
+            var buildStatus = new BuildStatus
             {
                 Id = b["id"].Value<int>(),
                 Name = b["buildNumber"].Value<string>(),
@@ -110,6 +110,29 @@ namespace BuildMonitor.TfsOnline
                 Status = StatusFromString((b["result"] ?? b["status"]).Value<string>()),
                 RequestedBy = b["requestedFor"]["displayName"].Value<string>()
             };
+
+            if (definition.IsVNext)
+                return await GetBuildTimeline(projectName, buildStatus);
+
+            return buildStatus;
+        }
+        
+        private async Task<IBuildStatus> GetBuildTimeline(string projectName, BuildStatus buildStatus)
+        {
+            var projectNameEncoded = WebUtility.UrlEncode(projectName);
+            var queryPath = $"{projectNameEncoded}/_apis/build/builds/{buildStatus.Id}/timeline?api-version=2.0";
+
+            var buildTimeline = await GetTfsResult(queryPath);
+
+            var tasks = buildTimeline["records"].Children();
+
+            if (!tasks.Any())
+                return buildStatus;
+
+            buildStatus.ErrorCount = tasks.Sum(t => t["errorCount"]?.Value<int>()) ?? 0;
+            buildStatus.WarningCount = tasks.Sum(t => t["warningCount"]?.Value<int>()) ?? 0;
+
+            return buildStatus;
         }
 
         private async Task<JObject> GetTfsResult(string queryPath)
