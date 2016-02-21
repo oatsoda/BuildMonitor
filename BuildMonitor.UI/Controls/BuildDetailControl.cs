@@ -1,5 +1,4 @@
-﻿using System;
-using System.Diagnostics;
+﻿using System.Diagnostics;
 using System.Windows.Forms;
 using BuildMonitor.Core;
 using BuildMonitor.Core.InterfaceExtensions;
@@ -33,15 +32,17 @@ namespace BuildMonitor.UI.Controls
         public void DisplayDetail(BuildDetail buildDetail)
         {
             var url = buildDetail.Status == null ? buildDetail.Definition.Url : buildDetail.Status.Url;
-
+            
             lblLinkTitle.Text = buildDetail.Definition.Name;
             lblLinkTitle.Links.Clear();
             lblLinkTitle.Links.Add(0, lblLinkTitle.Text.Length, url);
+            //if (buildDetail.Status != null)
+            //    new ToolTip().SetToolTip(lblLinkTitle, buildDetail.Status.Name);
 
             lblRequestedBy.Text = buildDetail.Status.ToRequestedByDescription(18);
             lblStart.Text = buildDetail.Status.ToCurrentTimeDescription();
 
-            picStatus.Image = buildDetail.Status == null ? null : buildDetail.Status.Status.ToBitmap(picStatus.Size);
+            picStatus.Image = buildDetail.Status?.Status.ToBitmap(picStatus.Size);
         }
 
         private void lblLinkTitle_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)

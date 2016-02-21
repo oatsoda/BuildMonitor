@@ -1,13 +1,14 @@
 ﻿using System;
 using System.Configuration;
 using System.Windows.Forms;
+using BuildMonitor.App.Properties;
 using BuildMonitor.Core;
 using BuildMonitor.TfsOnline;
 using BuildMonitor.UI.Controls;
 using BuildMonitor.UI.Options;
 using BuildMonitor.UI.Updater;
 
-namespace BuildMonitor.UI
+namespace BuildMonitor.App
 {
     static class Program
     {
@@ -19,17 +20,22 @@ namespace BuildMonitor.UI
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            
-            var updater = new AppUpdater();
+
+            var versionUrl = ConfigurationManager.AppSettings["VersionUrl"];
+            var installUrl = ConfigurationManager.AppSettings["InstallUrl"];
+
+            var updater = new AppUpdater(versionUrl, installUrl);
             if (updater.CheckForUpdates())
                 return;
-
+            
             IBuildStoreFactory buildStoreFactory = new TfsOnlineBuildStoreFactory();
             IBuildDefinitionMonitor monitor = new BuildDefinitionMonitor(buildStoreFactory);
+            
+            var options = new MonitorOptions(Settings.Default);
 
-            var options = new MonitorOptions();
-
-            Application.Run(new BuildDefinitionsListForm(monitor, options, buildStoreFactory));
+            Application.Run(
+                new BuildDefinitionsListForm(monitor, options, buildStoreFactory, updater)
+                );
         }
     }
 }

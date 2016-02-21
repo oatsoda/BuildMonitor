@@ -1,0 +1,3 @@
+Current.ver must match the version of the binaries checked into .\Binaries
+
+The AssemblyVersionInfo version should match the version detailed in Setup > Product.wxs

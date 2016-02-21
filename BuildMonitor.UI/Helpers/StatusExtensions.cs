@@ -21,18 +21,14 @@ namespace BuildMonitor.UI.Helpers
                     return null;
                 case Status.Succeeded:
                     return Resources._1437954485_accepted_24;
-                    //return Resources._0007_Tick;
                 case Status.PartiallySucceeded:
                     return Resources._1437954464_warning_24;
-                    //return Resources._0010_Alert;
                 case Status.Failed:
                     return Resources._1437954459_cancel_24;
-                    //return Resources._0006_Cross;
                 case Status.InProgress:
                     return Resources._1437954472_arrow_right_24;
-                    //return Resources.Play1Normal;
                 default:
-                    throw new ArgumentOutOfRangeException("status");
+                    throw new ArgumentOutOfRangeException(nameof(status));
             }
         }
     }

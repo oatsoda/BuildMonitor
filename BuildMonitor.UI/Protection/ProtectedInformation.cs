@@ -2,7 +2,7 @@
 
 namespace BuildMonitor.UI.Protection
 {
-    internal class ProtectedInformation
+    public class ProtectedInformation
     {
         public string DataHash { get; private set; }
         public string DataEntropy { get; private set; }

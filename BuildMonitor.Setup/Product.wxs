@@ -3,7 +3,7 @@
 	<Product Id="*" 
            Name="Build Monitor" 
            Language="1033" 
-           Version="1.1.7.0" 
+           Version="1.5.0.0" 
            Manufacturer="Andrew Milne" 
            UpgradeCode="e3c1dc46-3b01-437a-8e9c-aae2e7046c6c">
 		<Package InstallerVersion="200" Compressed="yes" InstallScope="perMachine" />
@@ -79,10 +79,10 @@
           <Shortcut Id="AppStartMenuShortcut" 
                     Name="Build Monitor"
                     Description="Tray Application to Monitor Builds"
-                    Target="[INSTALLFOLDER]$(var.BuildMonitor.UI.TargetFileName)"
+                    Target="[INSTALLFOLDER]$(var.BuildMonitor.App.TargetFileName)"
                     WorkingDirectory="INSTALLFOLDER"
                     Icon="icon.ico"
-                    IconIndex="0" /> <!-- $(var.BuildMonitor.UI.TargetPath) APPLICATIONROOTDIRECTORY  -->
+                    IconIndex="0" /> <!-- $(var.BuildMonitor.App.TargetPath) APPLICATIONROOTDIRECTORY  -->
           <RemoveFolder Id="AppProgramsFolder" On="uninstall"/>
           <RegistryValue Root="HKCU" Key="Software\AndrewMilne\BuildMonitor" 
                          Name="installed" 
@@ -96,7 +96,7 @@
         <Shortcut Id="ApplicationDesktopShortcut"
            Name="Build Monitor"
            Description="Tray Application to Monitor Builds"
-           Target="[INSTALLFOLDER]$(var.BuildMonitor.UI.TargetFileName)"
+           Target="[INSTALLFOLDER]$(var.BuildMonitor.App.TargetFileName)"
            WorkingDirectory="INSTALLFOLDER"
            Icon="icon.ico"
            IconIndex="0" />
@@ -115,22 +115,19 @@
 			<!-- TODO: Remove the comments around this Component element and 
       the ComponentRef below in order to add resources to this installer. -->
 			 <Component Id="ProductComponent"> 
-				<File Source="$(var.BuildMonitor.UI.TargetPath)" />
+				<File Source="$(var.BuildMonitor.App.TargetPath)" />
 			 </Component>
       <Component Id="ProductConfigComponent">
-        <File Source="$(var.BuildMonitor.UI.TargetPath).config" />
+        <File Source="$(var.BuildMonitor.App.TargetPath).config" />
       </Component>
       <Component Id="CoreComponenet">
-				<File Source="$(var.BuildMonitor.UI.TargetDir)BuildMonitor.Core.dll" />
-			 </Component> 
-			 <Component Id="TfsComponent">
-				<File Source="$(var.BuildMonitor.UI.TargetDir)BuildMonitor.Tfs.dll" />
+				<File Source="$(var.BuildMonitor.App.TargetDir)BuildMonitor.Core.dll" />
 			 </Component> 
 			 <Component Id="TfsOnlineComponent">
-				<File Source="$(var.BuildMonitor.UI.TargetDir)BuildMonitor.TfsOnline.dll" />
+				<File Source="$(var.BuildMonitor.App.TargetDir)BuildMonitor.TfsOnline.dll" />
 			 </Component> 
 			 <Component Id="JsonComponent">
-				<File Source="$(var.BuildMonitor.UI.TargetDir)Newtonsoft.Json.dll" />
+				<File Source="$(var.BuildMonitor.App.TargetDir)Newtonsoft.Json.dll" />
 			 </Component> 
     
       

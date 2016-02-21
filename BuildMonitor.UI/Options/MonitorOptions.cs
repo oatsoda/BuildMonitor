@@ -1,13 +1,12 @@
 ﻿using System.Configuration;
 using System.Net;
 using BuildMonitor.Core;
-using BuildMonitor.UI.Properties;
 using BuildMonitor.UI.Protection;
 
 namespace BuildMonitor.UI.Options
 {
 
-    internal sealed class MonitorOptions : ApplicationSettingsBase, IMonitorOptions
+    public sealed class MonitorOptions : ApplicationSettingsBase, IMonitorOptions
     {
         [UserScopedSetting]
         [DefaultSettingValue("false")]
@@ -116,16 +115,10 @@ namespace BuildMonitor.UI.Options
         }
 
 
-        public NetworkCredential Credential
-        {
-            get 
-            { 
-                return new NetworkCredential(
-                    ProtectionMethods.Unprotect(UsernameProtected),
-                    ProtectionMethods.Unprotect(PasswordProtected)
-                    ); 
-            }
-        }
+        public NetworkCredential Credential => new NetworkCredential(
+            ProtectionMethods.Unprotect(UsernameProtected),
+            ProtectionMethods.Unprotect(PasswordProtected)
+            );
 
         public ProtectedInformation UsernameProtected
         {
@@ -147,14 +140,14 @@ namespace BuildMonitor.UI.Options
             }
         }
 
-        public MonitorOptions()
+        public MonitorOptions(IUpgradeSettingsCheck upgradeSettingsCheck = null)
         {
-            if (!Settings.Default.UpgradeSettings) 
+            if (upgradeSettingsCheck == null || !upgradeSettingsCheck.UpgradeSettings) 
                 return;
 
             Upgrade();
-            Settings.Default.UpgradeSettings = false;
-            Settings.Default.Save();
+            upgradeSettingsCheck.UpgradeSettings = false;
+            upgradeSettingsCheck.Save();
         }
 
         public MonitorOptions(IMonitorOptions existingOptions)

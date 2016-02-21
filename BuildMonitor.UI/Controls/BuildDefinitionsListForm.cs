@@ -30,6 +30,7 @@ namespace BuildMonitor.UI.Controls
 
         private IMonitorOptions m_CurrentMonitorOptions;
         private readonly IBuildStoreFactory m_BuildStoreFactory;
+        private readonly IAppUpdater m_AppUpdater;
 
         private readonly IBuildDefinitionMonitor m_Monitor;
 
@@ -42,7 +43,8 @@ namespace BuildMonitor.UI.Controls
 
         public BuildDefinitionsListForm(IBuildDefinitionMonitor monitor, 
                                         IMonitorOptions currentOptions, 
-                                        IBuildStoreFactory buildStoreFactory)
+                                        IBuildStoreFactory buildStoreFactory,
+                                        IAppUpdater appUpdater)
         {
             InitializeComponent();
 
@@ -56,6 +58,7 @@ namespace BuildMonitor.UI.Controls
             m_Monitor = monitor;
             m_CurrentMonitorOptions = currentOptions;
             m_BuildStoreFactory = buildStoreFactory;
+            m_AppUpdater = appUpdater;
 
             m_Monitor.OverallStatusChanged += OnBuildMonitorOnOverallStatusChanged;
             m_Monitor.ExceptionOccurred += OnBuildMonitorOnExceptionOccurred;
@@ -171,9 +174,6 @@ namespace BuildMonitor.UI.Controls
 
         private void SetSizeAndPosition()
         {
-            if (WindowState == FormWindowState.Minimized)
-                return;
-
             Height = m_CalculatedHeight;
             Width = m_CalculatedWidth;
 
@@ -224,7 +224,8 @@ namespace BuildMonitor.UI.Controls
             this.InvokeIfRequired(() =>
             {
                 UpdateBuildControls(list);
-                SetSizeAndPosition();
+                if (WindowState != FormWindowState.Minimized)
+                    SetSizeAndPosition();
             });
         }
 
@@ -291,8 +292,7 @@ namespace BuildMonitor.UI.Controls
         
         private void updateToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            var updater = new AppUpdater();
-            if (updater.CheckForUpdates())
+            if (m_AppUpdater.CheckForUpdates())
                 CloseApplication();
         }
 

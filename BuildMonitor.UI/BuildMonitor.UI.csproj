@@ -5,11 +5,11 @@
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{A210FEC6-E551-4017-9FA3-686C35E040F7}</ProjectGuid>
-    <OutputType>WinExe</OutputType>
+    <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>BuildMonitor.UI</RootNamespace>
     <AssemblyName>BuildMonitor.UI</AssemblyName>
-    <TargetFrameworkVersion>v4.6</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
     <PublishUrl>publish\</PublishUrl>
@@ -47,9 +47,11 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
+  <PropertyGroup>
+    <StartupObject />
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
-    <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
     <Reference Include="System.Security" />
     <Reference Include="System.Xml.Linq" />
@@ -88,6 +90,7 @@
     </Compile>
     <Compile Include="Helpers\ControlExtensions.cs" />
     <Compile Include="Helpers\StartupSettingHelper.cs" />
+    <Compile Include="Options\IUpgradeSettingsCheck.cs" />
     <Compile Include="Protection\ProtectionMethods.cs" />
     <Compile Include="Options\MonitorOptions.cs" />
     <Compile Include="Controls\PopupStatusForm.cs">
@@ -96,7 +99,6 @@
     <Compile Include="Controls\PopupStatusForm.Designer.cs">
       <DependentUpon>PopupStatusForm.cs</DependentUpon>
     </Compile>
-    <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Protection\ProtectedInformation.cs" />
     <Compile Include="Options\SettingsForm.cs">
@@ -107,6 +109,7 @@
     </Compile>
     <Compile Include="Helpers\StatusExtensions.cs" />
     <Compile Include="Updater\AppUpdater.cs" />
+    <Compile Include="Updater\IAppUpdater.cs" />
     <EmbeddedResource Include="Controls\AboutForm.resx">
       <DependentUpon>AboutForm.cs</DependentUpon>
     </EmbeddedResource>
@@ -132,29 +135,11 @@
     <EmbeddedResource Include="Options\SettingsForm.resx">
       <DependentUpon>SettingsForm.cs</DependentUpon>
     </EmbeddedResource>
-    <None Include="app.config" />
-    <None Include="Properties\Settings.settings">
-      <Generator>SettingsSingleFileGenerator</Generator>
-      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
-    </None>
-    <Compile Include="Properties\Settings.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DependentUpon>Settings.settings</DependentUpon>
-      <DesignTimeSharedInput>True</DesignTimeSharedInput>
-    </Compile>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\BuildMonitor.Core\BuildMonitor.Core.csproj">
       <Project>{DE3567CC-3FA4-4F55-A3AA-F220D6A49C1C}</Project>
       <Name>BuildMonitor.Core</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\BuildMonitor.TfsOnline\BuildMonitor.TfsOnline.csproj">
-      <Project>{880B2245-47CD-4F52-A1AC-C014A87CADFC}</Project>
-      <Name>BuildMonitor.TfsOnline</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\BuildMonitor.Tfs\BuildMonitor.Tfs.csproj">
-      <Project>{608DFB50-39EC-4EE6-9298-4FEDCAEEC24D}</Project>
-      <Name>BuildMonitor.Tfs</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

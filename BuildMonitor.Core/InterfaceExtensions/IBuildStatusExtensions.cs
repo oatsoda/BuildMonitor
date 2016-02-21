@@ -13,29 +13,28 @@ namespace BuildMonitor.Core.InterfaceExtensions
             var diff = status.TimeSpanSinceStart();
 
             if (diff.TotalHours >= 48)
-                return string.Format("{0} days ago", (int)diff.TotalDays);
+                return $"{(int) diff.TotalDays} days ago";
 
             if (diff.TotalMinutes >= 120)
-                return string.Format("{0} hours ago", (int)diff.TotalHours);
+                return $"{(int) diff.TotalHours} hours ago";
 
             if (diff.TotalMinutes >= 1)
-                return string.Format("{0} minutes ago", (int)diff.TotalMinutes);
+                return $"{(int) diff.TotalMinutes} minutes ago";
 
             if (diff.TotalSeconds > 1)
-                return string.Format("{0} seconds ago", (int)diff.TotalSeconds);
+                return $"{(int) diff.TotalSeconds} seconds ago";
 
             return "Just now";
         }
 
         public static string ToRequestedByDescription(this IBuildStatus status, int trimLen)
         {
-            if (status == null || status.RequestedBy == null)
+            if (status?.RequestedBy == null)
                 return "-";
 
-            if (status.RequestedBy.Length > trimLen)
-                return string.Format("{0}...", status.RequestedBy.Substring(0, trimLen));
-
-            return status.RequestedBy;
+            return status.RequestedBy.Length > trimLen 
+                ? $"{status.RequestedBy.Substring(0, trimLen)}..." 
+                : status.RequestedBy;
         }
 
         public static TimeSpan TimeSpanSinceStart(this IBuildStatus status)

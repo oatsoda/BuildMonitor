@@ -4,6 +4,8 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using BuildMonitor.Core;
 using BuildMonitor.UI.Controls;
+using BuildMonitor.UI.Options;
+using BuildMonitor.UI.Updater;
 using Moq;
 
 namespace BuildMonitor.TestApp
@@ -52,15 +54,27 @@ namespace BuildMonitor.TestApp
             optionsMoq
                 .SetupGet(o => o.IntervalSeconds)
                 .Returns(20);
+            optionsMoq
+                .SetupGet(o => o.ValidOptions)
+                .Returns(true);
+
+
 
             var factoryMoq = new Mock<IBuildStoreFactory>();
             factoryMoq
                 .Setup(f => f.GetBuildStore(It.IsAny<IMonitorOptions>()))
                 .Returns(storeMoq.Object);
 
+            var appUpdaterMoq = new Mock<IAppUpdater>();
+
             IBuildDefinitionMonitor monitor = new BuildDefinitionMonitor(factoryMoq.Object);
 
-            Application.Run(new BuildDefinitionsListForm(monitor, optionsMoq.Object, factoryMoq.Object));
+            Application.Run(
+                new BuildDefinitionsListForm(monitor, 
+                                             optionsMoq.Object, 
+                                             factoryMoq.Object,
+                                             appUpdaterMoq.Object)
+                );
         }
 
         private static IBuildStatus GetRandomStatus(int id)

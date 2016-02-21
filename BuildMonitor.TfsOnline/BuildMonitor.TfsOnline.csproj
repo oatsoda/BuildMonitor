@@ -9,7 +9,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>BuildMonitor.TfsOnline</RootNamespace>
     <AssemblyName>BuildMonitor.TfsOnline</AssemblyName>
-    <TargetFrameworkVersion>v4.6</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
   </PropertyGroup>
@@ -51,6 +51,8 @@
     <Compile Include="..\SharedAssemblyInfo.cs">
       <Link>Properties\SharedAssemblyInfo.cs</Link>
     </Compile>
+    <Compile Include="BuildDefinition.cs" />
+    <Compile Include="BuildStatus.cs" />
     <Compile Include="TfsOnlineBuildStore.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="TfsOnlineBuildStoreFactory.cs" />
@@ -59,10 +61,6 @@
     <ProjectReference Include="..\BuildMonitor.Core\BuildMonitor.Core.csproj">
       <Project>{DE3567CC-3FA4-4F55-A3AA-F220D6A49C1C}</Project>
       <Name>BuildMonitor.Core</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\BuildMonitor.Tfs\BuildMonitor.Tfs.csproj">
-      <Project>{608DFB50-39EC-4EE6-9298-4FEDCAEEC24D}</Project>
-      <Name>BuildMonitor.Tfs</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
