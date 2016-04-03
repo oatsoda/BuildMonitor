@@ -88,8 +88,8 @@ namespace BuildMonitor.TfsOnline
             queryPath = string.Join("&", 
                 queryPath, 
                 $"definitions={definition.Id}", 
-                "resultFilter=succeeded,partiallySucceeded,failed",
-                $"statusFilter=completed{includeRunningFilter}", "$top=1");
+                $"statusFilter=completed{includeRunningFilter}"
+                );
 
             var result = await GetTfsResult(queryPath);
 
@@ -98,7 +98,15 @@ namespace BuildMonitor.TfsOnline
             if (!builds.Any())
                 return null;
 
-            var b = builds.OrderByDescending(t => t["startTime"]).First();
+            var b = builds
+                // This should leave: succeeded, partiallySucceeded, failed and, if
+                // the option was added above, builds without a result - i.e. inProgress status
+                .Where(t => (t["result"]?.Value<string>() ?? string.Empty) != "canceled") 
+                .OrderByDescending(t => t["startTime"])
+                .FirstOrDefault();
+
+            if (b == null)
+                return null;
 
             var buildStatus = new BuildStatus
             {
