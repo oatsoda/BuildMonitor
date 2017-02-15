@@ -94,12 +94,12 @@ namespace BuildMonitor.Core
             var sw = new Stopwatch();
             var intervalMilliseconds = m_Options.IntervalSeconds*1000;
 
+            var buildStore = m_BuildStoreFactory.GetBuildStore(m_Options);
+
             try
             {
                 while (!m_RequestStop)
                 {
-                    var buildStore = m_BuildStoreFactory.GetBuildStore(m_Options);
-
                     if (!m_RequestStop)
                         RefreshDefinitionsIfRequired(buildStore);
 

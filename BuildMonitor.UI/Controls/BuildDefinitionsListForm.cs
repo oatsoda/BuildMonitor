@@ -306,6 +306,9 @@ namespace BuildMonitor.UI.Controls
 
         private void settingsToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            // Stop monitoring while changing settings
+            m_Monitor.Stop();
+
             using (var settingsForm = new SettingsForm(m_CurrentMonitorOptions, m_BuildStoreFactory))
             {
                 settingsForm.ShowDialog(this);

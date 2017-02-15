@@ -12,11 +12,11 @@ using Newtonsoft.Json.Linq;
 
 namespace BuildMonitor.TfsOnline
 {
-    public class TfsOnlineBuildStore : IBuildStore
+    public sealed class TfsOnlineBuildStore : IBuildStore, IDisposable
     {
-        private readonly NetworkCredential m_SpecificCredentials;
         private readonly Uri m_BaseUrl;
         private readonly bool m_IncludeRunningBuilds;
+        private readonly HttpClient m_HttpClient;
         
         public TfsOnlineBuildStore(IMonitorOptions options)
         {
@@ -30,7 +30,15 @@ namespace BuildMonitor.TfsOnline
                 string.Format($"https://{options.TfsApiUrl}.visualstudio.com/DefaultCollection/")
                 );
             
-            m_SpecificCredentials = options.UseCredentials ? options.Credential : null;
+            m_HttpClient = new HttpClient();
+            m_HttpClient.DefaultRequestHeaders.Accept.Add(
+                    new MediaTypeWithQualityHeaderValue("application/json"));
+
+            m_HttpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic",
+                Convert.ToBase64String(
+                    Encoding.ASCII.GetBytes(
+                        $"{options.Credential.UserName}:{options.Credential.Password}")));
+            
             m_IncludeRunningBuilds = options.IncludeRunningBuilds;
         }
 
@@ -130,7 +138,10 @@ namespace BuildMonitor.TfsOnline
             var projectNameEncoded = WebUtility.UrlEncode(projectName);
             var queryPath = $"{projectNameEncoded}/_apis/build/builds/{buildStatus.Id}/timeline?api-version=2.0";
 
-            var buildTimeline = await GetTfsResult(queryPath);
+            var buildTimeline = await GetTfsResult(queryPath, true);
+            
+            if (buildTimeline == null)
+                return buildStatus;
 
             var tasks = buildTimeline["records"].Children();
 
@@ -143,35 +154,30 @@ namespace BuildMonitor.TfsOnline
             return buildStatus;
         }
 
-        private async Task<JObject> GetTfsResult(string queryPath)
+        private async Task<JObject> GetTfsResult(string queryPath, bool allowNoContent = false)
         {
-            var resultJson = await GetJson(queryPath);
+            var resultJson = await GetJson(queryPath, allowNoContent);
+
+            if (allowNoContent && resultJson == null)
+                return null;
 
             return JObject.Parse(resultJson);
         }
         
-        private async Task<string> GetJson(string queryPath)
+        private async Task<string> GetJson(string queryPath, bool allowNoContent)
         {
-            using (var client = new HttpClient())
+            var url = FormatUrl(queryPath);
+            using (var response = await m_HttpClient.GetAsync(url))
             {
-                client.DefaultRequestHeaders.Accept.Add(
-                    new MediaTypeWithQualityHeaderValue("application/json"));
+                if (response.StatusCode == HttpStatusCode.Unauthorized)
+                    throw new AuthenticationException();
 
-                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic",
-                    Convert.ToBase64String(
-                        Encoding.ASCII.GetBytes(
-                            $"{m_SpecificCredentials.UserName}:{m_SpecificCredentials.Password}")));
+                if (allowNoContent && response.StatusCode == HttpStatusCode.NoContent)
+                    return null;
 
-                using (var response = client.GetAsync(FormatUrl(queryPath)).Result)
-                {
-                    if (response.StatusCode == HttpStatusCode.Unauthorized)
-                        throw new AuthenticationException();
-
-                    response.EnsureSuccessStatusCode();
-                    return await response.Content.ReadAsStringAsync();
-                }
+                response.EnsureSuccessStatusCode();
+                return await response.Content.ReadAsStringAsync();
             }
-
         }
 
         private Uri FormatUrl(string queryPath)
@@ -197,6 +203,10 @@ namespace BuildMonitor.TfsOnline
             }
         }
 
+        public void Dispose()
+        {
+            m_HttpClient?.Dispose();
+        }
     }
     
 }
