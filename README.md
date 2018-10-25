@@ -2,7 +2,7 @@
 
 A tray application to monitor build statuses on your TFS project.
 
-Currently works with Visual Studio Online.  
+Currently works with Visual Studio Team Services (DevOps).  
 
 Further plans:
 
