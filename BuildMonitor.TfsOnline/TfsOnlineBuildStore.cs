@@ -55,7 +55,7 @@ namespace BuildMonitor.TfsOnline
 
         public async Task<IEnumerable<IBuildDefinition>> GetDefinitions(string projectName)
         {
-            var projectNameEncoded = WebUtility.UrlEncode(projectName);
+            var projectNameEncoded = Uri.EscapeUriString(projectName);
             var queryPath = $"{projectNameEncoded}/_apis/build/definitions?api-version=2.0";
 
             var result = await GetTfsResult(queryPath);
@@ -77,7 +77,7 @@ namespace BuildMonitor.TfsOnline
 
         private async Task<IBuildDefinition> GetDefinitionDetail(string projectName, BuildDefinition definition)
         {
-            var projectNameEncoded = WebUtility.UrlEncode(projectName);
+            var projectNameEncoded = Uri.EscapeUriString(projectName);
             var queryPath = $"{projectNameEncoded}/_apis/build/definitions/{definition.Id}?api-version=2.0";
 
             var definitionDetail = await GetTfsResult(queryPath);
@@ -89,7 +89,7 @@ namespace BuildMonitor.TfsOnline
 
         public async Task<IBuildStatus> GetLatestBuild(string projectName, IBuildDefinition definition)
         {
-            var projectNameEncoded = WebUtility.UrlEncode(projectName);
+            var projectNameEncoded = Uri.EscapeUriString(projectName);
             var includeRunningFilter = m_IncludeRunningBuilds ? ",inProgress" : "";
             var queryPath = $"{projectNameEncoded}/_apis/build/builds?api-version=2.0";
 
@@ -135,7 +135,7 @@ namespace BuildMonitor.TfsOnline
         
         private async Task<IBuildStatus> GetBuildTimeline(string projectName, BuildStatus buildStatus)
         {
-            var projectNameEncoded = WebUtility.UrlEncode(projectName);
+            var projectNameEncoded = Uri.EscapeUriString(projectName);
             var queryPath = $"{projectNameEncoded}/_apis/build/builds/{buildStatus.Id}/timeline?api-version=2.0";
 
             var buildTimeline = await GetTfsResult(queryPath, true);
