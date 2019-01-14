@@ -201,10 +201,15 @@ namespace BuildMonitor.Core
                 m_LatestStatuses[definition.Id] = status;
             }
 
-            var worst = LatestStatuses
+            var worstList = LatestStatuses
                 .OrderByDescending(s => s.Value.Status)
                 .ThenByDescending(s => s.Value.Finish)
-                .First();
+                .ToList();
+
+            if (!worstList.Any())
+                return;
+
+            var worst = worstList.First();
 
             var worstDefn = m_MonitoredDefinitions.Single(d => d.Id == worst.Key);
             var worstStatus = worst.Value;
