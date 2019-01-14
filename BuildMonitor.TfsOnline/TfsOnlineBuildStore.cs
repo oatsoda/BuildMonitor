@@ -50,7 +50,8 @@ namespace BuildMonitor.TfsOnline
 
             var projects = result["value"].Children();
 
-            return projects.Select(p => p["name"].Value<string>());
+            return projects.Select(p => p["name"].Value<string>())
+                           .OrderBy(p => p);
         }
 
         public async Task<IEnumerable<IBuildDefinition>> GetDefinitions(string projectName)

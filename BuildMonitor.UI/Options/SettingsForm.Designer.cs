@@ -47,6 +47,8 @@
             this.cbRefreshDefinitions = new System.Windows.Forms.CheckBox();
             this.cbIncludeRunning = new System.Windows.Forms.CheckBox();
             this.tabTfs = new System.Windows.Forms.TabPage();
+            this.label9 = new System.Windows.Forms.Label();
+            this.label8 = new System.Windows.Forms.Label();
             this.imgBox = new System.Windows.Forms.PictureBox();
             this.btnValidate = new System.Windows.Forms.Button();
             this.cboTfsProjectName = new System.Windows.Forms.ComboBox();
@@ -54,8 +56,6 @@
             this.label4 = new System.Windows.Forms.Label();
             this.txtPassword = new System.Windows.Forms.TextBox();
             this.txtUsername = new System.Windows.Forms.TextBox();
-            this.label8 = new System.Windows.Forms.Label();
-            this.label9 = new System.Windows.Forms.Label();
             this.tabControl.SuspendLayout();
             this.tabWindows.SuspendLayout();
             this.tabGeneral.SuspendLayout();
@@ -65,7 +65,7 @@
             // 
             // txtTfsApiUrl
             // 
-            this.txtTfsApiUrl.Location = new System.Drawing.Point(136, 15);
+            this.txtTfsApiUrl.Location = new System.Drawing.Point(158, 15);
             this.txtTfsApiUrl.Name = "txtTfsApiUrl";
             this.txtTfsApiUrl.Size = new System.Drawing.Size(153, 20);
             this.txtTfsApiUrl.TabIndex = 0;
@@ -97,9 +97,9 @@
             this.label1.AutoSize = true;
             this.label1.Location = new System.Drawing.Point(15, 18);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(72, 13);
+            this.label1.Size = new System.Drawing.Size(89, 13);
             this.label1.TabIndex = 3;
-            this.label1.Text = "VSO Account";
+            this.label1.Text = "DevOps Account";
             // 
             // label2
             // 
@@ -148,7 +148,7 @@
             this.tabWindows.Location = new System.Drawing.Point(4, 22);
             this.tabWindows.Name = "tabWindows";
             this.tabWindows.Padding = new System.Windows.Forms.Padding(3);
-            this.tabWindows.Size = new System.Drawing.Size(509, 224);
+            this.tabWindows.Size = new System.Drawing.Size(509, 210);
             this.tabWindows.TabIndex = 2;
             this.tabWindows.Text = "Windows Preferences";
             this.tabWindows.UseVisualStyleBackColor = true;
@@ -177,7 +177,7 @@
             this.tabGeneral.Location = new System.Drawing.Point(4, 22);
             this.tabGeneral.Name = "tabGeneral";
             this.tabGeneral.Padding = new System.Windows.Forms.Padding(3);
-            this.tabGeneral.Size = new System.Drawing.Size(509, 224);
+            this.tabGeneral.Size = new System.Drawing.Size(509, 210);
             this.tabGeneral.TabIndex = 0;
             this.tabGeneral.Text = "General Settings";
             this.tabGeneral.UseVisualStyleBackColor = true;
@@ -269,8 +269,26 @@
             this.tabTfs.Padding = new System.Windows.Forms.Padding(3);
             this.tabTfs.Size = new System.Drawing.Size(509, 210);
             this.tabTfs.TabIndex = 1;
-            this.tabTfs.Text = "VSO";
+            this.tabTfs.Text = "VSTS / Azure DevOps";
             this.tabTfs.UseVisualStyleBackColor = true;
+            // 
+            // label9
+            // 
+            this.label9.AutoSize = true;
+            this.label9.Location = new System.Drawing.Point(312, 18);
+            this.label9.Name = "label9";
+            this.label9.Size = new System.Drawing.Size(173, 13);
+            this.label9.TabIndex = 16;
+            this.label9.Text = ".visualstudio.com/DefaultCollection";
+            // 
+            // label8
+            // 
+            this.label8.AutoSize = true;
+            this.label8.Location = new System.Drawing.Point(115, 18);
+            this.label8.Name = "label8";
+            this.label8.Size = new System.Drawing.Size(43, 13);
+            this.label8.TabIndex = 15;
+            this.label8.Text = "https://";
             // 
             // imgBox
             // 
@@ -330,24 +348,6 @@
             this.txtUsername.Name = "txtUsername";
             this.txtUsername.Size = new System.Drawing.Size(188, 20);
             this.txtUsername.TabIndex = 4;
-            // 
-            // label8
-            // 
-            this.label8.AutoSize = true;
-            this.label8.Location = new System.Drawing.Point(93, 18);
-            this.label8.Name = "label8";
-            this.label8.Size = new System.Drawing.Size(43, 13);
-            this.label8.TabIndex = 15;
-            this.label8.Text = "https://";
-            // 
-            // label9
-            // 
-            this.label9.AutoSize = true;
-            this.label9.Location = new System.Drawing.Point(290, 18);
-            this.label9.Name = "label9";
-            this.label9.Size = new System.Drawing.Size(173, 13);
-            this.label9.TabIndex = 16;
-            this.label9.Text = ".visualstudio.com/DefaultCollection";
             // 
             // SettingsForm
             // 
