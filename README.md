@@ -13,3 +13,10 @@ Currently works with Visual Studio Team Services (DevOps).
 Further plans:
 
 - Support for TFS on-premises.
+
+
+# Authentication
+
+Use Personal Access Tokens - put them in the Username field (not sure why I did this rather than Password)
+
+Create Personal Access Token in DevOps by going to the Account Menu item on the top toolbar -> Personal Access Tokens
