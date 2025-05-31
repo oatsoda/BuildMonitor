@@ -23,7 +23,7 @@ namespace BuildMonitor.UI.Protection
 
         public static string Unprotect(ProtectedInformation protectedData)
         {
-            var plainbytes = ProtectedData.Unprotect(protectedData.DataHashBytes, protectedData.DataEntropyBytes, DataProtectionScope.CurrentUser);
+            var plainbytes = ProtectedData.Unprotect(protectedData.DataCipherBytes, protectedData.DataEntropyBytes, DataProtectionScope.CurrentUser);
 
             return Encoding.Unicode.GetString(plainbytes);
         }

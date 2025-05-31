@@ -1,4 +1,5 @@
 ﻿using BuildMonitor.Core;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,7 +9,6 @@ using System.Net.Http.Headers;
 using System.Security.Authentication;
 using System.Text;
 using System.Threading.Tasks;
-using Newtonsoft.Json.Linq;
 
 namespace BuildMonitor.TfsOnline
 {
@@ -17,19 +17,13 @@ namespace BuildMonitor.TfsOnline
         private readonly Uri m_BaseUrl;
         private readonly bool m_IncludeRunningBuilds;
         private readonly HttpClient m_HttpClient;
-        
+
         public TfsOnlineBuildStore(IMonitorOptions options)
         {
-            if (!options.UseCredentials)
-                throw new ArgumentOutOfRangeException();
-
-            if (options.Credential == null)
-                throw new ArgumentOutOfRangeException();
-            
             m_BaseUrl = new Uri(
-                string.Format($"https://{options.TfsApiUrl}.visualstudio.com/DefaultCollection/")
+                string.Format($"https://{options.AzureDevOpsOrganisation}.visualstudio.com/DefaultCollection/")
                 );
-            
+
             m_HttpClient = new HttpClient();
             m_HttpClient.DefaultRequestHeaders.Accept.Add(
                     new MediaTypeWithQualityHeaderValue("application/json"));
@@ -37,8 +31,8 @@ namespace BuildMonitor.TfsOnline
             m_HttpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic",
                 Convert.ToBase64String(
                     Encoding.ASCII.GetBytes(
-                        $"{options.Credential.UserName}:{options.Credential.Password}")));
-            
+                        $"{options.PersonalAccessTokenPlainText}:")));
+
             m_IncludeRunningBuilds = options.IncludeRunningBuilds;
         }
 
@@ -74,7 +68,7 @@ namespace BuildMonitor.TfsOnline
                 buildDefinitions.Select(d => GetDefinitionDetail(projectName, d))
                 );
         }
-        
+
 
         private async Task<IBuildDefinition> GetDefinitionDetail(string projectName, BuildDefinition definition)
         {
@@ -94,9 +88,9 @@ namespace BuildMonitor.TfsOnline
             var includeRunningFilter = m_IncludeRunningBuilds ? ",inProgress" : "";
             var queryPath = $"{projectNameEncoded}/_apis/build/builds?api-version=2.0";
 
-            queryPath = string.Join("&", 
-                queryPath, 
-                $"definitions={definition.Id}", 
+            queryPath = string.Join("&",
+                queryPath,
+                $"definitions={definition.Id}",
                 $"statusFilter=completed{includeRunningFilter}"
                 );
 
@@ -110,7 +104,7 @@ namespace BuildMonitor.TfsOnline
             var b = builds
                 // This should leave: succeeded, partiallySucceeded, failed and, if
                 // the option was added above, builds without a result - i.e. inProgress status
-                .Where(t => (t["result"]?.Value<string>() ?? string.Empty) != "canceled") 
+                .Where(t => (t["result"]?.Value<string>() ?? string.Empty) != "canceled")
                 .OrderByDescending(t => t["startTime"])
                 .FirstOrDefault();
 
@@ -133,14 +127,14 @@ namespace BuildMonitor.TfsOnline
 
             return buildStatus;
         }
-        
+
         private async Task<IBuildStatus> GetBuildTimeline(string projectName, BuildStatus buildStatus)
         {
             var projectNameEncoded = Uri.EscapeUriString(projectName);
             var queryPath = $"{projectNameEncoded}/_apis/build/builds/{buildStatus.Id}/timeline?api-version=2.0";
 
             var buildTimeline = await GetTfsResult(queryPath, true);
-            
+
             if (buildTimeline == null)
                 return buildStatus;
 
@@ -164,7 +158,7 @@ namespace BuildMonitor.TfsOnline
 
             return JObject.Parse(resultJson);
         }
-        
+
         private async Task<string> GetJson(string queryPath, bool allowNoContent)
         {
             var url = FormatUrl(queryPath);
@@ -209,5 +203,5 @@ namespace BuildMonitor.TfsOnline
             m_HttpClient?.Dispose();
         }
     }
-    
+
 }
