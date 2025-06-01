@@ -28,81 +28,87 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(AboutForm));
-            this.label1 = new System.Windows.Forms.Label();
-            this.label2 = new System.Windows.Forms.Label();
-            this.textBox1 = new System.Windows.Forms.TextBox();
-            this.lblVersion = new System.Windows.Forms.Label();
-            this.btnOk = new System.Windows.Forms.Button();
-            this.SuspendLayout();
+            var resources = new System.ComponentModel.ComponentResourceManager(typeof(AboutForm));
+            label1 = new System.Windows.Forms.Label();
+            label2 = new System.Windows.Forms.Label();
+            textBox1 = new System.Windows.Forms.TextBox();
+            lblVersion = new System.Windows.Forms.Label();
+            btnOk = new System.Windows.Forms.Button();
+            SuspendLayout();
             // 
             // label1
             // 
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(13, 13);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(48, 13);
-            this.label1.TabIndex = 0;
-            this.label1.Text = "Version: ";
+            label1.AutoSize = true;
+            label1.Location = new System.Drawing.Point(15, 15);
+            label1.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            label1.Name = "label1";
+            label1.Size = new System.Drawing.Size(51, 15);
+            label1.TabIndex = 0;
+            label1.Text = "Version: ";
             // 
             // label2
             // 
-            this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(13, 38);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(51, 13);
-            this.label2.TabIndex = 1;
-            this.label2.Text = "Licence: ";
+            label2.AutoSize = true;
+            label2.Location = new System.Drawing.Point(15, 44);
+            label2.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            label2.Name = "label2";
+            label2.Size = new System.Drawing.Size(53, 15);
+            label2.TabIndex = 1;
+            label2.Text = "Licence: ";
             // 
             // textBox1
             // 
-            this.textBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.textBox1.Location = new System.Drawing.Point(16, 68);
-            this.textBox1.Multiline = true;
-            this.textBox1.Name = "textBox1";
-            this.textBox1.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.textBox1.Size = new System.Drawing.Size(472, 113);
-            this.textBox1.TabIndex = 2;
-            this.textBox1.Text = resources.GetString("textBox1.Text");
+            textBox1.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
+            textBox1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            textBox1.Location = new System.Drawing.Point(19, 78);
+            textBox1.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            textBox1.Multiline = true;
+            textBox1.Name = "textBox1";
+            textBox1.ReadOnly = true;
+            textBox1.Size = new System.Drawing.Size(550, 159);
+            textBox1.TabIndex = 2;
+            textBox1.Text = resources.GetString("textBox1.Text");
             // 
             // lblVersion
             // 
-            this.lblVersion.AutoSize = true;
-            this.lblVersion.Location = new System.Drawing.Point(80, 13);
-            this.lblVersion.Name = "lblVersion";
-            this.lblVersion.Size = new System.Drawing.Size(10, 13);
-            this.lblVersion.TabIndex = 3;
-            this.lblVersion.Text = "-";
+            lblVersion.AutoSize = true;
+            lblVersion.Location = new System.Drawing.Point(93, 15);
+            lblVersion.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            lblVersion.Name = "lblVersion";
+            lblVersion.Size = new System.Drawing.Size(12, 15);
+            lblVersion.TabIndex = 3;
+            lblVersion.Text = "-";
             // 
             // btnOk
             // 
-            this.btnOk.Location = new System.Drawing.Point(414, 190);
-            this.btnOk.Name = "btnOk";
-            this.btnOk.Size = new System.Drawing.Size(75, 23);
-            this.btnOk.TabIndex = 4;
-            this.btnOk.Text = "OK";
-            this.btnOk.UseVisualStyleBackColor = true;
-            this.btnOk.Click += new System.EventHandler(this.btnOk_Click);
+            btnOk.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right;
+            btnOk.Location = new System.Drawing.Point(482, 245);
+            btnOk.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            btnOk.Name = "btnOk";
+            btnOk.Size = new System.Drawing.Size(88, 27);
+            btnOk.TabIndex = 4;
+            btnOk.Text = "OK";
+            btnOk.UseVisualStyleBackColor = true;
+            btnOk.Click += btnOk_Click;
             // 
             // AboutForm
             // 
-            this.AcceptButton = this.btnOk;
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(500, 221);
-            this.ControlBox = false;
-            this.Controls.Add(this.btnOk);
-            this.Controls.Add(this.lblVersion);
-            this.Controls.Add(this.textBox1);
-            this.Controls.Add(this.label2);
-            this.Controls.Add(this.label1);
-            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
-            this.Name = "AboutForm";
-            this.Text = "About Build Monitor";
-            this.ResumeLayout(false);
-            this.PerformLayout();
+            AcceptButton = btnOk;
+            AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
+            AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            ClientSize = new System.Drawing.Size(583, 284);
+            ControlBox = false;
+            Controls.Add(btnOk);
+            Controls.Add(lblVersion);
+            Controls.Add(textBox1);
+            Controls.Add(label2);
+            Controls.Add(label1);
+            FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
+            Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            Name = "AboutForm";
+            Text = "About Build Monitor";
+            ResumeLayout(false);
+            PerformLayout();
 
         }
 
