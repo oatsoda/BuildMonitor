@@ -48,7 +48,7 @@ namespace BuildMonitor.UI.Controls
             if (buildDetail.Status != null)
                 ToolTip.SetToolTip(lblLinkTitle, buildDetail.Status.Name);
 
-            lblRequestedBy.Text = buildDetail.Status.ToRequestedByDescription(18);
+            lblRequestedBy.Text = buildDetail.Status.ToRequestedByDescription(30);
             lblStart.Text = buildDetail.Status.ToCurrentTimeDescription();
 
             if (buildDetail.Definition.IsVNext)

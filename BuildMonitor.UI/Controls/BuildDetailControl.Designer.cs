@@ -46,11 +46,12 @@
             // 
             lblLinkTitle.ActiveLinkColor = System.Drawing.Color.FromArgb(0, 122, 204);
             lblLinkTitle.AutoSize = true;
+            lblLinkTitle.Font = new System.Drawing.Font("Segoe UI", 11F);
             lblLinkTitle.LinkColor = System.Drawing.Color.FromArgb(0, 122, 204);
-            lblLinkTitle.Location = new System.Drawing.Point(37, 3);
+            lblLinkTitle.Location = new System.Drawing.Point(42, 5);
             lblLinkTitle.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             lblLinkTitle.Name = "lblLinkTitle";
-            lblLinkTitle.Size = new System.Drawing.Size(65, 15);
+            lblLinkTitle.Size = new System.Drawing.Size(81, 20);
             lblLinkTitle.TabIndex = 0;
             lblLinkTitle.TabStop = true;
             lblLinkTitle.Text = "lblLinkTitle";
@@ -60,28 +61,30 @@
             // lblRequestedBy
             // 
             lblRequestedBy.AutoSize = true;
+            lblRequestedBy.Font = new System.Drawing.Font("Segoe UI", 11F);
             lblRequestedBy.ForeColor = System.Drawing.Color.FromArgb(241, 241, 241);
-            lblRequestedBy.Location = new System.Drawing.Point(42, 23);
+            lblRequestedBy.Location = new System.Drawing.Point(42, 34);
             lblRequestedBy.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             lblRequestedBy.Name = "lblRequestedBy";
-            lblRequestedBy.Size = new System.Drawing.Size(88, 15);
+            lblRequestedBy.Size = new System.Drawing.Size(112, 20);
             lblRequestedBy.TabIndex = 1;
             lblRequestedBy.Text = "lblRequestedBy";
             // 
             // lblStart
             // 
             lblStart.AutoSize = true;
+            lblStart.Font = new System.Drawing.Font("Segoe UI", 11F);
             lblStart.ForeColor = System.Drawing.Color.FromArgb(241, 241, 241);
-            lblStart.Location = new System.Drawing.Point(191, 23);
+            lblStart.Location = new System.Drawing.Point(265, 34);
             lblStart.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             lblStart.Name = "lblStart";
-            lblStart.Size = new System.Drawing.Size(44, 15);
+            lblStart.Size = new System.Drawing.Size(57, 20);
             lblStart.TabIndex = 2;
             lblStart.Text = "lblStart";
             // 
             // picStatus
             // 
-            picStatus.Location = new System.Drawing.Point(5, 5);
+            picStatus.Location = new System.Drawing.Point(11, 7);
             picStatus.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             picStatus.Name = "picStatus";
             picStatus.Size = new System.Drawing.Size(24, 24);
@@ -103,7 +106,7 @@
             // 
             lblErrors.AutoSize = true;
             lblErrors.ForeColor = System.Drawing.Color.FromArgb(241, 241, 241);
-            lblErrors.Location = new System.Drawing.Point(223, 3);
+            lblErrors.Location = new System.Drawing.Point(302, 9);
             lblErrors.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             lblErrors.Name = "lblErrors";
             lblErrors.Size = new System.Drawing.Size(13, 15);
@@ -115,7 +118,7 @@
             // 
             lblWarnings.AutoSize = true;
             lblWarnings.ForeColor = System.Drawing.Color.FromArgb(241, 241, 241);
-            lblWarnings.Location = new System.Drawing.Point(267, 3);
+            lblWarnings.Location = new System.Drawing.Point(346, 9);
             lblWarnings.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             lblWarnings.Name = "lblWarnings";
             lblWarnings.Size = new System.Drawing.Size(13, 15);
@@ -125,20 +128,20 @@
             // 
             // imgErrors
             // 
-            imgErrors.Location = new System.Drawing.Point(209, 3);
+            imgErrors.Location = new System.Drawing.Point(286, 8);
             imgErrors.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             imgErrors.Name = "imgErrors";
-            imgErrors.Size = new System.Drawing.Size(14, 14);
+            imgErrors.Size = new System.Drawing.Size(16, 16);
             imgErrors.TabIndex = 7;
             imgErrors.TabStop = false;
             imgErrors.Visible = false;
             // 
             // imgWarnings
             // 
-            imgWarnings.Location = new System.Drawing.Point(253, 3);
+            imgWarnings.Location = new System.Drawing.Point(330, 8);
             imgWarnings.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             imgWarnings.Name = "imgWarnings";
-            imgWarnings.Size = new System.Drawing.Size(14, 14);
+            imgWarnings.Size = new System.Drawing.Size(16, 16);
             imgWarnings.TabIndex = 8;
             imgWarnings.TabStop = false;
             imgWarnings.Visible = false;
@@ -159,7 +162,7 @@
             Controls.Add(lblLinkTitle);
             Margin = new System.Windows.Forms.Padding(0);
             Name = "BuildDetailControl";
-            Size = new System.Drawing.Size(300, 44);
+            Size = new System.Drawing.Size(370, 65);
             ((System.ComponentModel.ISupportInitialize)picStatus).EndInit();
             ((System.ComponentModel.ISupportInitialize)imgErrors).EndInit();
             ((System.ComponentModel.ISupportInitialize)imgWarnings).EndInit();
