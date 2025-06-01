@@ -1,13 +1,15 @@
-﻿using System.Diagnostics;
-using System.Windows.Forms;
-using BuildMonitor.Core;
+﻿using BuildMonitor.Core;
 using BuildMonitor.Core.InterfaceExtensions;
 using BuildMonitor.UI.Helpers;
+using System.ComponentModel;
+using System.Diagnostics;
+using System.Windows.Forms;
 
 namespace BuildMonitor.UI.Controls
 {
     public partial class BuildDetailControl : UserControl
     {
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
         public ToolTip ToolTip { get; set; }
 
         public BuildDetailControl()
@@ -37,7 +39,7 @@ namespace BuildMonitor.UI.Controls
         public void DisplayDetail(BuildDetail buildDetail)
         {
             var url = buildDetail.Status == null ? buildDetail.Definition.Url : buildDetail.Status.Url;
-            
+
             lblLinkTitle.Text = buildDetail.Definition.Name;
 
             lblLinkTitle.Links.Clear();
@@ -55,9 +57,9 @@ namespace BuildMonitor.UI.Controls
                 lblWarnings.Text = buildDetail.Status?.WarningCount.ToString() ?? "0";
             }
 
-            lblErrors.Visible = 
-            imgErrors.Visible = 
-            lblWarnings.Visible = 
+            lblErrors.Visible =
+            imgErrors.Visible =
+            lblWarnings.Visible =
             imgWarnings.Visible = buildDetail.Definition.IsVNext;
 
             picStatus.Image = buildDetail.Status?.Status.ToBitmap(picStatus.Size);
