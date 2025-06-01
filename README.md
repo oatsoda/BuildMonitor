@@ -17,8 +17,6 @@ Use Personal Access Tokens:
 
 # Conversion to .NET / TODO
 
-- Fix icons looking low-quality
-
 - Decide on how to version. Could hardcode in the Directory.Build.props, or could just pass -p:Version=1.0.0 to the dotnet build command.
 If the latter, will need to avoid the upgrage check on app startup when running Debug builds.
 
