@@ -54,7 +54,7 @@ namespace BuildMonitor.UI.Controls
 
         private void SetStartLocation()
         {
-            var bounds = this.GetSreenBounds();
+            var bounds = this.GetScreenBounds();
 
             m_ExpectedMinTop = bounds.Height;
             m_ExpectedMaxTop = (bounds.Height - Height) - 2;

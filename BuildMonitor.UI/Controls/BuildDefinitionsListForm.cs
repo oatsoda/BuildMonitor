@@ -188,7 +188,7 @@ namespace BuildMonitor.UI.Controls
             Height = m_CalculatedHeight;
             Width = m_CalculatedWidth;
 
-            var bounds = this.GetSreenBounds();
+            var bounds = this.GetScreenBounds();
             var x = (bounds.Width - Width) - OFFSET_X;
             var y = (bounds.Height - Height) - OFFSET_Y;
             SetDesktopLocation(x, y);

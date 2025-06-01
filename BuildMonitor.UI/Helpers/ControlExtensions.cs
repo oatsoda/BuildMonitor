@@ -6,7 +6,7 @@ namespace BuildMonitor.UI.Helpers
 {
     public static class ControlExtensions
     {
-        public static Rectangle GetSreenBounds(this Control ctrl)
+        public static Rectangle GetScreenBounds(this Control ctrl)
         {
             return Screen.FromControl(ctrl).WorkingArea;
         }
