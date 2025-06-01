@@ -1,12 +1,12 @@
-﻿using System;
-using System.Configuration;
-using System.Windows.Forms;
-using BuildMonitor.App.Properties;
+﻿using BuildMonitor.App.Properties;
 using BuildMonitor.Core;
 using BuildMonitor.TfsOnline;
 using BuildMonitor.UI.Controls;
 using BuildMonitor.UI.Options;
 using BuildMonitor.UI.Updater;
+using System;
+using System.Configuration;
+using System.Windows.Forms;
 
 namespace BuildMonitor.App
 {
@@ -27,10 +27,10 @@ namespace BuildMonitor.App
             var updater = new AppUpdater(versionUrl, installUrl);
             if (updater.CheckForUpdates())
                 return;
-            
+
             IBuildStoreFactory buildStoreFactory = new TfsOnlineBuildStoreFactory();
             IBuildDefinitionMonitor monitor = new BuildDefinitionMonitor(buildStoreFactory);
-            
+
             var options = new MonitorOptions(Settings.Default);
 
             Application.Run(

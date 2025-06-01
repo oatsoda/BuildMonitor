@@ -93,14 +93,12 @@ namespace BuildMonitor.UI.Options
             options.ValidOptions = cboAdoProjectName.Enabled;
         }
 
-        private void btnValidate_Click(object sender, EventArgs e)
+        private async void btnValidate_Click(object sender, EventArgs e)
         {
-#pragma warning disable 4014
-            ValidateADOSettings();
-#pragma warning restore 4014
+            await ValidateADOSettings();
         }
 
-        private void tabControl_SelectedIndexChanged(object sender, EventArgs e)
+        private async void tabControl_SelectedIndexChanged(object sender, EventArgs e)
         {
             if (tabControl.SelectedTab != tabTfs)
                 return;
@@ -108,12 +106,9 @@ namespace BuildMonitor.UI.Options
             if (m_SavedSettingsValidated)
                 return;
 
-#pragma warning disable 4014
-            ValidateADOSettings();
-#pragma warning restore 4014
+            await ValidateADOSettings();
         }
 
-        // ReSharper disable once UnusedMethodReturnValue.Local - not recommended to use void with async
         private async Task ValidateADOSettings()
         {
             tabTfs.Enabled = false;
