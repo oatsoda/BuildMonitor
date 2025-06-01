@@ -106,7 +106,7 @@ namespace BuildMonitor.UI.Options
 
         private async void tabControl_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if (tabControl.SelectedTab != tabTfs)
+            if (tabControl.SelectedTab != tabADO)
                 return;
 
             if (m_SavedSettingsValidated)
@@ -117,7 +117,7 @@ namespace BuildMonitor.UI.Options
 
         private async Task ValidateADOSettings()
         {
-            tabTfs.Enabled = false;
+            tabADO.Enabled = false;
 
             var tempOptions = new MonitorOptions();
             RetrieveOptions(tempOptions);
@@ -126,7 +126,7 @@ namespace BuildMonitor.UI.Options
             {
                 cboAdoProjectName.Enabled = false;
                 btnOk.Enabled = false;
-                tabTfs.Enabled = true;
+                tabADO.Enabled = true;
                 return;
             }
 
@@ -161,13 +161,13 @@ namespace BuildMonitor.UI.Options
 
                 cboAdoProjectName.Enabled = true;
                 btnOk.Enabled = true;
-                tabTfs.Enabled = true;
+                tabADO.Enabled = true;
                 return;
             }
 
             cboAdoProjectName.Enabled = false;
             btnOk.Enabled = false;
-            tabTfs.Enabled = true;
+            tabADO.Enabled = true;
         }
 
         private void cbRefreshDefinitions_CheckedChanged(object sender, EventArgs e)

@@ -12,7 +12,7 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\BuildMonitor.Core\BuildMonitor.Core.csproj" />
-    <ProjectReference Include="..\BuildMonitor.TfsOnline\BuildMonitor.TfsOnline.csproj" />
+    <ProjectReference Include="..\BuildMonitor.ADO\BuildMonitor.ADO.csproj" />
     <ProjectReference Include="..\BuildMonitor.UI\BuildMonitor.UI.csproj" />
   </ItemGroup>
 </Project>

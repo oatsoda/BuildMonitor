@@ -46,7 +46,7 @@
             txtDefinitionInterval = new System.Windows.Forms.TextBox();
             cbRefreshDefinitions = new System.Windows.Forms.CheckBox();
             cbIncludeRunning = new System.Windows.Forms.CheckBox();
-            tabTfs = new System.Windows.Forms.TabPage();
+            tabADO = new System.Windows.Forms.TabPage();
             label8 = new System.Windows.Forms.Label();
             imgBox = new System.Windows.Forms.PictureBox();
             btnValidate = new System.Windows.Forms.Button();
@@ -57,7 +57,7 @@
             tabControl.SuspendLayout();
             tabWindows.SuspendLayout();
             tabGeneral.SuspendLayout();
-            tabTfs.SuspendLayout();
+            tabADO.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)imgBox).BeginInit();
             SuspendLayout();
             // 
@@ -137,7 +137,7 @@
             tabControl.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
             tabControl.Controls.Add(tabWindows);
             tabControl.Controls.Add(tabGeneral);
-            tabControl.Controls.Add(tabTfs);
+            tabControl.Controls.Add(tabADO);
             tabControl.Location = new System.Drawing.Point(14, 14);
             tabControl.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             tabControl.Name = "tabControl";
@@ -264,25 +264,25 @@
             cbIncludeRunning.Text = "Include monitoring of builds in progress";
             cbIncludeRunning.UseVisualStyleBackColor = true;
             // 
-            // tabTfs
+            // tabADO
             // 
-            tabTfs.Controls.Add(label8);
-            tabTfs.Controls.Add(imgBox);
-            tabTfs.Controls.Add(btnValidate);
-            tabTfs.Controls.Add(cboAdoProjectName);
-            tabTfs.Controls.Add(label5);
-            tabTfs.Controls.Add(txtAdoPat);
-            tabTfs.Controls.Add(label1);
-            tabTfs.Controls.Add(txtAdoOrganisation);
-            tabTfs.Controls.Add(label2);
-            tabTfs.Location = new System.Drawing.Point(4, 24);
-            tabTfs.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            tabTfs.Name = "tabTfs";
-            tabTfs.Padding = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            tabTfs.Size = new System.Drawing.Size(595, 204);
-            tabTfs.TabIndex = 1;
-            tabTfs.Text = "Azure DevOps";
-            tabTfs.UseVisualStyleBackColor = true;
+            tabADO.Controls.Add(label8);
+            tabADO.Controls.Add(imgBox);
+            tabADO.Controls.Add(btnValidate);
+            tabADO.Controls.Add(cboAdoProjectName);
+            tabADO.Controls.Add(label5);
+            tabADO.Controls.Add(txtAdoPat);
+            tabADO.Controls.Add(label1);
+            tabADO.Controls.Add(txtAdoOrganisation);
+            tabADO.Controls.Add(label2);
+            tabADO.Location = new System.Drawing.Point(4, 24);
+            tabADO.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            tabADO.Name = "tabADO";
+            tabADO.Padding = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            tabADO.Size = new System.Drawing.Size(595, 204);
+            tabADO.TabIndex = 1;
+            tabADO.Text = "Azure DevOps";
+            tabADO.UseVisualStyleBackColor = true;
             // 
             // label8
             // 
@@ -374,8 +374,8 @@
             tabWindows.PerformLayout();
             tabGeneral.ResumeLayout(false);
             tabGeneral.PerformLayout();
-            tabTfs.ResumeLayout(false);
-            tabTfs.PerformLayout();
+            tabADO.ResumeLayout(false);
+            tabADO.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)imgBox).EndInit();
             ResumeLayout(false);
 
@@ -392,7 +392,7 @@
         private System.Windows.Forms.TextBox txtInterval;
         private System.Windows.Forms.TabControl tabControl;
         private System.Windows.Forms.TabPage tabGeneral;
-        private System.Windows.Forms.TabPage tabTfs;
+        private System.Windows.Forms.TabPage tabADO;
         private System.Windows.Forms.TextBox txtAdoPat;
         private System.Windows.Forms.Label label5;
         private System.Windows.Forms.TabPage tabWindows;

@@ -1,5 +1,5 @@
-﻿using BuildMonitor.Core;
-using BuildMonitor.TfsOnline;
+﻿using BuildMonitor.ADO;
+using BuildMonitor.Core;
 using BuildMonitor.UI.Controls;
 using BuildMonitor.UI.Options;
 using BuildMonitor.UI.Updater;
@@ -29,7 +29,7 @@ namespace BuildMonitor.App
             if (await updater.CheckForUpdates())
                 return;
 
-            IBuildStoreFactory buildStoreFactory = new TfsOnlineBuildStoreFactory();
+            IBuildStoreFactory buildStoreFactory = new ADOBuildStoreFactory();
             IBuildDefinitionMonitor monitor = new BuildDefinitionMonitor(buildStoreFactory);
 
             var options = new MonitorOptions();
