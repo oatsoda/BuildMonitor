@@ -106,6 +106,7 @@
             FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
             Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             Name = "AboutForm";
+            ShowInTaskbar = false;
             Text = "About Build Monitor";
             ResumeLayout(false);
             PerformLayout();

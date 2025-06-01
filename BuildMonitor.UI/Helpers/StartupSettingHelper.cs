@@ -12,9 +12,6 @@ namespace BuildMonitor.UI.Helpers
 
         public static void SetStartup(bool runOnStartup)
         {
-#if DEBUG
-            return;
-#endif
             var key = Registry.CurrentUser.OpenSubKey(_REG_KEY, true);
 
             if (runOnStartup)

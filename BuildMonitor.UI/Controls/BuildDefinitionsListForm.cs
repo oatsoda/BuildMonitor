@@ -1,13 +1,13 @@
-﻿using System;
+﻿using BuildMonitor.Core;
+using BuildMonitor.UI.Helpers;
+using BuildMonitor.UI.Options;
+using BuildMonitor.UI.Updater;
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using BuildMonitor.Core;
-using BuildMonitor.UI.Helpers;
-using BuildMonitor.UI.Options;
-using BuildMonitor.UI.Updater;
 
 namespace BuildMonitor.UI.Controls
 {
@@ -33,7 +33,7 @@ namespace BuildMonitor.UI.Controls
         private readonly IAppUpdater m_AppUpdater;
 
         private readonly IBuildDefinitionMonitor m_Monitor;
-        
+
         private IEnumerable<BuildDetailControl> BuildDetailControls => Controls.OfType<BuildDetailControl>();
 
         private ToolTip m_ToolTip;
@@ -42,8 +42,8 @@ namespace BuildMonitor.UI.Controls
 
         #region Constructor
 
-        public BuildDefinitionsListForm(IBuildDefinitionMonitor monitor, 
-                                        IMonitorOptions currentOptions, 
+        public BuildDefinitionsListForm(IBuildDefinitionMonitor monitor,
+                                        IMonitorOptions currentOptions,
                                         IBuildStoreFactory buildStoreFactory,
                                         IAppUpdater appUpdater)
         {
@@ -52,7 +52,7 @@ namespace BuildMonitor.UI.Controls
             // This ensures first click on notify icon displays the form. Otherwise the
             // first call to SetDesktopLocation sets the WindowState back to Minimized even
             // though we have just set it to Normal.
-            Visible = false; 
+            Visible = false;
 
             m_FirstStatusUpdate = true;
 
@@ -79,7 +79,7 @@ namespace BuildMonitor.UI.Controls
                 IsBalloon = true
             };
         }
-        
+
         #endregion
 
         #region Private Methods
@@ -89,7 +89,7 @@ namespace BuildMonitor.UI.Controls
             Controls.Clear();
 
             SetMessageOnly("Waiting for builds...");
-            
+
             Task.Run(() => m_Monitor.Start(m_CurrentMonitorOptions));
         }
 
@@ -119,7 +119,7 @@ namespace BuildMonitor.UI.Controls
                 else
                 {
                     c = new BuildDetailControl();
-                    c.Top = ((x - 1)*c.Height);
+                    c.Top = ((x - 1) * c.Height);
                     c.ToolTip = m_ToolTip;
                     c.DisplayDetail(detail);
                     Controls.Add(c);
@@ -292,15 +292,15 @@ namespace BuildMonitor.UI.Controls
         #endregion
 
         #region Toolstrip Event Handlers
-        
+
         private void exitToolStripMenuItem_Click(object sender, EventArgs e)
         {
             CloseApplication();
         }
-        
-        private void updateToolStripMenuItem_Click(object sender, EventArgs e)
+
+        private async void updateToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            if (m_AppUpdater.CheckForUpdates())
+            if (await m_AppUpdater.CheckForUpdates())
                 CloseApplication();
         }
 

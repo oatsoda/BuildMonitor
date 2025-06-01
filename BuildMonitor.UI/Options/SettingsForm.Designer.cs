@@ -152,7 +152,7 @@
             tabWindows.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             tabWindows.Name = "tabWindows";
             tabWindows.Padding = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            tabWindows.Size = new System.Drawing.Size(595, 215);
+            tabWindows.Size = new System.Drawing.Size(595, 204);
             tabWindows.TabIndex = 2;
             tabWindows.Text = "Windows Preferences";
             tabWindows.UseVisualStyleBackColor = true;
@@ -278,7 +278,7 @@
             tabTfs.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             tabTfs.Name = "tabTfs";
             tabTfs.Padding = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            tabTfs.Size = new System.Drawing.Size(595, 186);
+            tabTfs.Size = new System.Drawing.Size(595, 204);
             tabTfs.TabIndex = 1;
             tabTfs.Text = "Azure DevOps";
             tabTfs.UseVisualStyleBackColor = true;
@@ -353,6 +353,7 @@
             FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
             Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             Name = "SettingsForm";
+            ShowInTaskbar = false;
             StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             Text = "Monitor Settings";
             tabControl.ResumeLayout(false);

@@ -8,14 +8,8 @@ namespace BuildMonitor.UI.Protection
         public static ProtectedInformation Protect(string plaintext)
         {
             // Generate additional entropy (will be used as the Initialization vector)
-            var entropy = new byte[20];
-            using (var rng = new RNGCryptoServiceProvider())
-            {
-                rng.GetBytes(entropy);
-            }
-
+            var entropy = RandomNumberGenerator.GetBytes(20);
             var plainbytes = Encoding.Unicode.GetBytes(plaintext);
-
             var cipherbytes = ProtectedData.Protect(plainbytes, entropy, DataProtectionScope.CurrentUser);
 
             return new ProtectedInformation(cipherbytes, entropy);

@@ -17,7 +17,6 @@ Use Personal Access Tokens:
 
 # Conversion to .NET / TODO
 
-- Clean up Warnings
 - Remove App.config
 - Fix icons looking low-quality
 - Reset all settings option to aid debugging new install scenarios

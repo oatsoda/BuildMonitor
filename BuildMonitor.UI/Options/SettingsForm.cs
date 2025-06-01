@@ -30,6 +30,11 @@ namespace BuildMonitor.UI.Options
             // Windows Tab
             cbStartup.Checked = StartupSettingHelper.RunOnStartup;
 
+#if DEBUG
+            cbStartup.Enabled = false;
+            cbStartup.Text += " [Option disabled in debug mode]";
+#endif
+
             // General Tab
             txtInterval.Text = m_Options.IntervalSeconds.ToString(CultureInfo.InvariantCulture);
 

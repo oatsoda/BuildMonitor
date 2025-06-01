@@ -6,6 +6,7 @@ using BuildMonitor.UI.Options;
 using BuildMonitor.UI.Updater;
 using System;
 using System.Configuration;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace BuildMonitor.App
@@ -16,7 +17,7 @@ namespace BuildMonitor.App
         /// The main entry point for the application.
         /// </summary>
         [STAThread]
-        static void Main()
+        static async Task Main()
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
@@ -25,7 +26,7 @@ namespace BuildMonitor.App
             var installUrl = ConfigurationManager.AppSettings["InstallUrl"];
 
             var updater = new AppUpdater(versionUrl, installUrl);
-            if (updater.CheckForUpdates())
+            if (await updater.CheckForUpdates())
                 return;
 
             IBuildStoreFactory buildStoreFactory = new TfsOnlineBuildStoreFactory();

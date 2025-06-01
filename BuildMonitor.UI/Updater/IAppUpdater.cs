@@ -1,7 +1,9 @@
-﻿namespace BuildMonitor.UI.Updater
+﻿using System.Threading.Tasks;
+
+namespace BuildMonitor.UI.Updater
 {
     public interface IAppUpdater
     {
-        bool CheckForUpdates();
+        Task<bool> CheckForUpdates();
     }
 }

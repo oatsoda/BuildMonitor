@@ -1,13 +1,16 @@
 ﻿using System;
 using System.Diagnostics;
-using System.Net;
+using System.Net.Http;
 using System.Reflection;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace BuildMonitor.UI.Updater
 {
     public class AppUpdater : IAppUpdater
     {
+        private readonly HttpClient m_HttpClient = new();
+
         private readonly string m_VersionUrl;
         private readonly string m_LatestBinaryUrl;
 
@@ -19,9 +22,9 @@ namespace BuildMonitor.UI.Updater
             m_LatestBinaryUrl = installUrl;
         }
 
-        public bool CheckForUpdates()
+        public async Task<bool> CheckForUpdates()
         {
-            var latestVersion = GetLatestVersion();
+            var latestVersion = await GetLatestVersion();
 
             if (latestVersion <= CurrentVersion)
                 return false;
@@ -41,13 +44,9 @@ namespace BuildMonitor.UI.Updater
             return true;
         }
 
-        private Version GetLatestVersion()
+        private async Task<Version> GetLatestVersion()
         {
-            string latestVersion;
-            using (var wc = new WebClient())
-            {
-                latestVersion = wc.DownloadString(m_VersionUrl);
-            }
+            string latestVersion = await m_HttpClient.GetStringAsync(m_VersionUrl);
 
             return Version.Parse(latestVersion);
         }
