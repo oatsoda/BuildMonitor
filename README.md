@@ -18,7 +18,6 @@ Use Personal Access Tokens:
 # Conversion to .NET / TODO
 
 - Fix icons looking low-quality
-- Reset all settings option to aid debugging new install scenarios
 - Rename Tfs/TfsOnline to ADO
 
 - Decide on how to version. Could hardcode in the Directory.Build.props, or could just pass -p:Version=1.0.0 to the dotnet build command.

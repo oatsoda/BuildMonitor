@@ -53,6 +53,7 @@
             cboAdoProjectName = new System.Windows.Forms.ComboBox();
             label5 = new System.Windows.Forms.Label();
             txtAdoPat = new System.Windows.Forms.TextBox();
+            btnReset = new System.Windows.Forms.Button();
             tabControl.SuspendLayout();
             tabWindows.SuspendLayout();
             tabGeneral.SuspendLayout();
@@ -62,7 +63,7 @@
             // 
             // txtAdoOrganisation
             // 
-            txtAdoOrganisation.Location = new System.Drawing.Point(337, 17);
+            txtAdoOrganisation.Location = new System.Drawing.Point(321, 18);
             txtAdoOrganisation.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             txtAdoOrganisation.Name = "txtAdoOrganisation";
             txtAdoOrganisation.Size = new System.Drawing.Size(178, 23);
@@ -286,7 +287,7 @@
             // label8
             // 
             label8.AutoSize = true;
-            label8.Location = new System.Drawing.Point(192, 21);
+            label8.Location = new System.Drawing.Point(180, 21);
             label8.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             label8.Name = "label8";
             label8.Size = new System.Drawing.Size(129, 15);
@@ -295,7 +296,7 @@
             // 
             // imgBox
             // 
-            imgBox.Location = new System.Drawing.Point(366, 90);
+            imgBox.Location = new System.Drawing.Point(350, 91);
             imgBox.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             imgBox.Name = "imgBox";
             imgBox.Size = new System.Drawing.Size(28, 28);
@@ -304,7 +305,7 @@
             // 
             // btnValidate
             // 
-            btnValidate.Location = new System.Drawing.Point(196, 91);
+            btnValidate.Location = new System.Drawing.Point(180, 92);
             btnValidate.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             btnValidate.Name = "btnValidate";
             btnValidate.Size = new System.Drawing.Size(163, 27);
@@ -316,7 +317,7 @@
             // cboAdoProjectName
             // 
             cboAdoProjectName.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            cboAdoProjectName.Location = new System.Drawing.Point(196, 138);
+            cboAdoProjectName.Location = new System.Drawing.Point(180, 139);
             cboAdoProjectName.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             cboAdoProjectName.Name = "cboAdoProjectName";
             cboAdoProjectName.Size = new System.Drawing.Size(236, 23);
@@ -325,7 +326,7 @@
             // label5
             // 
             label5.AutoSize = true;
-            label5.Location = new System.Drawing.Point(23, 55);
+            label5.Location = new System.Drawing.Point(33, 56);
             label5.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             label5.Name = "label5";
             label5.Size = new System.Drawing.Size(126, 15);
@@ -334,12 +335,24 @@
             // 
             // txtAdoPat
             // 
-            txtAdoPat.Location = new System.Drawing.Point(196, 52);
+            txtAdoPat.Location = new System.Drawing.Point(180, 53);
             txtAdoPat.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             txtAdoPat.Name = "txtAdoPat";
             txtAdoPat.PasswordChar = '*';
-            txtAdoPat.Size = new System.Drawing.Size(219, 23);
+            txtAdoPat.Size = new System.Drawing.Size(395, 23);
             txtAdoPat.TabIndex = 5;
+            // 
+            // btnReset
+            // 
+            btnReset.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right;
+            btnReset.Location = new System.Drawing.Point(13, 254);
+            btnReset.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            btnReset.Name = "btnReset";
+            btnReset.Size = new System.Drawing.Size(88, 27);
+            btnReset.TabIndex = 8;
+            btnReset.Text = "Reset All";
+            btnReset.UseVisualStyleBackColor = true;
+            btnReset.Click += btnReset_Click;
             // 
             // SettingsForm
             // 
@@ -347,6 +360,7 @@
             AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             ClientSize = new System.Drawing.Size(631, 293);
             ControlBox = false;
+            Controls.Add(btnReset);
             Controls.Add(tabControl);
             Controls.Add(btnCancel);
             Controls.Add(btnOk);
@@ -394,5 +408,6 @@
         private System.Windows.Forms.TextBox txtStaleDays;
         private System.Windows.Forms.CheckBox cbHideStale;
         private System.Windows.Forms.Label label8;
+        private System.Windows.Forms.Button btnReset;
     }
 }

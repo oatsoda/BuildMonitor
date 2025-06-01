@@ -66,7 +66,7 @@ namespace BuildMonitor.UI.Options
         {
             base.OnFormClosing(e);
 
-            if (DialogResult == DialogResult.Cancel)
+            if (DialogResult != DialogResult.OK)
                 return;
 
             // Windows Tab
@@ -180,5 +180,19 @@ namespace BuildMonitor.UI.Options
             txtStaleDays.Enabled = cbHideStale.Checked;
         }
 
+        private void btnReset_Click(object sender, EventArgs e)
+        {
+            if (DialogResult.Cancel == MessageBox.Show(
+                @"Are you sure you want to delete all settings? It cannot be undone.",
+                @"Reset All Settings?",
+                MessageBoxButtons.OKCancel,
+                MessageBoxIcon.Warning,
+                MessageBoxDefaultButton.Button2
+                ))
+                return;
+
+            m_Options.Reset();
+            DialogResult = DialogResult.Abort; // Close without triggering OnClose saving of settings.
+        }
     }
 }

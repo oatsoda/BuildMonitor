@@ -321,18 +321,20 @@ namespace BuildMonitor.UI.Controls
             {
                 settingsForm.ShowDialog(this);
 
-                if (settingsForm.DialogResult != DialogResult.OK)
+                m_IsSettingsOpen = false;
+
+                if (settingsForm.DialogResult == DialogResult.OK ||
+                    settingsForm.DialogResult == DialogResult.Abort)
                 {
-                    m_IsSettingsOpen = false;
+                    m_CurrentMonitorOptions = settingsForm.Options;
+                }
+                else
+                {
                     return;
                 }
-
-                m_CurrentMonitorOptions = settingsForm.Options;
             }
 
-            m_IsSettingsOpen = false;
             Hide();
-
             ApplyOptions();
         }
 
