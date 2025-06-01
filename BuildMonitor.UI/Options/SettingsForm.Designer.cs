@@ -353,7 +353,6 @@
             FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
             Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             Name = "SettingsForm";
-            ShowInTaskbar = false;
             StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             Text = "Monitor Settings";
             tabControl.ResumeLayout(false);

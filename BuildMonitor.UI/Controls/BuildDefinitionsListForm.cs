@@ -36,7 +36,10 @@ namespace BuildMonitor.UI.Controls
 
         private IEnumerable<BuildDetailControl> BuildDetailControls => Controls.OfType<BuildDetailControl>();
 
-        private ToolTip m_ToolTip;
+        private readonly ToolTip m_ToolTip;
+
+        private bool m_IsSettingsOpen;
+        private bool m_IsAboutOpen;
 
         #endregion
 
@@ -306,6 +309,11 @@ namespace BuildMonitor.UI.Controls
 
         private void settingsToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            if (m_IsSettingsOpen)
+                return;
+
+            m_IsSettingsOpen = true;
+
             // Stop monitoring while changing settings
             m_Monitor.Stop();
 
@@ -314,19 +322,31 @@ namespace BuildMonitor.UI.Controls
                 settingsForm.ShowDialog(this);
 
                 if (settingsForm.DialogResult != DialogResult.OK)
+                {
+                    m_IsSettingsOpen = false;
                     return;
+                }
 
                 m_CurrentMonitorOptions = settingsForm.Options;
-                Hide();
             }
+
+            m_IsSettingsOpen = false;
+            Hide();
 
             ApplyOptions();
         }
 
         private void aboutToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            if (m_IsAboutOpen)
+                return;
+
+            m_IsAboutOpen = true;
+
             using (var aboutForm = new AboutForm())
                 aboutForm.ShowDialog(this);
+
+            m_IsAboutOpen = false;
         }
 
         #endregion

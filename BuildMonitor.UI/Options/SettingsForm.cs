@@ -23,6 +23,7 @@ namespace BuildMonitor.UI.Options
         public SettingsForm(IMonitorOptions currentOptions, IBuildStoreFactory buildStoreFactory)
         {
             InitializeComponent();
+            Icon = Properties.Resources._0031_Tools;
 
             m_Options = new MonitorOptions(currentOptions);
             m_BuildStoreFactory = buildStoreFactory;

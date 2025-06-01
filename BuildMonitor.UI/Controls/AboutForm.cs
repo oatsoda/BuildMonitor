@@ -8,6 +8,7 @@ namespace BuildMonitor.UI.Controls
         public AboutForm()
         {
             InitializeComponent();
+            Icon = Properties.Resources._0031_Tools;
             lblVersion.Text = Assembly.GetAssembly(GetType()).GetName().Version.ToString();
         }
 
