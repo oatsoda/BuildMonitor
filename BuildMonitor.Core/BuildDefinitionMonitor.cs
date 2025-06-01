@@ -1,4 +1,5 @@
-﻿using System;
+﻿using BuildMonitor.Core.InterfaceExtensions;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
@@ -6,7 +7,6 @@ using System.Linq;
 using System.Security.Authentication;
 using System.Threading;
 using System.Threading.Tasks;
-using BuildMonitor.Core.InterfaceExtensions;
 
 namespace BuildMonitor.Core
 {
@@ -18,7 +18,7 @@ namespace BuildMonitor.Core
 
         private readonly IBuildStoreFactory m_BuildStoreFactory;
         private IMonitorOptions m_Options;
-        
+
         private Status m_OverallStatus;
         private List<IBuildDefinition> m_MonitoredDefinitions;
         private Dictionary<int, IBuildStatus> m_LatestStatuses;
@@ -57,11 +57,17 @@ namespace BuildMonitor.Core
 
         public void Start(IMonitorOptions options)
         {
+            Debug.WriteLine("Monitor starting...");
+
             Stop();
+
+            Debug.WriteLine("Monitor ensuring any previous stops have completed...");
             // First time this is already signalled so will immediately pass.
             // Subsequent calls to Start will wait for it to stop first.
             m_StopWaitHandle.WaitOne();
-            
+
+            Debug.WriteLine("Monitor setting options...");
+
             m_Options = options;
 
             m_MonitoredDefinitions = null;
@@ -76,7 +82,9 @@ namespace BuildMonitor.Core
                 return;
             }
 
-            Task.Factory.StartNew(Run);
+            Debug.WriteLine("Monitor running...");
+
+            Task.Run(Run);
         }
 
         public void Stop()
@@ -84,15 +92,19 @@ namespace BuildMonitor.Core
             if (!m_Stopped)
                 m_RequestStop = true;
         }
-        
+
         private void Run()
         {
+            Debug.WriteLine("Monitor Run...");
+
             m_StopWaitHandle.Reset();
 
             var restartAfterException = false;
 
             var sw = new Stopwatch();
-            var intervalMilliseconds = m_Options.IntervalSeconds*1000;
+            var intervalMilliseconds = m_Options.IntervalSeconds * 1000;
+
+            Debug.WriteLine("Monitor getting store...");
 
             var buildStore = m_BuildStoreFactory.GetBuildStore(m_Options);
 
@@ -161,7 +173,7 @@ namespace BuildMonitor.Core
         private List<BuildDetail> GetBuildDetails()
         {
             return m_MonitoredDefinitions
-                .Where(d => 
+                .Where(d =>
                     !m_Options.HideStaleDefinitions || // Option is disabled
                     LatestStatuses.ContainsKey(d.Id) // No status means either no status or stale status
                     )

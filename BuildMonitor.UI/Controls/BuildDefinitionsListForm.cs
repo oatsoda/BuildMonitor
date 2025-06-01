@@ -4,6 +4,7 @@ using BuildMonitor.UI.Options;
 using BuildMonitor.UI.Updater;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using System.Threading.Tasks;
@@ -89,9 +90,11 @@ namespace BuildMonitor.UI.Controls
 
         private void ApplyOptions()
         {
-            Controls.Clear();
+            Debug.WriteLine("ApplyOptions...");
 
             SetMessageOnly("Waiting for builds...");
+
+            Debug.WriteLine("Triggering start...");
 
             Task.Run(() => m_Monitor.Start(m_CurrentMonitorOptions));
         }
