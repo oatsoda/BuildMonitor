@@ -75,7 +75,7 @@
             lblStart.AutoSize = true;
             lblStart.Font = new System.Drawing.Font("Segoe UI", 11F);
             lblStart.ForeColor = System.Drawing.Color.FromArgb(241, 241, 241);
-            lblStart.Location = new System.Drawing.Point(265, 34);
+            lblStart.Location = new System.Drawing.Point(254, 34);
             lblStart.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             lblStart.Name = "lblStart";
             lblStart.Size = new System.Drawing.Size(57, 20);

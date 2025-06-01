@@ -1,12 +1,11 @@
-﻿using System;
+﻿using BuildMonitor.Core;
+using BuildMonitor.UI.Controls;
+using BuildMonitor.UI.Updater;
+using Moq;
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using BuildMonitor.Core;
-using BuildMonitor.UI.Controls;
-using BuildMonitor.UI.Options;
-using BuildMonitor.UI.Updater;
-using Moq;
 
 namespace BuildMonitor.TestApp
 {
@@ -22,22 +21,22 @@ namespace BuildMonitor.TestApp
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            
+
             var defnOneMoq = new Mock<IBuildDefinition>();
             defnOneMoq
-                .SetupGet(d => d.Id)
-                .Returns(1);
+                .SetupGet(d => d.Id).Returns(1);
             defnOneMoq
-                .SetupGet(d => d.Name)
-                .Returns("Test 1");
+                .SetupGet(d => d.Name).Returns("Test 1");
+            defnOneMoq
+                .SetupGet(d => d.IsVNext).Returns(true);
 
             var defnTwoMoq = new Mock<IBuildDefinition>();
             defnTwoMoq
-                .SetupGet(d => d.Id)
-                .Returns(2);
+                .SetupGet(d => d.Id).Returns(2);
             defnTwoMoq
-                .SetupGet(d => d.Name)
-                .Returns("Test 2");
+                .SetupGet(d => d.Name).Returns("Test 2");
+            defnTwoMoq
+                .SetupGet(d => d.IsVNext).Returns(true);
 
             var storeMoq = new Mock<IBuildStore>();
             storeMoq
@@ -70,8 +69,8 @@ namespace BuildMonitor.TestApp
             IBuildDefinitionMonitor monitor = new BuildDefinitionMonitor(factoryMoq.Object);
 
             Application.Run(
-                new BuildDefinitionsListForm(monitor, 
-                                             optionsMoq.Object, 
+                new BuildDefinitionsListForm(monitor,
+                                             optionsMoq.Object,
                                              factoryMoq.Object,
                                              appUpdaterMoq.Object)
                 );
@@ -80,8 +79,9 @@ namespace BuildMonitor.TestApp
         private static IBuildStatus GetRandomStatus(int id)
         {
             var statusMoq = new Mock<IBuildStatus>();
-            statusMoq.Setup(s => s.Status).Returns((Status) s_Random.Next(1, 5));
+            statusMoq.Setup(s => s.Status).Returns((Status)s_Random.Next(1, 5));
             statusMoq.Setup(s => s.Id).Returns(id);
+            statusMoq.Setup(s => s.Start).Returns(DateTime.Now.AddHours(-3));
             return statusMoq.Object;
         }
     }
