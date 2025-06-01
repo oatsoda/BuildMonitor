@@ -91,6 +91,14 @@ namespace BuildMonitor.UI.Options
             set { this["ValidOptions"] = value; }
         }
 
+        [UserScopedSetting]
+        [DefaultSettingValue("true")]
+        public bool SettingsUpgradeRequired
+        {
+            get { return (bool)this["SettingsUpgradeRequired"]; }
+            set { this["SettingsUpgradeRequired"] = value; }
+        }
+
         public string PersonalAccessTokenPlainText =>
             ProtectionMethods.Unprotect(PersonalAccessTokenProtected);
 
@@ -104,14 +112,14 @@ namespace BuildMonitor.UI.Options
             }
         }
 
-        public MonitorOptions(IUpgradeSettingsCheck upgradeSettingsCheck = null)
+        public MonitorOptions()
         {
-            if (upgradeSettingsCheck == null || !upgradeSettingsCheck.UpgradeSettings)
+            if (!SettingsUpgradeRequired)
                 return;
 
             Upgrade();
-            upgradeSettingsCheck.UpgradeSettings = false;
-            upgradeSettingsCheck.Save();
+            SettingsUpgradeRequired = false;
+            Save();
         }
 
         public MonitorOptions(IMonitorOptions existingOptions)
