@@ -130,7 +130,6 @@
             txtInterval.Name = "txtInterval";
             txtInterval.Size = new System.Drawing.Size(41, 23);
             txtInterval.TabIndex = 8;
-            txtInterval.Text = "60";
             // 
             // tabControl
             // 
@@ -206,13 +205,10 @@
             txtStaleDays.Name = "txtStaleDays";
             txtStaleDays.Size = new System.Drawing.Size(41, 23);
             txtStaleDays.TabIndex = 15;
-            txtStaleDays.Text = "30";
             // 
             // cbHideStale
             // 
             cbHideStale.AutoSize = true;
-            cbHideStale.Checked = true;
-            cbHideStale.CheckState = System.Windows.Forms.CheckState.Checked;
             cbHideStale.Location = new System.Drawing.Point(23, 133);
             cbHideStale.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             cbHideStale.Name = "cbHideStale";
@@ -239,7 +235,6 @@
             txtDefinitionInterval.Name = "txtDefinitionInterval";
             txtDefinitionInterval.Size = new System.Drawing.Size(41, 23);
             txtDefinitionInterval.TabIndex = 12;
-            txtDefinitionInterval.Text = "3600";
             // 
             // cbRefreshDefinitions
             // 

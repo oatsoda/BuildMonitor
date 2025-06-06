@@ -8,7 +8,7 @@ namespace BuildMonitor.UI.Options
     public sealed class MonitorOptions : ApplicationSettingsBase, IMonitorOptions
     {
         [UserScopedSetting]
-        [DefaultSettingValue("false")]
+        [DefaultSettingValue("true")]
         public bool IncludeRunningBuilds
         {
             get { return (bool)this["IncludeRunningBuilds"]; }
@@ -48,7 +48,7 @@ namespace BuildMonitor.UI.Options
         }
 
         [UserScopedSetting]
-        [DefaultSettingValue("30")]
+        [DefaultSettingValue("90")]
         public int StaleDefinitionDays
         {
             get { return (int)this["StaleDefinitionDays"]; }
