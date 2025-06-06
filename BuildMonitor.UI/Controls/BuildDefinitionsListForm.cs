@@ -213,6 +213,50 @@ namespace BuildMonitor.UI.Controls
             Close();
         }
 
+        private void ShowSettingsForm()
+        {
+            if (m_IsSettingsOpen)
+                return;
+
+            m_IsSettingsOpen = true;
+
+            // Stop monitoring while changing settings
+            m_Monitor.Stop();
+
+            using (var settingsForm = new SettingsForm(m_CurrentMonitorOptions, m_BuildStoreFactory))
+            {
+                settingsForm.ShowDialog(this);
+
+                m_IsSettingsOpen = false;
+
+                if (settingsForm.DialogResult == DialogResult.OK ||
+                    settingsForm.DialogResult == DialogResult.Abort)
+                {
+                    m_CurrentMonitorOptions = settingsForm.Options;
+                }
+                else
+                {
+                    return;
+                }
+            }
+
+            Hide();
+            ApplyOptions();
+        }
+
+        private void ShowAboutForm()
+        {
+            if (m_IsAboutOpen)
+                return;
+
+            m_IsAboutOpen = true;
+
+            using (var aboutForm = new AboutForm())
+                aboutForm.ShowDialog(this);
+
+            m_IsAboutOpen = false;
+        }
+
         #endregion
 
         #region Base Form Overrides
@@ -264,7 +308,9 @@ namespace BuildMonitor.UI.Controls
                 SetMessageOnly(stoppedReason);
                 notifyIcon.BalloonTipText = $"Monitor stopped: {stoppedReason}";
                 notifyIcon.ShowBalloonTip(20000);
+                ShowSettingsForm();
             });
+
         }
 
         private void OnBuildMonitorOnOverallStatusChanged(object sender, BuildDetail buildDetail)
@@ -312,46 +358,12 @@ namespace BuildMonitor.UI.Controls
 
         private void settingsToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            if (m_IsSettingsOpen)
-                return;
-
-            m_IsSettingsOpen = true;
-
-            // Stop monitoring while changing settings
-            m_Monitor.Stop();
-
-            using (var settingsForm = new SettingsForm(m_CurrentMonitorOptions, m_BuildStoreFactory))
-            {
-                settingsForm.ShowDialog(this);
-
-                m_IsSettingsOpen = false;
-
-                if (settingsForm.DialogResult == DialogResult.OK ||
-                    settingsForm.DialogResult == DialogResult.Abort)
-                {
-                    m_CurrentMonitorOptions = settingsForm.Options;
-                }
-                else
-                {
-                    return;
-                }
-            }
-
-            Hide();
-            ApplyOptions();
+            ShowSettingsForm();
         }
 
         private void aboutToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            if (m_IsAboutOpen)
-                return;
-
-            m_IsAboutOpen = true;
-
-            using (var aboutForm = new AboutForm())
-                aboutForm.ShowDialog(this);
-
-            m_IsAboutOpen = false;
+            ShowAboutForm();
         }
 
         #endregion
@@ -363,21 +375,28 @@ namespace BuildMonitor.UI.Controls
             if (e.Button != MouseButtons.Left)
                 return;
 
+            Debug.WriteLine($"NotifyItem Click {WindowState} [{m_CalculatedWidth},{m_CalculatedHeight} / {Width},{Height}]");
+
             if (WindowState == FormWindowState.Normal)
             {
+                Debug.WriteLine($"NotifyItem Hiding...");
                 Hide();
                 WindowState = FormWindowState.Minimized;
             }
             else
             {
+                Debug.WriteLine($"NotifyItem Set Size...");
                 WindowState = FormWindowState.Normal;
                 SetSizeAndPosition();
+
+                Debug.WriteLine($"NotifyItem Showing [{m_CalculatedWidth},{m_CalculatedHeight} / {Width},{Height}]");
+
                 Show();
+
+                Debug.WriteLine($"NotifyItem Shown [{m_CalculatedWidth},{m_CalculatedHeight} / {Width},{Height}]");
             }
         }
 
         #endregion
-
-
     }
 }
