@@ -1,11 +1,12 @@
 ﻿<Wix xmlns="http://wixtoolset.org/schemas/v4/wxs">
 	<Package 
-			Name="Build Monitor"
+			Name="Azure DevOps Pipeline Monitor"
       Language="1033" 
       Version="2.0.0.0" 
       Manufacturer="Andrew Milne"
-      UpgradeCode="e3c1dc46-3b01-437a-8e9c-aae2e7046c6c" 
-      InstallerVersion="200">
+      UpgradeCode="D946D59E-49BA-4DCC-96A9-50B81C4BD2BA" 
+      InstallerVersion="500"
+			Scope="perUser">
     
 		<MajorUpgrade DowngradeErrorMessage="A newer version of [ProductName] is already installed."/>
 		<MediaTemplate EmbedCab="yes"/>
@@ -14,7 +15,7 @@
     
 		<!-- Run on finish
     <!- Add "Launch" checkbox to UI ->
-    <Property Id="WIXUI_EXITDIALOGOPTIONALCHECKBOXTEXT" Value="Launch BuildMonitor" />
+    <Property Id="WIXUI_EXITDIALOGOPTIONALCHECKBOXTEXT" Value="Launch ADOPipelineMonitor" />
     
     <!- Custom Action to run ->
     <Property Id="WixShellExecTarget" Value="[#myapplication.exe]" />
@@ -22,8 +23,8 @@
     -->
     
 		<UI Id="UserInterface">
-			<Property Id="WIXUI_INSTALLDIR" Value="TARGETDIR"/>
-			<Property Id="WixUI_Mode" Value="Custom"/>
+			<!--<Property Id="WIXUI_INSTALLDIR" Value="TARGETDIR"/>-->
+			<!--<Property Id="WixUI_Mode" Value="Custom"/>-->
 			<TextStyle Id="WixUI_Font_Normal" FaceName="Tahoma" Size="8"/>
 			<TextStyle Id="WixUI_Font_Bigger" FaceName="Tahoma" Size="9" Bold="yes"/>
 			<TextStyle Id="WixUI_Font_Title" FaceName="Tahoma" Size="9" Bold="yes"/>
@@ -45,8 +46,8 @@
     
 		<UIRef Id="WixUI_Common"/>
     
-		<Feature Id="ProductFeature" Title="Build Monitor" Level="1">
-			<ComponentGroupRef Id="ProductComponents"/>
+		<Feature Id="ProductFeature" Title="Azure DevOps Pipeline Monitor" Level="1">
+			<ComponentRef Id="ProductComponent"/>
 			<!-- Add Start Menu -->
 			<ComponentRef Id="AppShortcut"/>
 			<!-- Add Desktop Shortcut-->
@@ -54,34 +55,64 @@
 		</Feature>
     
 		<DirectoryRef Id="AppProgramsFolder">
-			<Component Id="AppShortcut" Guid="A91F4FDE-D4A4-4E1F-8C1C-20DE11918365">
-				<Shortcut Id="AppStartMenuShortcut" Name="Build Monitor" Description="Tray Application to Monitor Builds" Target="[INSTALLFOLDER]BuildMonitor.App.exe" WorkingDirectory="INSTALLFOLDER" Icon="icon.ico" IconIndex="0"/>
+			<Component Id="AppShortcut" Guid="D2307FDC-7885-47B0-810F-54836EA8F3E2">
+				<Shortcut Id="AppStartMenuShortcut" 
+                  Name="Azure DevOps Pipeline Monitor" 
+                  Description="Tray App to Monitor ADO Pipelines" 
+									Target="[INSTALLFOLDER]BuildMonitor.App.exe" 
+									WorkingDirectory="INSTALLFOLDER" 
+									Icon="icon.ico" 
+									IconIndex="0"/>
 				<RemoveFolder Id="AppProgramsFolder" On="uninstall"/>
-				<RegistryValue Root="HKCU" Key="Software\AndrewMilne\BuildMonitor" Name="installed" Type="integer" Value="1" KeyPath="yes"/>
+				<RegistryValue Root="HKCU" 
+                       Key="Software\AndrewMilne\ADOPipelineMonitor" 
+											 Name="installed"
+											 Type="integer" 
+											 Value="1" 
+											 KeyPath="yes"/>
 			</Component>
 		</DirectoryRef>
     
 		<StandardDirectory Id="DesktopFolder">
-			<Component Id="ApplicationShortcutDesktop">
-				<Shortcut Id="ApplicationDesktopShortcut" Name="Build Monitor" Description="Tray Application to Monitor Builds" Target="[INSTALLFOLDER]BuildMonitor.App.exe" WorkingDirectory="INSTALLFOLDER" Icon="icon.ico" IconIndex="0"/>
+			<Component Id="ApplicationShortcutDesktop" Guid="24DEF5E2-B856-43BB-AB81-76A531D327AC">
+				<Shortcut Id="ApplicationDesktopShortcut" 
+                  Name="Azure DevOps Pipeline Monitor" 
+									Description="Tray Application to Monitor Builds" 
+									Target="[INSTALLFOLDER]BuildMonitor.App.exe" 
+									WorkingDirectory="INSTALLFOLDER" 
+									Icon="icon.ico" 
+									IconIndex="0"/>
 				<RemoveFolder Id="DesktopFolder" On="uninstall"/>
-				<RegistryValue Root="HKCU" Key="Software\AndrewMilne\BuildMonitor" Name="installed" Type="integer" Value="1" KeyPath="yes"/>
+				<RegistryValue Root="HKCU" 
+                       Key="Software\AndrewMilne\ADOPipelineMonitor" 
+											 Name="installed" 
+											 Type="integer"
+											 Value="1" 
+											 KeyPath="yes"/>
 			</Component>
 		</StandardDirectory>
     
-		<ComponentGroup Id="ProductComponents" Directory="INSTALLFOLDER">
-			<Component Id="ProductComponent">
-				<File Source="BuildMonitor.App.exe"/>
-			</Component>
-		</ComponentGroup>
-    
-		<StandardDirectory Id="ProgramFiles64Folder">
-			<Directory Id="INSTALLFOLDER" Name="Build Monitor"/>
+		<StandardDirectory Id="LocalAppDataFolder">
+      <Directory Id="COMPANYFOLDER" Name="Andrew_Milne">
+				<Directory Id="INSTALLFOLDER" Name="Azure DevOps Pipeline Monitor">
+					 <Component Id="ProductComponent" Guid="0725BBE6-B911-4EBC-AAC3-DD09BE4F0869">
+							<File Source="BuildMonitor.App.exe"/>
+							<RemoveFolder Directory="INSTALLFOLDER" On="uninstall" />
+							<RemoveFolder Directory="COMPANYFOLDER" On="uninstall" />
+							<RegistryValue Root="HKCU"
+														 Key="Software\AndrewMilne\ADOPipelineMonitor"
+														 Name="installed"
+														 Type="integer"
+														 Value="1"
+														 KeyPath="yes"/>
+					 </Component>
+				</Directory>
+      </Directory>
 		</StandardDirectory>
     
 		<!--Start Menu Folder-->
 		<StandardDirectory Id="ProgramMenuFolder">
-			<Directory Id="AppProgramsFolder" Name="Build Monitor"/>
+			<Directory Id="AppProgramsFolder" Name="Azure DevOps Pipeline Monitor"/>
 		</StandardDirectory>
     
 		<!-- Desktop Folder-->
