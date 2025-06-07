@@ -14,17 +14,16 @@ namespace BuildMonitor.ADO
 {
     public sealed class ADOBuildStore : IBuildStore, IDisposable
     {
-        private readonly Uri m_BaseUrl;
         private readonly bool m_IncludeRunningBuilds;
         private readonly HttpClient m_HttpClient;
 
         public ADOBuildStore(IMonitorOptions options)
         {
-            m_BaseUrl = new Uri(
+            var baseUrl = new Uri(
                 string.Format($"https://{options.AzureDevOpsOrganisation}.visualstudio.com/DefaultCollection/")
                 );
 
-            m_HttpClient = new HttpClient();
+            m_HttpClient = new HttpClient() { BaseAddress = baseUrl };
             m_HttpClient.DefaultRequestHeaders.Accept.Add(
                     new MediaTypeWithQualityHeaderValue("application/json"));
 
@@ -164,8 +163,7 @@ namespace BuildMonitor.ADO
 
         private async Task<string> GetJson(string queryPath, bool allowNoContent)
         {
-            var url = FormatUrl(queryPath);
-            using (var response = await m_HttpClient.GetAsync(url))
+            using (var response = await m_HttpClient.GetAsync(queryPath))
             {
                 if (response.StatusCode == HttpStatusCode.Unauthorized)
                     throw new AuthenticationException();
@@ -176,11 +174,6 @@ namespace BuildMonitor.ADO
                 response.EnsureSuccessStatusCode();
                 return await response.Content.ReadAsStringAsync();
             }
-        }
-
-        private Uri FormatUrl(string queryPath)
-        {
-            return new Uri(m_BaseUrl, queryPath.TrimStart('/'));
         }
 
         private static Status StatusFromString(string statusString)
