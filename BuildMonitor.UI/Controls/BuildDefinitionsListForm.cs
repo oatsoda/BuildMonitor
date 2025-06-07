@@ -103,6 +103,7 @@ namespace BuildMonitor.UI.Controls
             Debug.WriteLine("ApplyOptions...");
 
             SetMessageOnly("Waiting for builds...");
+            SetSizeAndPosition();
 
             Debug.WriteLine("Triggering start...");
 
@@ -195,8 +196,6 @@ namespace BuildMonitor.UI.Controls
 
             m_CalculatedHeight = label.Height;
             m_CalculatedWidth = m_MessageOnlyWidth;
-
-            SetSizeAndPosition();
         }
 
         private void SetSizeAndPosition()
@@ -294,10 +293,11 @@ namespace BuildMonitor.UI.Controls
 
         private void OnBuildMonitorOnUpdated(object sender, List<BuildDetail> list)
         {
+            Debug.WriteLine($"OnBuildMonitorOnUpdated: {list.Count} builds");
+
             this.InvokeIfRequired(() =>
             {
                 UpdateBuildControls(list);
-                //if (WindowState != FormWindowState.Minimized)
                 SetSizeAndPosition();
             });
         }
@@ -311,6 +311,7 @@ namespace BuildMonitor.UI.Controls
                     exception = aggEx.Flatten();
 
                 SetMessageOnly(exception.ToString());
+                SetSizeAndPosition();
                 notifyIcon.BalloonTipText = $"Monitor error: {exception}";
                 notifyIcon.ShowBalloonTip(20000);
             });
@@ -321,6 +322,7 @@ namespace BuildMonitor.UI.Controls
             this.InvokeIfRequired(() =>
             {
                 SetMessageOnly(stoppedReason);
+                SetSizeAndPosition();
                 notifyIcon.BalloonTipText = $"Monitor stopped: {stoppedReason}";
                 notifyIcon.ShowBalloonTip(20000);
                 ShowSettingsForm();
@@ -330,6 +332,8 @@ namespace BuildMonitor.UI.Controls
 
         private void OnBuildMonitorOnOverallStatusChanged(object sender, BuildDetail buildDetail)
         {
+            Debug.WriteLine($"OnBuildMonitorOnOverallStatusChanged: {buildDetail.Definition.Name} - {buildDetail.Status.Status}");
+
             this.InvokeIfRequired(() =>
             {
                 notifyIcon.Icon = buildDetail.Status.Status.ToIcon();
@@ -408,7 +412,13 @@ namespace BuildMonitor.UI.Controls
 
                 Show();
 
-                Debug.WriteLine($"NotifyItem Shown [{m_CalculatedWidth},{m_CalculatedHeight} / {Width},{Height}]");
+                Debug.WriteLine($"NotifyItem Shown ({WindowState}) [{m_CalculatedWidth},{m_CalculatedHeight} / {Width},{Height}]");
+
+                if (WindowState == FormWindowState.Minimized)
+                {
+                    Debug.WriteLine($"Incorrect Show(); State still Minimised...");
+                    WindowState = FormWindowState.Normal;
+                }
             }
         }
 

@@ -128,7 +128,7 @@ namespace BuildMonitor.Core
                         RefreshDefinitionsIfRequired(buildStore);
 
                     if (!m_RequestStop)
-                        RefreshStatuses(buildStore).Wait(); // Async ends here at the mo.
+                        RefreshStatuses(buildStore).GetAwaiter().GetResult(); // Async ends here at the mo.
 
                     if (!m_RequestStop)
                         RaiseUpdated();
@@ -199,7 +199,7 @@ namespace BuildMonitor.Core
             // Don't refresh defns if: a) already loaded AND 
             // ( b) option to refresh is off OR c) option is on but interval not exceeded
 
-            if (m_MonitoredDefinitions != null &&
+            if (m_MonitoredDefinitions.Count > 0 &&
                 (!Options.RefreshDefintions || DateTime.UtcNow.Subtract(m_LastDefinitionRefresh).Seconds < Options.RefreshDefinitionIntervalSeconds))
                 return;
 
@@ -209,7 +209,7 @@ namespace BuildMonitor.Core
         private async Task RefreshDefinitions(IBuildStore buildStore)
         {
             var definitions = await buildStore.GetDefinitions(Options.ProjectName);
-            m_MonitoredDefinitions = definitions.ToList();
+            m_MonitoredDefinitions = [.. definitions];
             m_LastDefinitionRefresh = DateTime.UtcNow;
         }
 
