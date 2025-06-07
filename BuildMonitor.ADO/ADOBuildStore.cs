@@ -8,6 +8,7 @@ using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Security.Authentication;
 using System.Text;
+using System.Text.Json;
 using System.Threading.Tasks;
 
 namespace BuildMonitor.ADO
@@ -35,16 +36,18 @@ namespace BuildMonitor.ADO
             m_IncludeRunningBuilds = options.IncludeRunningBuilds;
         }
 
+        public record ADOProject(string Name);
+        public record ADOProjects(int Count, ADOProject[] Value);
+
         public async Task<IEnumerable<string>> GetProjects()
         {
-            var queryPath = "_apis/projects?api-version=1.0&statefilter=wellFormed";
+            var queryPath = "_apis/projects?api-version=7.1";
 
-            var result = await GetADOResult(queryPath);
+            var projects = await GetADOResult<ADOProjects>(queryPath);
 
-            var projects = result["value"].Children();
-
-            return projects.Select(p => p["name"].Value<string>())
-                           .OrderBy(p => p);
+            return projects.Value
+                .Select(p => p.Name)
+                .OrderBy(p => p);
         }
 
         public async Task<IEnumerable<BuildDefinition>> GetDefinitions(string projectName)
@@ -130,51 +133,58 @@ namespace BuildMonitor.ADO
             return buildStatus;
         }
 
+        public record ADOTimelineRecord(int ErrorCount, int WarningCount);
+        public record ADOTimeline(ADOTimelineRecord[] Records);
+
         private async Task<BuildStatus> GetBuildTimeline(string projectName, BuildStatus buildStatus)
         {
             var projectNameEncoded = Uri.EscapeDataString(projectName);
             var queryPath = $"{projectNameEncoded}/_apis/build/builds/{buildStatus.Id}/timeline?api-version=2.0";
 
-            var buildTimeline = await GetADOResult(queryPath, true);
+            var buildTimeline = await GetADOResult<ADOTimeline>(queryPath);
 
             if (buildTimeline == null)
                 return buildStatus;
 
-            var tasks = buildTimeline["records"].Children();
-
-            if (!tasks.Any())
-                return buildStatus;
-
-            buildStatus.ErrorCount = tasks.Sum(t => t["errorCount"]?.Value<int>()) ?? 0;
-            buildStatus.WarningCount = tasks.Sum(t => t["warningCount"]?.Value<int>()) ?? 0;
+            buildStatus.ErrorCount = buildTimeline.Records.Sum(r => r.ErrorCount);
+            buildStatus.WarningCount = buildTimeline.Records.Sum(r => r.WarningCount);
 
             return buildStatus;
         }
 
-        private async Task<JObject> GetADOResult(string queryPath, bool allowNoContent = false)
+        private static readonly JsonSerializerOptions s_JsonOptions = new()
         {
-            var resultJson = await GetJson(queryPath, allowNoContent);
+            PropertyNameCaseInsensitive = true,
+            PropertyNamingPolicy = JsonNamingPolicy.CamelCase
+        };
 
-            if (allowNoContent && resultJson == null)
+        private async Task<T> GetADOResult<T>(string queryPath)
+        {
+            var json = await GetADOJsonResult(queryPath);
+
+            return JsonSerializer.Deserialize<T>(json, s_JsonOptions);
+        }
+
+        private async Task<JObject> GetADOResult(string queryPath)
+        {
+            var json = await GetADOJsonResult(queryPath);
+
+            if (json == null)
                 return null;
-
-            return JObject.Parse(resultJson);
+            return JObject.Parse(json);
         }
 
-        private async Task<string> GetJson(string queryPath, bool allowNoContent)
+        private async Task<string> GetADOJsonResult(string path)
         {
-            using (var response = await m_HttpClient.GetAsync(queryPath))
-            {
-                if (response.StatusCode == HttpStatusCode.Unauthorized)
-                    throw new AuthenticationException();
+            using var response = await m_HttpClient.GetAsync(path);
 
-                if (allowNoContent && response.StatusCode == HttpStatusCode.NoContent)
-                    return null;
+            if (response.StatusCode == HttpStatusCode.Unauthorized)
+                throw new AuthenticationException();
 
-                response.EnsureSuccessStatusCode();
-                return await response.Content.ReadAsStringAsync();
-            }
+            response.EnsureSuccessStatusCode();
+            return await response.Content.ReadAsStringAsync();
         }
+
 
         private static Status StatusFromString(string statusString)
         {
@@ -194,4 +204,9 @@ namespace BuildMonitor.ADO
         }
     }
 
+    public static class JsonSerializerExtensions
+    {
+        public static T DeserializeAnonymousType<T>(this string json, T _)
+            => JsonSerializer.Deserialize<T>(json);
+    }
 }

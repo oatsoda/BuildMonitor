@@ -130,7 +130,7 @@ namespace BuildMonitor.UI.Options
                 return;
             }
 
-
+            cboAdoProjectName.Items.Clear();
             try
             {
                 var store = m_BuildStoreFactory.GetBuildStore(tempOptions);
@@ -142,12 +142,10 @@ namespace BuildMonitor.UI.Options
             catch (Exception ex) when (ex is AuthenticationException ||
                     ex.GetBaseException() is AuthenticationException)
             {
-                cboAdoProjectName.Items.Clear();
                 imgBox.Image = Status.Failed.ToBitmap(new Size(24, 24));
             }
             catch (Exception ex)
             {
-                cboAdoProjectName.Items.Clear();
                 imgBox.Image = Status.Failed.ToBitmap(new Size(24, 24));
                 MessageBox.Show(ex.ToString());
             }
