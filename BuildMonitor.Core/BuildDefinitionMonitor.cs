@@ -63,7 +63,7 @@ namespace BuildMonitor.Core
             m_StopWaitHandle = new ManualResetEvent(true); // Initial value is Signalled.
         }
 
-        public void Start(IMonitorOptions options)
+        public async Task Start(IMonitorOptions options)
         {
             Debug.WriteLine("Monitor starting...");
 
@@ -96,7 +96,7 @@ namespace BuildMonitor.Core
 
             Debug.WriteLine("Monitor running...");
 
-            Task.Run(Run);
+            await Run();
         }
 
         public void Stop()
@@ -105,75 +105,78 @@ namespace BuildMonitor.Core
                 m_RequestStop = true;
         }
 
-        private void Run()
+        private async Task Run()
         {
-            Debug.WriteLine("Monitor Run...");
-
-            m_StopWaitHandle.Reset();
-
             var restartAfterException = false;
 
-            var sw = new Stopwatch();
-            var intervalMilliseconds = Options.IntervalSeconds * 1000;
-
-            Debug.WriteLine("Monitor getting store...");
-
-            var buildStore = m_BuildStoreFactory.GetBuildStore(Options);
-
-            try
+            do
             {
-                while (!m_RequestStop)
+                Debug.WriteLine("Monitor Run...");
+
+                m_StopWaitHandle.Reset();
+
+
+                var sw = new Stopwatch();
+                var intervalMilliseconds = Options.IntervalSeconds * 1000;
+
+                Debug.WriteLine("Monitor getting store...");
+
+                var buildStore = m_BuildStoreFactory.GetBuildStore(Options);
+
+                try
                 {
-                    if (!m_RequestStop)
-                        RefreshDefinitionsIfRequired(buildStore);
-
-                    if (!m_RequestStop)
-                        RefreshStatuses(buildStore).GetAwaiter().GetResult(); // Async ends here at the mo.
-
-                    if (!m_RequestStop)
-                        RaiseUpdated();
-
-                    if (!m_RequestStop)
+                    while (!m_RequestStop)
                     {
-                        sw.Start();
+                        if (!m_RequestStop)
+                            await RefreshDefinitionsIfRequired(buildStore);
 
-                        while (sw.ElapsedMilliseconds < intervalMilliseconds)
+                        if (!m_RequestStop)
+                            await RefreshStatuses(buildStore);
+
+                        if (!m_RequestStop)
+                            RaiseUpdated();
+
+                        if (!m_RequestStop)
                         {
-                            Thread.Sleep(1000);
+                            sw.Start();
 
-                            if (m_RequestStop)
-                                break;
+                            while (sw.ElapsedMilliseconds < intervalMilliseconds)
+                            {
+                                Thread.Sleep(1000);
+
+                                if (m_RequestStop)
+                                    break;
+                            }
+
+                            sw.Reset();
                         }
-
-                        sw.Reset();
                     }
                 }
-            }
-            catch (AuthenticationException)
-            {
-                OnMonitoringStopped("Authentication failed.");
-            }
-            catch (Exception ex)
-            {
-                ExceptionOccurred?.Invoke(this, ex);
+                catch (AuthenticationException)
+                {
+                    OnMonitoringStopped("Authentication failed.");
+                }
+                catch (Exception ex)
+                {
+                    ExceptionOccurred?.Invoke(this, ex);
 
-                if (!m_RequestStop && !m_Stopped)
-                    restartAfterException = true;
-            }
-            finally
-            {
+                    if (!m_RequestStop && !m_Stopped)
+                        restartAfterException = true;
+                }
+
                 if (restartAfterException)
                 {
-                    Thread.Sleep(10000); // Wait for 10 secs before starting again
-                    Run();
+                    Thread.Sleep(10000); // Wait for 10 secs before starting again                        
                 }
                 else
                 {
                     m_RequestStop = false;
                     m_Stopped = true;
                     m_StopWaitHandle.Set();
+                    return;
                 }
-            }
+
+            } while (restartAfterException);
         }
 
         private void RaiseUpdated()
@@ -194,7 +197,7 @@ namespace BuildMonitor.Core
                 .ToList();
         }
 
-        private void RefreshDefinitionsIfRequired(IBuildStore buildStore)
+        private async Task RefreshDefinitionsIfRequired(IBuildStore buildStore)
         {
             // Don't refresh defns if: a) already loaded AND 
             // ( b) option to refresh is off OR c) option is on but interval not exceeded
@@ -203,7 +206,7 @@ namespace BuildMonitor.Core
                 (!Options.RefreshDefintions || DateTime.UtcNow.Subtract(m_LastDefinitionRefresh).Seconds < Options.RefreshDefinitionIntervalSeconds))
                 return;
 
-            RefreshDefinitions(buildStore).Wait(); // Async ends here at the mo.
+            await RefreshDefinitions(buildStore);
         }
 
         private async Task RefreshDefinitions(IBuildStore buildStore)

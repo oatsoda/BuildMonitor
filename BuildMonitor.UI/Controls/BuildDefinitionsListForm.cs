@@ -101,6 +101,8 @@ namespace BuildMonitor.UI.Controls
         {
             Debug.WriteLine("ApplyOptions...");
 
+            // TODO: resetting this - it doesn't then get set again becaue OverallStatusUpdate will not fire
+            // as the Monitor instance is the same...
             notifyIcon.Icon = Icon;
             SetMessageOnly("Waiting for builds...");
             SetSizeAndPosition();
