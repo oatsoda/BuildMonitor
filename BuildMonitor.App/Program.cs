@@ -29,7 +29,7 @@ namespace BuildMonitor.App
             if (await updater.CheckForUpdates())
                 return;
 
-            IBuildStoreFactory buildStoreFactory = new ADOBuildStoreFactory();
+            var buildStoreFactory = new ADOBuildStoreFactory();
             var monitor = new BuildDefinitionMonitor(buildStoreFactory);
 
             var options = new MonitorOptions();
