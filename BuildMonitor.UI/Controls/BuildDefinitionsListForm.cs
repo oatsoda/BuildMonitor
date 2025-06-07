@@ -61,7 +61,7 @@ namespace BuildMonitor.UI.Controls
             // though we have just set it to Normal.
             // (TODO: Actually this sometimes seem to still happen and the weird form appears)
             // TODO: Also, edting settings causes Hide, but if the form was being shown, that
-            // doesn't change WindowState, so clicking NotifyIcon things it's still showing, and hides it.
+            // doesn't change WindowState, so clicking NotifyIcon thinks it's still showing, and hides it.
             Visible = false;
 
             m_Monitor = monitor;
