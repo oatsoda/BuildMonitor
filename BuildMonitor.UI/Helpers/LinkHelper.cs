@@ -16,8 +16,17 @@ namespace BuildMonitor.UI.Helpers
         }
     }
 
-    public static class LinkLabelLinkClickedEventArgsExtensions
+    public static class LinkLabelExtensions
     {
+        public static void SetUrl(this LinkLabel linkLabel, string url, string changeText = null)
+        {
+            if (changeText != null)
+                linkLabel.Text = changeText;
+
+            linkLabel.Links.Clear();
+            linkLabel.Links.Add(0, linkLabel.Text.Length, url);
+        }
+
         public static void VisitUrl(this LinkLabelLinkClickedEventArgs e, object sender)
         {
             var url = e.Link.LinkData.ToString();

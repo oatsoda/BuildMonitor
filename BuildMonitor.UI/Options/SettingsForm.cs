@@ -200,9 +200,7 @@ namespace BuildMonitor.UI.Options
             lblLinkPat.Enabled = txtAdoOrganisation.Text.Length >= 0;
 
             var url = $"https://dev.azure.com/{txtAdoOrganisation.Text}/_usersSettings/tokens";
-
-            lblLinkPat.Links.Clear();
-            lblLinkPat.Links.Add(0, lblLinkPat.Text.Length, url);
+            lblLinkPat.SetUrl(url);
         }
 
         private void lblLinkPat_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
