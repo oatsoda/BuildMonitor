@@ -75,7 +75,6 @@ namespace BuildMonitor.UI.Controls
             m_Monitor.MonitoringStopped += OnBuildMonitorMonitoringStopped;
 
             TopMost = true;
-            notifyIcon.Icon = Icon;
 
             m_CalculatedHeight = m_CalculatedWidth = 0;
             Controls.Clear();
@@ -102,6 +101,7 @@ namespace BuildMonitor.UI.Controls
         {
             Debug.WriteLine("ApplyOptions...");
 
+            notifyIcon.Icon = Icon;
             SetMessageOnly("Waiting for builds...");
             SetSizeAndPosition();
 
@@ -188,8 +188,12 @@ namespace BuildMonitor.UI.Controls
                 AutoSize = true,
                 Text = message,
                 Dock = DockStyle.Fill,
-                MaximumSize = new Size(m_MessageOnlyWidth, 0),
-                MinimumSize = new Size(100, m_MessageOnlyHeight)
+                MaximumSize = new Size(m_MessageOnlyWidth, m_MessageOnlyHeight * 10),
+                MinimumSize = new Size(100, m_MessageOnlyHeight),
+
+                Font = new Font("Segoe UI", 11F),
+                ForeColor = Color.OrangeRed,
+                Padding = new Padding(3)
             };
 
             Controls.Add(label);

@@ -12,15 +12,6 @@ Use Personal Access Tokens:
 - Create Personal Access Token in Azure DevOps by going to the Account Menu item on the top toolbar -> Personal Access Tokens
 - Require Read permission for Pipelines only.
 
-# Conversion to .NET / TODO
-
-- Decide on how to version. Could hardcode in the Directory.Build.props, or could just pass -p:Version=1.0.0 to the dotnet build command.
-If the latter, will need to avoid the upgrage check on app startup when running Debug builds.
-
-- Either fix up WiX installer, or thing of alternative approach.
-    - What does installer need to do: just deploy files or other things? Is it just to aid updates?
-	- Could I use .NET to package single file? User puts that somewhere and upgrade somehow on startup renames/swaps in? Is this possible?
-
 # Build Dependencies
 
 - Heatwave Wix Toolset
