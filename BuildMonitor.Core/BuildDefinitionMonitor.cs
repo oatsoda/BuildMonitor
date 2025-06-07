@@ -16,30 +16,39 @@ namespace BuildMonitor.Core
         private readonly ManualResetEvent m_StopWaitHandle;
 
         private readonly IBuildStoreFactory m_BuildStoreFactory;
-        private IMonitorOptions m_Options;
+        private IMonitorOptions? m_Options;
+        private IMonitorOptions Options
+        {
+            get
+            {
+                if (m_Options == null)
+                    throw new InvalidOperationException("Monitor options have not been set.");
+                return m_Options;
+            }
+        }
 
         private Status m_OverallStatus;
-        private List<BuildDefinition> m_MonitoredDefinitions;
-        private Dictionary<int, BuildStatus> m_LatestStatuses;
+        private List<BuildDefinition> m_MonitoredDefinitions = [];
+        private Dictionary<int, BuildStatus> m_LatestStatuses = [];
         private DateTime m_LastDefinitionRefresh;
 
-        public event EventHandler<BuildDetail> OverallStatusChanged;
-        public event EventHandler<Exception> ExceptionOccurred;
-        public event EventHandler<string> MonitoringStopped;
-        public event EventHandler<List<BuildDetail>> Updated;
+        public event EventHandler<BuildDetail>? OverallStatusChanged;
+        public event EventHandler<Exception>? ExceptionOccurred;
+        public event EventHandler<string>? MonitoringStopped;
+        public event EventHandler<List<BuildDetail>>? Updated;
 
         private ReadOnlyDictionary<int, BuildStatus> LatestStatuses
         {
             get
             {
-                if (!m_Options.HideStaleDefinitions) // Option is not enabled
+                if (!Options.HideStaleDefinitions) // Option is not enabled
                     return new ReadOnlyDictionary<int, BuildStatus>(m_LatestStatuses);
 
                 return
                     new ReadOnlyDictionary<int, BuildStatus>(
                         m_LatestStatuses
                         .Where(kvp =>
-                            kvp.Value.TimeSpanSinceStart().TotalDays < m_Options.StaleDefinitionDays // Status is within days
+                            kvp.Value.TimeSpanSinceStart().TotalDays < Options.StaleDefinitionDays // Status is within days
                         )
                         .ToDictionary(pair => pair.Key, pair => pair.Value)
                     );
@@ -69,8 +78,12 @@ namespace BuildMonitor.Core
 
             m_Options = options;
 
-            m_MonitoredDefinitions = null;
-            m_LatestStatuses = new Dictionary<int, BuildStatus>();
+            if (m_MonitoredDefinitions.Count > 0)
+                m_MonitoredDefinitions = [];
+
+            if (m_LatestStatuses.Count > 0)
+                m_LatestStatuses = [];
+
             m_RequestStop = false;
             m_Stopped = false;
 
@@ -101,11 +114,11 @@ namespace BuildMonitor.Core
             var restartAfterException = false;
 
             var sw = new Stopwatch();
-            var intervalMilliseconds = m_Options.IntervalSeconds * 1000;
+            var intervalMilliseconds = Options.IntervalSeconds * 1000;
 
             Debug.WriteLine("Monitor getting store...");
 
-            var buildStore = m_BuildStoreFactory.GetBuildStore(m_Options);
+            var buildStore = m_BuildStoreFactory.GetBuildStore(Options);
 
             try
             {
@@ -173,10 +186,10 @@ namespace BuildMonitor.Core
         {
             return m_MonitoredDefinitions
                 .Where(d =>
-                    !m_Options.HideStaleDefinitions || // Option is disabled
+                    !Options.HideStaleDefinitions || // Option is disabled
                     LatestStatuses.ContainsKey(d.Id) // No status means either no status or stale status
                     )
-                .Select(d => new BuildDetail(d, LatestStatuses.ContainsKey(d.Id) ? LatestStatuses[d.Id] : null))
+                .Select(d => new BuildDetail(d, LatestStatuses.TryGetValue(d.Id, out var value) ? value : null))
                 .OrderBy(d => d.Definition.Name)
                 .ToList();
         }
@@ -187,7 +200,7 @@ namespace BuildMonitor.Core
             // ( b) option to refresh is off OR c) option is on but interval not exceeded
 
             if (m_MonitoredDefinitions != null &&
-                (!m_Options.RefreshDefintions || DateTime.UtcNow.Subtract(m_LastDefinitionRefresh).Seconds < m_Options.RefreshDefinitionIntervalSeconds))
+                (!Options.RefreshDefintions || DateTime.UtcNow.Subtract(m_LastDefinitionRefresh).Seconds < Options.RefreshDefinitionIntervalSeconds))
                 return;
 
             RefreshDefinitions(buildStore).Wait(); // Async ends here at the mo.
@@ -195,7 +208,7 @@ namespace BuildMonitor.Core
 
         private async Task RefreshDefinitions(IBuildStore buildStore)
         {
-            var definitions = await buildStore.GetDefinitions(m_Options.ProjectName);
+            var definitions = await buildStore.GetDefinitions(Options.ProjectName);
             m_MonitoredDefinitions = definitions.ToList();
             m_LastDefinitionRefresh = DateTime.UtcNow;
         }
@@ -204,7 +217,7 @@ namespace BuildMonitor.Core
         {
             foreach (var definition in m_MonitoredDefinitions)
             {
-                var status = await buildStore.GetLatestBuild(m_Options.ProjectName, definition);
+                var status = await buildStore.GetLatestBuild(Options.ProjectName, definition);
 
                 if (status == null)
                     continue;

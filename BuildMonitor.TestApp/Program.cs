@@ -3,8 +3,6 @@ using BuildMonitor.UI.Controls;
 using BuildMonitor.UI.Updater;
 using Moq;
 using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace BuildMonitor.TestApp
@@ -26,36 +24,33 @@ namespace BuildMonitor.TestApp
             {
                 Id = 1,
                 Name = "Test 1",
-                IsVNext = true
+                IsVNext = true,
+                Url = "https://fake.dev/pipeline/1"
             };
 
             var defnTwo = new BuildDefinition
             {
                 Id = 2,
                 Name = "Test 2",
-                IsVNext = true
+                IsVNext = true,
+                Url = "https://fake.dev/pipeline/2"
             };
 
             var storeMoq = new Mock<IBuildStore>();
             storeMoq
                 .Setup(s => s.GetDefinitions(It.IsAny<string>()))
-                .Returns(Task.Run(() => (IEnumerable<BuildDefinition>)[defnOne, defnTwo]));
+                .ReturnsAsync(() => [defnOne, defnTwo]);
             storeMoq
-                .Setup(s => s.GetLatestBuild(It.IsAny<string>(), It.Is<BuildDefinition>(d => d.Id == 1)))
-                .Returns(Task.Run(() => GetRandomStatus(1)));
-            storeMoq
-                .Setup(s => s.GetLatestBuild(It.IsAny<string>(), It.Is<BuildDefinition>(d => d.Id == 2)))
-                .Returns(Task.Run(() => GetRandomStatus(2)));
+                .Setup(s => s.GetLatestBuild(It.IsAny<string>(), It.IsAny<BuildDefinition>()))
+                .ReturnsAsync((string _, BuildDefinition defn) => GetRandomStatus(defn));
 
             var optionsMoq = new Mock<IMonitorOptions>();
             optionsMoq
                 .SetupGet(o => o.IntervalSeconds)
-                .Returns(20);
+                .Returns(10);
             optionsMoq
                 .SetupGet(o => o.ValidOptions)
                 .Returns(true);
-
-
 
             var factoryMoq = new Mock<IBuildStoreFactory>();
             factoryMoq
@@ -74,12 +69,15 @@ namespace BuildMonitor.TestApp
                 );
         }
 
-        private static BuildStatus GetRandomStatus(int id)
+        private static BuildStatus GetRandomStatus(BuildDefinition forDefintion)
         {
             return new()
             {
+                Id = forDefintion.Id,
+                Name = forDefintion.Name,
+                Url = $"{forDefintion.Url}/build/{s_Random.Next(1, 25)}",
+                RequestedBy = $"User{s_Random.Next(1, 100)}",
                 Status = (Status)s_Random.Next(1, 5),
-                Id = id,
                 Start = DateTime.Now.AddHours(-s_Random.Next(1, 5)),
             };
         }

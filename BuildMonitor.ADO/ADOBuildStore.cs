@@ -50,41 +50,44 @@ namespace BuildMonitor.ADO
 
         public async Task<IEnumerable<BuildDefinition>> GetDefinitions(string projectName)
         {
-            var projectNameEncoded = Uri.EscapeUriString(projectName);
+            var projectNameEncoded = Uri.EscapeDataString(projectName);
             var queryPath = $"{projectNameEncoded}/_apis/build/definitions?api-version=2.0";
 
             var result = await GetADOResult(queryPath);
 
-            var definitions = result["value"].Children();
-
-            var buildDefinitions = definitions.Select(b => new BuildDefinition
-            {
-                Id = b["id"].Value<int>(),
-                Name = b["name"].Value<string>(),
-                IsVNext = b["type"]?.Value<string>() == "build"
-            });
+            var jsonDefinitions = result["value"].Children();
 
             return await Task.WhenAll(
-                buildDefinitions.Select(d => GetDefinitionDetail(projectName, d))
+                jsonDefinitions.Select(async d =>
+                {
+                    int id = d["id"].Value<int>();
+                    var detail = await GetDefinitionDetail(projectName, id);
+                    return new BuildDefinition
+                    {
+                        Id = id,
+                        Name = d["name"].Value<string>(),
+                        IsVNext = d["type"]?.Value<string>() == "build",
+                        Url = detail.Url
+                    };
+                })
                 );
         }
 
+        public record BuildDefinitionDetail(string Url);
 
-        private async Task<BuildDefinition> GetDefinitionDetail(string projectName, BuildDefinition definition)
+        private async Task<BuildDefinitionDetail> GetDefinitionDetail(string projectName, int definitionId)
         {
-            var projectNameEncoded = Uri.EscapeUriString(projectName);
-            var queryPath = $"{projectNameEncoded}/_apis/build/definitions/{definition.Id}?api-version=2.0";
+            var projectNameEncoded = Uri.EscapeDataString(projectName);
+            var queryPath = $"{projectNameEncoded}/_apis/build/definitions/{definitionId}?api-version=2.0";
 
             var definitionDetail = await GetADOResult(queryPath);
 
-            definition.Url = definitionDetail["_links"]["web"]["href"].Value<string>();
-
-            return definition;
+            return new(definitionDetail["_links"]["web"]["href"].Value<string>());
         }
 
         public async Task<BuildStatus> GetLatestBuild(string projectName, BuildDefinition definition)
         {
-            var projectNameEncoded = Uri.EscapeUriString(projectName);
+            var projectNameEncoded = Uri.EscapeDataString(projectName);
             var includeRunningFilter = m_IncludeRunningBuilds ? ",inProgress" : "";
             var queryPath = $"{projectNameEncoded}/_apis/build/builds?api-version=2.0";
 
@@ -130,7 +133,7 @@ namespace BuildMonitor.ADO
 
         private async Task<BuildStatus> GetBuildTimeline(string projectName, BuildStatus buildStatus)
         {
-            var projectNameEncoded = Uri.EscapeUriString(projectName);
+            var projectNameEncoded = Uri.EscapeDataString(projectName);
             var queryPath = $"{projectNameEncoded}/_apis/build/builds/{buildStatus.Id}/timeline?api-version=2.0";
 
             var buildTimeline = await GetADOResult(queryPath, true);
@@ -180,22 +183,16 @@ namespace BuildMonitor.ADO
             return new Uri(m_BaseUrl, queryPath.TrimStart('/'));
         }
 
-        private Status StatusFromString(string statusString)
+        private static Status StatusFromString(string statusString)
         {
-            switch (statusString)
+            return statusString switch
             {
-                case "succeeded":
-                    return Status.Succeeded;
-                case "partiallySucceeded":
-                    return Status.PartiallySucceeded;
-                case "failed":
-                    return Status.Failed;
-                case "inProgress":
-                    return Status.InProgress;
-
-                default:
-                    throw new ArgumentOutOfRangeException(nameof(statusString));
-            }
+                "succeeded" => Status.Succeeded,
+                "partiallySucceeded" => Status.PartiallySucceeded,
+                "failed" => Status.Failed,
+                "inProgress" => Status.InProgress,
+                _ => throw new ArgumentOutOfRangeException(nameof(statusString)),
+            };
         }
 
         public void Dispose()
