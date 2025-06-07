@@ -1,8 +1,6 @@
-using BuildMonitor.Core;
-
-namespace BuildMonitor.ADO
+namespace BuildMonitor.Core
 {
-    public class BuildDefinition : IBuildDefinition
+    public class BuildDefinition
     {
         public int Id { get; set; }
         public string Name { get; set; }

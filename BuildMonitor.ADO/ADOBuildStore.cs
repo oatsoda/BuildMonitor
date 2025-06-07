@@ -48,7 +48,7 @@ namespace BuildMonitor.ADO
                            .OrderBy(p => p);
         }
 
-        public async Task<IEnumerable<IBuildDefinition>> GetDefinitions(string projectName)
+        public async Task<IEnumerable<BuildDefinition>> GetDefinitions(string projectName)
         {
             var projectNameEncoded = Uri.EscapeUriString(projectName);
             var queryPath = $"{projectNameEncoded}/_apis/build/definitions?api-version=2.0";
@@ -70,7 +70,7 @@ namespace BuildMonitor.ADO
         }
 
 
-        private async Task<IBuildDefinition> GetDefinitionDetail(string projectName, BuildDefinition definition)
+        private async Task<BuildDefinition> GetDefinitionDetail(string projectName, BuildDefinition definition)
         {
             var projectNameEncoded = Uri.EscapeUriString(projectName);
             var queryPath = $"{projectNameEncoded}/_apis/build/definitions/{definition.Id}?api-version=2.0";
@@ -82,7 +82,7 @@ namespace BuildMonitor.ADO
             return definition;
         }
 
-        public async Task<IBuildStatus> GetLatestBuild(string projectName, IBuildDefinition definition)
+        public async Task<BuildStatus> GetLatestBuild(string projectName, BuildDefinition definition)
         {
             var projectNameEncoded = Uri.EscapeUriString(projectName);
             var includeRunningFilter = m_IncludeRunningBuilds ? ",inProgress" : "";
@@ -128,7 +128,7 @@ namespace BuildMonitor.ADO
             return buildStatus;
         }
 
-        private async Task<IBuildStatus> GetBuildTimeline(string projectName, BuildStatus buildStatus)
+        private async Task<BuildStatus> GetBuildTimeline(string projectName, BuildStatus buildStatus)
         {
             var projectNameEncoded = Uri.EscapeUriString(projectName);
             var queryPath = $"{projectNameEncoded}/_apis/build/builds/{buildStatus.Id}/timeline?api-version=2.0";

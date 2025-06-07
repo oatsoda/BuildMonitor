@@ -20,8 +20,8 @@ namespace BuildMonitor.Core
         private IMonitorOptions m_Options;
 
         private Status m_OverallStatus;
-        private List<IBuildDefinition> m_MonitoredDefinitions;
-        private Dictionary<int, IBuildStatus> m_LatestStatuses;
+        private List<BuildDefinition> m_MonitoredDefinitions;
+        private Dictionary<int, BuildStatus> m_LatestStatuses;
         private DateTime m_LastDefinitionRefresh;
 
         public event EventHandler<BuildDetail> OverallStatusChanged;
@@ -29,15 +29,15 @@ namespace BuildMonitor.Core
         public event EventHandler<string> MonitoringStopped;
         public event EventHandler<List<BuildDetail>> Updated;
 
-        private ReadOnlyDictionary<int, IBuildStatus> LatestStatuses
+        private ReadOnlyDictionary<int, BuildStatus> LatestStatuses
         {
             get
             {
                 if (!m_Options.HideStaleDefinitions) // Option is not enabled
-                    return new ReadOnlyDictionary<int, IBuildStatus>(m_LatestStatuses);
+                    return new ReadOnlyDictionary<int, BuildStatus>(m_LatestStatuses);
 
                 return
-                    new ReadOnlyDictionary<int, IBuildStatus>(
+                    new ReadOnlyDictionary<int, BuildStatus>(
                         m_LatestStatuses
                         .Where(kvp =>
                             kvp.Value.TimeSpanSinceStart().TotalDays < m_Options.StaleDefinitionDays // Status is within days
@@ -71,7 +71,7 @@ namespace BuildMonitor.Core
             m_Options = options;
 
             m_MonitoredDefinitions = null;
-            m_LatestStatuses = new Dictionary<int, IBuildStatus>();
+            m_LatestStatuses = new Dictionary<int, BuildStatus>();
             m_RequestStop = false;
             m_Stopped = false;
 

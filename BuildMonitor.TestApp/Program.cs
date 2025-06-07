@@ -22,31 +22,29 @@ namespace BuildMonitor.TestApp
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
 
-            var defnOneMoq = new Mock<IBuildDefinition>();
-            defnOneMoq
-                .SetupGet(d => d.Id).Returns(1);
-            defnOneMoq
-                .SetupGet(d => d.Name).Returns("Test 1");
-            defnOneMoq
-                .SetupGet(d => d.IsVNext).Returns(true);
+            var defnOne = new BuildDefinition
+            {
+                Id = 1,
+                Name = "Test 1",
+                IsVNext = true
+            };
 
-            var defnTwoMoq = new Mock<IBuildDefinition>();
-            defnTwoMoq
-                .SetupGet(d => d.Id).Returns(2);
-            defnTwoMoq
-                .SetupGet(d => d.Name).Returns("Test 2");
-            defnTwoMoq
-                .SetupGet(d => d.IsVNext).Returns(true);
+            var defnTwo = new BuildDefinition
+            {
+                Id = 2,
+                Name = "Test 2",
+                IsVNext = true
+            };
 
             var storeMoq = new Mock<IBuildStore>();
             storeMoq
                 .Setup(s => s.GetDefinitions(It.IsAny<string>()))
-                .Returns(Task.Run(() => (IEnumerable<IBuildDefinition>)new[] { defnOneMoq.Object, defnTwoMoq.Object }));
+                .Returns(Task.Run(() => (IEnumerable<BuildDefinition>)[defnOne, defnTwo]));
             storeMoq
-                .Setup(s => s.GetLatestBuild(It.IsAny<string>(), It.Is<IBuildDefinition>(d => d.Id == 1)))
+                .Setup(s => s.GetLatestBuild(It.IsAny<string>(), It.Is<BuildDefinition>(d => d.Id == 1)))
                 .Returns(Task.Run(() => GetRandomStatus(1)));
             storeMoq
-                .Setup(s => s.GetLatestBuild(It.IsAny<string>(), It.Is<IBuildDefinition>(d => d.Id == 2)))
+                .Setup(s => s.GetLatestBuild(It.IsAny<string>(), It.Is<BuildDefinition>(d => d.Id == 2)))
                 .Returns(Task.Run(() => GetRandomStatus(2)));
 
             var optionsMoq = new Mock<IMonitorOptions>();
@@ -76,13 +74,14 @@ namespace BuildMonitor.TestApp
                 );
         }
 
-        private static IBuildStatus GetRandomStatus(int id)
+        private static BuildStatus GetRandomStatus(int id)
         {
-            var statusMoq = new Mock<IBuildStatus>();
-            statusMoq.Setup(s => s.Status).Returns((Status)s_Random.Next(1, 5));
-            statusMoq.Setup(s => s.Id).Returns(id);
-            statusMoq.Setup(s => s.Start).Returns(DateTime.Now.AddHours(-3));
-            return statusMoq.Object;
+            return new()
+            {
+                Status = (Status)s_Random.Next(1, 5),
+                Id = id,
+                Start = DateTime.Now.AddHours(-s_Random.Next(1, 5)),
+            };
         }
     }
 }

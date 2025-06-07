@@ -6,7 +6,7 @@ namespace BuildMonitor.Core
     public interface IBuildStore
     {
         Task<IEnumerable<string>> GetProjects();
-        Task<IEnumerable<IBuildDefinition>> GetDefinitions(string projectName);
-        Task<IBuildStatus> GetLatestBuild(string projectName, IBuildDefinition definition);
+        Task<IEnumerable<BuildDefinition>> GetDefinitions(string projectName);
+        Task<BuildStatus> GetLatestBuild(string projectName, BuildDefinition definition);
     }
 }
