@@ -78,11 +78,15 @@ namespace BuildMonitor.Core
 
             m_Options = options;
 
+            m_OverallStatus = Status.Unknown;
+
             if (m_MonitoredDefinitions.Count > 0)
                 m_MonitoredDefinitions = [];
 
             if (m_LatestStatuses.Count > 0)
                 m_LatestStatuses = [];
+
+            m_LastDefinitionRefresh = DateTime.MinValue;
 
             m_RequestStop = false;
             m_Stopped = false;

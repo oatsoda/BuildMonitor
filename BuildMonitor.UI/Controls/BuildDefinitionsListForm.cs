@@ -60,9 +60,9 @@ namespace BuildMonitor.UI.Controls
             // first call to SetDesktopLocation sets the WindowState back to Minimized even
             // though we have just set it to Normal.
             // (TODO: Actually this sometimes seem to still happen and the weird form appears)
+            // TODO: Also, edting settings causes Hide, but if the form was being shown, that
+            // doesn't change WindowState, so clicking NotifyIcon things it's still showing, and hides it.
             Visible = false;
-
-            m_FirstStatusUpdate = true;
 
             m_Monitor = monitor;
             m_CurrentMonitorOptions = currentOptions;
@@ -101,8 +101,7 @@ namespace BuildMonitor.UI.Controls
         {
             Debug.WriteLine("ApplyOptions...");
 
-            // TODO: resetting this - it doesn't then get set again becaue OverallStatusUpdate will not fire
-            // as the Monitor instance is the same...
+            m_FirstStatusUpdate = true;
             notifyIcon.Icon = Icon;
             SetMessageOnly("Waiting for builds...");
             SetSizeAndPosition();
