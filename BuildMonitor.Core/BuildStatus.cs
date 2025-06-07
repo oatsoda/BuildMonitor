@@ -14,9 +14,14 @@ namespace BuildMonitor.Core
         public int ErrorCount { get; set; }
         public int WarningCount { get; set; }
 
+        public TimeSpan TimeSpanSinceStart()
+        {
+            return DateTime.UtcNow.Subtract(Start);
+        }
+
         public string ToCurrentTimeDescription()
         {
-            var diff = DateTime.UtcNow.Subtract(Start);
+            var diff = TimeSpanSinceStart();
 
             if (diff.TotalHours >= 48)
                 return $"{(int)diff.TotalDays} days ago";

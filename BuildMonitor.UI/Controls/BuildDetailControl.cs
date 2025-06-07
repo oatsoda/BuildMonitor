@@ -1,5 +1,4 @@
 ﻿using BuildMonitor.Core;
-using BuildMonitor.Core.InterfaceExtensions;
 using BuildMonitor.UI.Helpers;
 using System.ComponentModel;
 using System.Windows.Forms;
