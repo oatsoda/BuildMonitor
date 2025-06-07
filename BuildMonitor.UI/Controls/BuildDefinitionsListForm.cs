@@ -42,6 +42,9 @@ namespace BuildMonitor.UI.Controls
         private bool m_IsSettingsOpen;
         private bool m_IsAboutOpen;
 
+        private int m_MessageOnlyHeight;
+        private int m_MessageOnlyWidth;
+
         #endregion
 
         #region Constructor
@@ -56,6 +59,7 @@ namespace BuildMonitor.UI.Controls
             // This ensures first click on notify icon displays the form. Otherwise the
             // first call to SetDesktopLocation sets the WindowState back to Minimized even
             // though we have just set it to Normal.
+            // (TODO: Actually this sometimes seem to still happen and the weird form appears)
             Visible = false;
 
             m_FirstStatusUpdate = true;
@@ -74,6 +78,12 @@ namespace BuildMonitor.UI.Controls
             notifyIcon.Icon = Icon;
 
             m_CalculatedHeight = m_CalculatedWidth = 0;
+            Controls.Clear();
+            using (var dimension = new BuildDetailControl())
+            {
+                m_MessageOnlyHeight = Height = dimension.Height;
+                m_MessageOnlyWidth = Width = dimension.Width;
+            }
 
             ApplyOptions();
 
@@ -177,19 +187,24 @@ namespace BuildMonitor.UI.Controls
                 AutoSize = true,
                 Text = message,
                 Dock = DockStyle.Fill,
-                MaximumSize = new Size(Width, 0)
+                MaximumSize = new Size(m_MessageOnlyWidth, 0),
+                MinimumSize = new Size(100, m_MessageOnlyHeight)
             };
 
             Controls.Add(label);
 
             m_CalculatedHeight = label.Height;
-            m_CalculatedWidth = label.Width;
+            m_CalculatedWidth = m_MessageOnlyWidth;
+
+            SetSizeAndPosition();
         }
 
         private void SetSizeAndPosition()
         {
             Height = m_CalculatedHeight;
             Width = m_CalculatedWidth;
+
+            Debug.WriteLine($"Setting Size [{m_CalculatedWidth},{m_CalculatedHeight} / {Width},{Height}]");
 
             var bounds = this.GetScreenBounds();
             var x = (bounds.Width - Width) - OFFSET_X;
@@ -282,8 +297,8 @@ namespace BuildMonitor.UI.Controls
             this.InvokeIfRequired(() =>
             {
                 UpdateBuildControls(list);
-                if (WindowState != FormWindowState.Minimized)
-                    SetSizeAndPosition();
+                //if (WindowState != FormWindowState.Minimized)
+                SetSizeAndPosition();
             });
         }
 

@@ -28,31 +28,33 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.buildDetailControl = new BuildMonitor.UI.Controls.BuildDetailControl();
-            this.SuspendLayout();
+            buildDetailControl = new BuildDetailControl();
+            SuspendLayout();
             // 
             // buildDetailControl
             // 
-            this.buildDetailControl.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(37)))), ((int)(((byte)(37)))), ((int)(((byte)(38)))));
-            this.buildDetailControl.Location = new System.Drawing.Point(0, 0);
-            this.buildDetailControl.Margin = new System.Windows.Forms.Padding(0);
-            this.buildDetailControl.Name = "buildDetailControl";
-            this.buildDetailControl.Size = new System.Drawing.Size(257, 38);
-            this.buildDetailControl.TabIndex = 0;
+            buildDetailControl.BackColor = System.Drawing.Color.FromArgb(37, 37, 38);
+            buildDetailControl.Location = new System.Drawing.Point(0, 0);
+            buildDetailControl.Margin = new System.Windows.Forms.Padding(0);
+            buildDetailControl.Name = "buildDetailControl";
+            buildDetailControl.Size = new System.Drawing.Size(300, 44);
+            buildDetailControl.TabIndex = 0;
             // 
             // PopupStatusForm
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(257, 38);
-            this.ControlBox = false;
-            this.Controls.Add(this.buildDetailControl);
-            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
-            this.Name = "PopupStatusForm";
-            this.ShowIcon = false;
-            this.ShowInTaskbar = false;
-            this.Text = "PopupStatusForm";
-            this.ResumeLayout(false);
+            AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
+            AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            ClientSize = new System.Drawing.Size(300, 44);
+            ControlBox = false;
+            Controls.Add(buildDetailControl);
+            FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
+            Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            Name = "PopupStatusForm";
+            ShowIcon = false;
+            ShowInTaskbar = false;
+            Text = "PopupStatusForm";
+            TopMost = true;
+            ResumeLayout(false);
 
         }
 

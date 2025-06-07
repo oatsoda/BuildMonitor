@@ -161,6 +161,8 @@
             Controls.Add(lblRequestedBy);
             Controls.Add(lblLinkTitle);
             Margin = new System.Windows.Forms.Padding(0);
+            MaximumSize = new System.Drawing.Size(370, 65);
+            MinimumSize = new System.Drawing.Size(370, 65);
             Name = "BuildDetailControl";
             Size = new System.Drawing.Size(370, 65);
             ((System.ComponentModel.ISupportInitialize)picStatus).EndInit();
