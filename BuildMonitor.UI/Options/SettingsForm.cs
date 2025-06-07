@@ -194,5 +194,21 @@ namespace BuildMonitor.UI.Options
             m_Options.Reset();
             DialogResult = DialogResult.Abort; // Close without triggering OnClose saving of settings.
         }
+
+        private void txtAdoOrganisation_TextChanged(object sender, EventArgs e)
+        {
+            lblLinkPat.Enabled = txtAdoOrganisation.Text.Length >= 0;
+
+            var url = $"https://dev.azure.com/{txtAdoOrganisation.Text}/_usersSettings/tokens";
+
+            lblLinkPat.Links.Clear();
+            lblLinkPat.Links.Add(0, lblLinkPat.Text.Length, url);
+        }
+
+        private void lblLinkPat_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        {
+            e.VisitUrl(sender);
+        }
+
     }
 }

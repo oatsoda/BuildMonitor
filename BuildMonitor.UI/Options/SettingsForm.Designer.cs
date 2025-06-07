@@ -47,6 +47,7 @@
             cbRefreshDefinitions = new System.Windows.Forms.CheckBox();
             cbIncludeRunning = new System.Windows.Forms.CheckBox();
             tabADO = new System.Windows.Forms.TabPage();
+            lblLinkPat = new System.Windows.Forms.LinkLabel();
             label8 = new System.Windows.Forms.Label();
             imgBox = new System.Windows.Forms.PictureBox();
             btnValidate = new System.Windows.Forms.Button();
@@ -68,6 +69,7 @@
             txtAdoOrganisation.Name = "txtAdoOrganisation";
             txtAdoOrganisation.Size = new System.Drawing.Size(178, 23);
             txtAdoOrganisation.TabIndex = 0;
+            txtAdoOrganisation.TextChanged += txtAdoOrganisation_TextChanged;
             // 
             // btnOk
             // 
@@ -261,6 +263,7 @@
             // 
             // tabADO
             // 
+            tabADO.Controls.Add(lblLinkPat);
             tabADO.Controls.Add(label8);
             tabADO.Controls.Add(imgBox);
             tabADO.Controls.Add(btnValidate);
@@ -278,6 +281,18 @@
             tabADO.TabIndex = 1;
             tabADO.Text = "Azure DevOps";
             tabADO.UseVisualStyleBackColor = true;
+            // 
+            // lblLinkPat
+            // 
+            lblLinkPat.AutoSize = true;
+            lblLinkPat.Enabled = false;
+            lblLinkPat.Location = new System.Drawing.Point(498, 79);
+            lblLinkPat.Name = "lblLinkPat";
+            lblLinkPat.Size = new System.Drawing.Size(77, 15);
+            lblLinkPat.TabIndex = 16;
+            lblLinkPat.TabStop = true;
+            lblLinkPat.Text = "Manage PATs";
+            lblLinkPat.LinkClicked += lblLinkPat_LinkClicked;
             // 
             // label8
             // 
@@ -404,5 +419,6 @@
         private System.Windows.Forms.CheckBox cbHideStale;
         private System.Windows.Forms.Label label8;
         private System.Windows.Forms.Button btnReset;
+        private System.Windows.Forms.LinkLabel lblLinkPat;
     }
 }

@@ -1,5 +1,5 @@
-﻿using System;
-using System.Diagnostics;
+﻿using BuildMonitor.UI.Helpers;
+using System;
 using System.Net.Http;
 using System.Reflection;
 using System.Threading.Tasks;
@@ -53,8 +53,7 @@ namespace BuildMonitor.UI.Updater
 
         private void RunUpdate()
         {
-            var si = new ProcessStartInfo(m_LatestBinaryUrl);
-            Process.Start(si);
+            LinkHelper.OpenUrl(m_LatestBinaryUrl);
         }
     }
 }

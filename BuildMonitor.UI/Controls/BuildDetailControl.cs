@@ -2,7 +2,6 @@
 using BuildMonitor.Core.InterfaceExtensions;
 using BuildMonitor.UI.Helpers;
 using System.ComponentModel;
-using System.Diagnostics;
 using System.Windows.Forms;
 
 namespace BuildMonitor.UI.Controls
@@ -67,9 +66,7 @@ namespace BuildMonitor.UI.Controls
 
         private void lblLinkTitle_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
-            var si = new ProcessStartInfo(e.Link.LinkData.ToString());
-            Process.Start(si);
-            lblLinkTitle.LinkVisited = true;
+            e.VisitUrl(sender);
         }
     }
 }
