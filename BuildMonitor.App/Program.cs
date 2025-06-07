@@ -30,7 +30,7 @@ namespace BuildMonitor.App
                 return;
 
             IBuildStoreFactory buildStoreFactory = new ADOBuildStoreFactory();
-            IBuildDefinitionMonitor monitor = new BuildDefinitionMonitor(buildStoreFactory);
+            var monitor = new BuildDefinitionMonitor(buildStoreFactory);
 
             var options = new MonitorOptions();
 

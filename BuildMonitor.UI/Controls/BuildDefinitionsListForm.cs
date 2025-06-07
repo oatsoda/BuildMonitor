@@ -33,7 +33,7 @@ namespace BuildMonitor.UI.Controls
         private readonly IBuildStoreFactory m_BuildStoreFactory;
         private readonly IAppUpdater m_AppUpdater;
 
-        private readonly IBuildDefinitionMonitor m_Monitor;
+        private readonly BuildDefinitionMonitor m_Monitor;
 
         private IEnumerable<BuildDetailControl> BuildDetailControls => Controls.OfType<BuildDetailControl>();
 
@@ -49,7 +49,7 @@ namespace BuildMonitor.UI.Controls
 
         #region Constructor
 
-        public BuildDefinitionsListForm(IBuildDefinitionMonitor monitor,
+        public BuildDefinitionsListForm(BuildDefinitionMonitor monitor,
                                         IMonitorOptions currentOptions,
                                         IBuildStoreFactory buildStoreFactory,
                                         IAppUpdater appUpdater)

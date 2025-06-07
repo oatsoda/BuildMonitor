@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace BuildMonitor.Core
 {
-    public sealed class BuildDefinitionMonitor : IBuildDefinitionMonitor, IDisposable
+    public sealed class BuildDefinitionMonitor : IDisposable
     {
         private bool m_RequestStop;
         private bool m_Stopped;

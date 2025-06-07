@@ -59,7 +59,7 @@ namespace BuildMonitor.TestApp
 
             var appUpdaterMoq = new Mock<IAppUpdater>();
 
-            IBuildDefinitionMonitor monitor = new BuildDefinitionMonitor(factoryMoq.Object);
+            var monitor = new BuildDefinitionMonitor(factoryMoq.Object);
 
             Application.Run(
                 new BuildDefinitionsListForm(monitor,
