@@ -296,7 +296,7 @@ namespace BuildMonitor.UI.Controls
 
         private void OnBuildMonitorOnUpdated(object sender, List<BuildDetail> list)
         {
-            Debug.WriteLine($"OnBuildMonitorOnUpdated: {list.Count} builds");
+            Debug.WriteLine($"OnBuildMonitorOnUpdated: [{string.Join(", ", list.Select(b => $"{b.Definition.Name}: {b.Status.Status}"))}]");
 
             this.InvokeIfRequired(() =>
             {
@@ -341,7 +341,7 @@ namespace BuildMonitor.UI.Controls
             {
                 notifyIcon.Icon = buildDetail.Status.Status.ToIcon();
 
-                if (!m_FirstStatusUpdate || buildDetail.Status.Status != Status.Succeeded) // Don't notify if first load is Succeeded
+                if (!m_FirstStatusUpdate) // Don't notify on first load
                     new PopupStatusForm(buildDetail).Show();
 
                 m_FirstStatusUpdate = false;

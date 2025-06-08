@@ -47,7 +47,7 @@ namespace BuildMonitor.TestApp
             var optionsMoq = new Mock<IMonitorOptions>();
             optionsMoq
                 .SetupGet(o => o.IntervalSeconds)
-                .Returns(10);
+                .Returns(20);
             optionsMoq
                 .SetupGet(o => o.ValidOptions)
                 .Returns(true);
