@@ -131,6 +131,8 @@ namespace BuildMonitor.Core
                 {
                     while (!m_RequestStop)
                     {
+                        Debug.WriteLine("Monitor checking now...");
+
                         if (!m_RequestStop)
                             await RefreshDefinitionsIfRequired(buildStore);
 
@@ -144,12 +146,9 @@ namespace BuildMonitor.Core
                         {
                             sw.Start();
 
-                            while (sw.ElapsedMilliseconds < intervalMilliseconds)
+                            while (!m_RequestStop && sw.ElapsedMilliseconds < intervalMilliseconds)
                             {
-                                Thread.Sleep(1000);
-
-                                if (m_RequestStop)
-                                    break;
+                                await Task.Delay(1000);
                             }
 
                             sw.Reset();
@@ -185,6 +184,8 @@ namespace BuildMonitor.Core
 
         private void RaiseUpdated()
         {
+            Debug.WriteLine("Monitor raising updated event...");
+
             Updated?.Invoke(this, GetBuildDetails());
         }
 
@@ -215,16 +216,20 @@ namespace BuildMonitor.Core
 
         private async Task RefreshDefinitions(IBuildStore buildStore)
         {
-            var definitions = await buildStore.GetDefinitions(Options.ProjectName);
+            Debug.WriteLine("Monitor refreshing definitions...");
+
+            var definitions = await buildStore.GetDefinitions();
             m_MonitoredDefinitions = [.. definitions];
             m_LastDefinitionRefresh = DateTime.UtcNow;
         }
 
         private async Task RefreshStatuses(IBuildStore buildStore)
         {
+            Debug.WriteLine("Monitor refreshing statuses...");
+
             foreach (var definition in m_MonitoredDefinitions)
             {
-                var status = await buildStore.GetLatestBuild(Options.ProjectName, definition);
+                var status = await buildStore.GetLatestBuild(definition);
 
                 if (status == null)
                     continue;

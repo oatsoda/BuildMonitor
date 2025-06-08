@@ -1,5 +1,4 @@
 ﻿using BuildMonitor.Core;
-using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,19 +8,22 @@ using System.Net.Http.Headers;
 using System.Security.Authentication;
 using System.Text;
 using System.Text.Json;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
 namespace BuildMonitor.ADO
 {
     public sealed class ADOBuildStore : IBuildStore, IDisposable
     {
-        private readonly bool m_IncludeRunningBuilds;
         private readonly HttpClient m_HttpClient;
+
+        private readonly bool m_IncludeRunningBuilds;
+        private readonly string m_ProjectNameUrlEncoded;
 
         public ADOBuildStore(IMonitorOptions options)
         {
             var baseUrl = new Uri(
-                string.Format($"https://{options.AzureDevOpsOrganisation}.visualstudio.com/DefaultCollection/")
+                string.Format($"https://dev.azure.com/{Uri.EscapeDataString(options.AzureDevOpsOrganisation)}/")
                 );
 
             m_HttpClient = new HttpClient() { BaseAddress = baseUrl };
@@ -34,83 +36,79 @@ namespace BuildMonitor.ADO
                         $"{options.PersonalAccessTokenPlainText}:")));
 
             m_IncludeRunningBuilds = options.IncludeRunningBuilds;
+            m_ProjectNameUrlEncoded = Uri.EscapeDataString(options.ProjectName);
         }
 
         public record ADOProject(string Name);
-        public record ADOProjects(int Count, ADOProject[] Value);
+        public record ADOListResult<T>(int Count, T[] Value);
 
         public async Task<IEnumerable<string>> GetProjects()
         {
+            // https://learn.microsoft.com/en-us/rest/api/azure/devops/core/projects/list?view=azure-devops-rest-7.1&tabs=HTTP
             var queryPath = "_apis/projects?api-version=7.1";
 
-            var projects = await GetADOResult<ADOProjects>(queryPath);
+            var projects = await GetADOResult<ADOListResult<ADOProject>>(queryPath);
 
             return projects.Value
                 .Select(p => p.Name)
                 .OrderBy(p => p);
         }
 
-        public async Task<IEnumerable<BuildDefinition>> GetDefinitions(string projectName)
+        public record ADOLink(string Href);
+        public record ADOLinks(ADOLink Web);
+
+        public enum DefinitionType { Build, Xaml };
+        public record ADOBuildDefinition(int Id, string Name, DefinitionType Type,
+            [property: JsonPropertyName("_links")] ADOLinks Links);
+
+        public async Task<IEnumerable<BuildDefinition>> GetDefinitions()
         {
-            var projectNameEncoded = Uri.EscapeDataString(projectName);
-            var queryPath = $"{projectNameEncoded}/_apis/build/definitions?api-version=2.0";
+            // https://learn.microsoft.com/en-us/rest/api/azure/devops/build/definitions/list?view=azure-devops-rest-7.1
+            var queryPath = $"{m_ProjectNameUrlEncoded}/_apis/build/definitions?api-version=7.1";
 
-            var result = await GetADOResult(queryPath);
+            var definitions = await GetADOResult<ADOListResult<ADOBuildDefinition>>(queryPath);
 
-            var jsonDefinitions = result["value"].Children();
-
-            return await Task.WhenAll(
-                jsonDefinitions.Select(async d =>
+            return definitions.Value.Select(d
+                => new BuildDefinition
                 {
-                    int id = d["id"].Value<int>();
-                    var detail = await GetDefinitionDetail(projectName, id);
-                    return new BuildDefinition
-                    {
-                        Id = id,
-                        Name = d["name"].Value<string>(),
-                        IsVNext = d["type"]?.Value<string>() == "build",
-                        Url = detail.Url
-                    };
-                })
-                );
+                    Id = d.Id,
+                    Name = d.Name,
+                    IsVNext = d.Type == DefinitionType.Build,
+                    Url = d.Links.Web.Href
+                });
         }
 
-        public record BuildDefinitionDetail(string Url);
+        public record ADOBuildRequestedFor(string DisplayName);
+        public record ADOBuild(int Id, string BuildNumber, ADOStatus Status, ADOResult Result,
+            DateTimeOffset StartTime, DateTimeOffset? FinishTime, ADOBuildRequestedFor RequestedFor,
+            [property: JsonPropertyName("_links")] ADOLinks Links);
+        public enum ADOResult { None, Succeeded, PartiallySucceeded, Canceled, Failed };
+        public enum ADOStatus { None, InProgress, Completed, NotStarted, Postponed, Canceling, All };
 
-        private async Task<BuildDefinitionDetail> GetDefinitionDetail(string projectName, int definitionId)
+        public async Task<BuildStatus> GetLatestBuild(BuildDefinition definition)
         {
-            var projectNameEncoded = Uri.EscapeDataString(projectName);
-            var queryPath = $"{projectNameEncoded}/_apis/build/definitions/{definitionId}?api-version=2.0";
-
-            var definitionDetail = await GetADOResult(queryPath);
-
-            return new(definitionDetail["_links"]["web"]["href"].Value<string>());
-        }
-
-        public async Task<BuildStatus> GetLatestBuild(string projectName, BuildDefinition definition)
-        {
-            var projectNameEncoded = Uri.EscapeDataString(projectName);
-            var includeRunningFilter = m_IncludeRunningBuilds ? ",inProgress" : "";
-            var queryPath = $"{projectNameEncoded}/_apis/build/builds?api-version=2.0";
+            // https://learn.microsoft.com/en-us/rest/api/azure/devops/build/builds/get?view=azure-devops-rest-7.1
+            var statuses = m_IncludeRunningBuilds ? "completed,inProgress" : "completed";
+            var queryPath = $"{m_ProjectNameUrlEncoded}/_apis/build/builds?api-version=2.0";
 
             queryPath = string.Join("&",
                 queryPath,
                 $"definitions={definition.Id}",
-                $"statusFilter=completed{includeRunningFilter}"
+                $"statusFilter={statuses}"
                 );
 
-            var result = await GetADOResult(queryPath);
+            var result = await GetADOResult<ADOListResult<ADOBuild>>(queryPath);
 
-            var builds = result["value"].Children();
+            var builds = result.Value;
 
-            if (!builds.Any())
+            if (builds.Length == 0)
                 return null;
 
             var b = builds
                 // This should leave: succeeded, partiallySucceeded, failed and, if
                 // the option was added above, builds without a result - i.e. inProgress status
-                .Where(t => (t["result"]?.Value<string>() ?? string.Empty) != "canceled")
-                .OrderByDescending(t => t["startTime"])
+                .Where(t => t.Result != ADOResult.Canceled)
+                .OrderByDescending(t => t.StartTime)
                 .FirstOrDefault();
 
             if (b == null)
@@ -118,17 +116,17 @@ namespace BuildMonitor.ADO
 
             var buildStatus = new BuildStatus
             {
-                Id = b["id"].Value<int>(),
-                Name = b["buildNumber"].Value<string>(),
-                Url = b["_links"]["web"]["href"].Value<string>(),
-                Start = b["startTime"].Value<DateTime>(),
-                Finish = b["finishTime"]?.Value<DateTime>(),
-                Status = StatusFromString((b["result"] ?? b["status"]).Value<string>()),
-                RequestedBy = b["requestedFor"]["displayName"].Value<string>()
+                Id = b.Id,
+                Name = b.BuildNumber,
+                Url = b.Links.Web.Href,
+                Start = b.StartTime,
+                Finish = b.FinishTime,
+                Status = b.Status == ADOStatus.InProgress ? Status.InProgress : ToStatus(b.Result),
+                RequestedBy = b.RequestedFor.DisplayName
             };
 
             if (definition.IsVNext)
-                return await GetBuildTimeline(projectName, buildStatus);
+                return await GetBuildTimeline(buildStatus);
 
             return buildStatus;
         }
@@ -136,10 +134,10 @@ namespace BuildMonitor.ADO
         public record ADOTimelineRecord(int ErrorCount, int WarningCount);
         public record ADOTimeline(ADOTimelineRecord[] Records);
 
-        private async Task<BuildStatus> GetBuildTimeline(string projectName, BuildStatus buildStatus)
+        private async Task<BuildStatus> GetBuildTimeline(BuildStatus buildStatus)
         {
-            var projectNameEncoded = Uri.EscapeDataString(projectName);
-            var queryPath = $"{projectNameEncoded}/_apis/build/builds/{buildStatus.Id}/timeline?api-version=2.0";
+            // https://learn.microsoft.com/en-us/rest/api/azure/devops/build/timeline/get?view=azure-devops-rest-7.1
+            var queryPath = $"{m_ProjectNameUrlEncoded}/_apis/build/builds/{buildStatus.Id}/timeline?api-version=2.0";
 
             var buildTimeline = await GetADOResult<ADOTimeline>(queryPath);
 
@@ -155,7 +153,11 @@ namespace BuildMonitor.ADO
         private static readonly JsonSerializerOptions s_JsonOptions = new()
         {
             PropertyNameCaseInsensitive = true,
-            PropertyNamingPolicy = JsonNamingPolicy.CamelCase
+            PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+            Converters =
+            {
+                new JsonStringEnumConverter()
+            }
         };
 
         private async Task<T> GetADOResult<T>(string queryPath)
@@ -163,15 +165,6 @@ namespace BuildMonitor.ADO
             var json = await GetADOJsonResult(queryPath);
 
             return JsonSerializer.Deserialize<T>(json, s_JsonOptions);
-        }
-
-        private async Task<JObject> GetADOResult(string queryPath)
-        {
-            var json = await GetADOJsonResult(queryPath);
-
-            if (json == null)
-                return null;
-            return JObject.Parse(json);
         }
 
         private async Task<string> GetADOJsonResult(string path)
@@ -185,16 +178,14 @@ namespace BuildMonitor.ADO
             return await response.Content.ReadAsStringAsync();
         }
 
-
-        private static Status StatusFromString(string statusString)
+        private static Status ToStatus(ADOResult result)
         {
-            return statusString switch
+            return result switch
             {
-                "succeeded" => Status.Succeeded,
-                "partiallySucceeded" => Status.PartiallySucceeded,
-                "failed" => Status.Failed,
-                "inProgress" => Status.InProgress,
-                _ => throw new ArgumentOutOfRangeException(nameof(statusString)),
+                ADOResult.Succeeded => Status.Succeeded,
+                ADOResult.PartiallySucceeded => Status.PartiallySucceeded,
+                ADOResult.Failed => Status.Failed,
+                _ => throw new ArgumentOutOfRangeException(nameof(result), result, $"Result '{result}' is not expected."),
             };
         }
 

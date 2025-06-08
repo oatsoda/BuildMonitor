@@ -38,11 +38,11 @@ namespace BuildMonitor.TestApp
 
             var storeMoq = new Mock<IBuildStore>();
             storeMoq
-                .Setup(s => s.GetDefinitions(It.IsAny<string>()))
+                .Setup(s => s.GetDefinitions())
                 .ReturnsAsync(() => [defnOne, defnTwo]);
             storeMoq
-                .Setup(s => s.GetLatestBuild(It.IsAny<string>(), It.IsAny<BuildDefinition>()))
-                .ReturnsAsync((string _, BuildDefinition defn) => GetRandomStatus(defn));
+                .Setup(s => s.GetLatestBuild(It.IsAny<BuildDefinition>()))
+                .ReturnsAsync((BuildDefinition defn) => GetRandomStatus(defn));
 
             var optionsMoq = new Mock<IMonitorOptions>();
             optionsMoq
@@ -78,7 +78,7 @@ namespace BuildMonitor.TestApp
                 Url = $"{forDefintion.Url}/build/{s_Random.Next(1, 25)}",
                 RequestedBy = $"User{s_Random.Next(1, 100)}",
                 Status = (Status)s_Random.Next(1, 5),
-                Start = DateTime.Now.AddHours(-s_Random.Next(1, 5)),
+                Start = DateTimeOffset.Now.AddHours(-s_Random.Next(1, 5)),
             };
         }
     }

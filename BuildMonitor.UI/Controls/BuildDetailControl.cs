@@ -53,9 +53,9 @@ namespace BuildMonitor.UI.Controls
             }
 
             lblErrors.Visible =
-            imgErrors.Visible =
-            lblWarnings.Visible =
-            imgWarnings.Visible = buildDetail.Definition.IsVNext;
+                imgErrors.Visible =
+                lblWarnings.Visible =
+                imgWarnings.Visible = buildDetail.Definition.IsVNext;
 
             picStatus.Image = buildDetail.Status?.Status.ToBitmap(picStatus.Size);
         }
