@@ -1,6 +1,4 @@
-﻿using BuildMonitor.Core;
-
-namespace BuildMonitor.ADO
+﻿namespace BuildMonitor.Core.ADO
 {
     public class ADOBuildStoreFactory : IBuildStoreFactory
     {

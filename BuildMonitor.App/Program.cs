@@ -1,5 +1,5 @@
-﻿using BuildMonitor.ADO;
-using BuildMonitor.Core;
+﻿using BuildMonitor.Core;
+using BuildMonitor.Core.ADO;
 using BuildMonitor.UI.Controls;
 using BuildMonitor.UI.Options;
 using BuildMonitor.UI.Updater;

@@ -1,5 +1,4 @@
-﻿using BuildMonitor.Core;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
@@ -11,7 +10,7 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
-namespace BuildMonitor.ADO
+namespace BuildMonitor.Core.ADO
 {
     public sealed class ADOBuildStore : IBuildStore, IDisposable
     {
