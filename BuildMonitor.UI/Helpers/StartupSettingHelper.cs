@@ -11,7 +11,7 @@ namespace BuildMonitor.UI.Helpers
 
         private static RegistryKey GetKey(bool forWriting = false)
         {
-            var regKey = Registry.CurrentUser.OpenSubKey(_REG_KEY);
+            var regKey = Registry.CurrentUser.OpenSubKey(_REG_KEY, forWriting);
 
             if (regKey == null)
                 throw new InvalidOperationException($"Registry key '{_REG_KEY}' could not be opened for {(forWriting ? "writing" : "reading")}.");

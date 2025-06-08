@@ -3,7 +3,6 @@ using BuildMonitor.UI.Helpers;
 using BuildMonitor.UI.Protection;
 using System;
 using System.Drawing;
-using System.Globalization;
 using System.Linq;
 using System.Security.Authentication;
 using System.Threading.Tasks;
@@ -37,17 +36,17 @@ namespace BuildMonitor.UI.Options
 #endif
 
             // General Tab
-            txtInterval.Text = m_Options.IntervalSeconds.ToString(CultureInfo.InvariantCulture);
+            numInterval.Value = m_Options.IntervalSeconds;
 
             cbIncludeRunning.Checked = m_Options.IncludeRunningBuilds;
 
             cbRefreshDefinitions.Checked = m_Options.RefreshDefintions;
-            txtDefinitionInterval.Text = m_Options.RefreshDefinitionIntervalSeconds.ToString(CultureInfo.InvariantCulture);
-            txtDefinitionInterval.Enabled = m_Options.RefreshDefintions;
+            numDefinitionInterval.Value = m_Options.RefreshDefinitionIntervalSeconds;
+            numDefinitionInterval.Enabled = m_Options.RefreshDefintions;
 
             cbHideStale.Checked = m_Options.HideStaleDefinitions;
-            txtStaleDays.Text = m_Options.StaleDefinitionDays.ToString(CultureInfo.InvariantCulture);
-            txtStaleDays.Enabled = m_Options.HideStaleDefinitions;
+            numStaleDays.Value = m_Options.StaleDefinitionDays;
+            numStaleDays.Enabled = m_Options.HideStaleDefinitions;
 
             // ADO Tab
             txtAdoOrganisation.Text = m_Options.AzureDevOpsOrganisation;
@@ -80,15 +79,15 @@ namespace BuildMonitor.UI.Options
         private void RetrieveOptions(MonitorOptions options)
         {
             // General Tab
-            options.IntervalSeconds = Convert.ToInt32(txtInterval.Text);
+            options.IntervalSeconds = (int)numInterval.Value;
 
             options.IncludeRunningBuilds = cbIncludeRunning.Checked;
 
             options.RefreshDefintions = cbRefreshDefinitions.Checked;
-            options.RefreshDefinitionIntervalSeconds = Convert.ToInt32(txtDefinitionInterval.Text);
+            options.RefreshDefinitionIntervalSeconds = (int)numDefinitionInterval.Value;
 
             options.HideStaleDefinitions = cbHideStale.Checked;
-            options.StaleDefinitionDays = Convert.ToInt32(txtStaleDays.Text);
+            options.StaleDefinitionDays = (int)numStaleDays.Value;
 
             options.AzureDevOpsOrganisation = txtAdoOrganisation.Text;
             options.PersonalAccessTokenProtected = ProtectionMethods.Protect(txtAdoPat.Text);
@@ -170,12 +169,12 @@ namespace BuildMonitor.UI.Options
 
         private void cbRefreshDefinitions_CheckedChanged(object sender, EventArgs e)
         {
-            txtDefinitionInterval.Enabled = cbRefreshDefinitions.Enabled;
+            numDefinitionInterval.Enabled = cbRefreshDefinitions.Enabled;
         }
 
         private void cbHideStale_CheckedChanged(object sender, EventArgs e)
         {
-            txtStaleDays.Enabled = cbHideStale.Checked;
+            numStaleDays.Enabled = cbHideStale.Checked;
         }
 
         private void btnReset_Click(object sender, EventArgs e)

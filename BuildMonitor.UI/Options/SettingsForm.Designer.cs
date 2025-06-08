@@ -34,16 +34,14 @@
             label1 = new System.Windows.Forms.Label();
             label2 = new System.Windows.Forms.Label();
             label3 = new System.Windows.Forms.Label();
-            txtInterval = new System.Windows.Forms.TextBox();
             tabControl = new System.Windows.Forms.TabControl();
             tabWindows = new System.Windows.Forms.TabPage();
             cbStartup = new System.Windows.Forms.CheckBox();
             tabGeneral = new System.Windows.Forms.TabPage();
+            numInterval = new System.Windows.Forms.NumericUpDown();
             label7 = new System.Windows.Forms.Label();
-            txtStaleDays = new System.Windows.Forms.TextBox();
             cbHideStale = new System.Windows.Forms.CheckBox();
             label6 = new System.Windows.Forms.Label();
-            txtDefinitionInterval = new System.Windows.Forms.TextBox();
             cbRefreshDefinitions = new System.Windows.Forms.CheckBox();
             cbIncludeRunning = new System.Windows.Forms.CheckBox();
             tabADO = new System.Windows.Forms.TabPage();
@@ -55,11 +53,16 @@
             label5 = new System.Windows.Forms.Label();
             txtAdoPat = new System.Windows.Forms.TextBox();
             btnReset = new System.Windows.Forms.Button();
+            numDefinitionInterval = new System.Windows.Forms.NumericUpDown();
+            numStaleDays = new System.Windows.Forms.NumericUpDown();
             tabControl.SuspendLayout();
             tabWindows.SuspendLayout();
             tabGeneral.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)numInterval).BeginInit();
             tabADO.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)imgBox).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)numDefinitionInterval).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)numStaleDays).BeginInit();
             SuspendLayout();
             // 
             // txtAdoOrganisation
@@ -125,14 +128,6 @@
             label3.TabIndex = 7;
             label3.Text = "Refresh seconds";
             // 
-            // txtInterval
-            // 
-            txtInterval.Location = new System.Drawing.Point(134, 16);
-            txtInterval.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            txtInterval.Name = "txtInterval";
-            txtInterval.Size = new System.Drawing.Size(41, 23);
-            txtInterval.TabIndex = 8;
-            // 
             // tabControl
             // 
             tabControl.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
@@ -172,15 +167,15 @@
             // 
             // tabGeneral
             // 
+            tabGeneral.Controls.Add(numStaleDays);
+            tabGeneral.Controls.Add(numDefinitionInterval);
+            tabGeneral.Controls.Add(numInterval);
             tabGeneral.Controls.Add(label7);
-            tabGeneral.Controls.Add(txtStaleDays);
             tabGeneral.Controls.Add(cbHideStale);
             tabGeneral.Controls.Add(label6);
-            tabGeneral.Controls.Add(txtDefinitionInterval);
             tabGeneral.Controls.Add(cbRefreshDefinitions);
             tabGeneral.Controls.Add(cbIncludeRunning);
             tabGeneral.Controls.Add(label3);
-            tabGeneral.Controls.Add(txtInterval);
             tabGeneral.Location = new System.Drawing.Point(4, 24);
             tabGeneral.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             tabGeneral.Name = "tabGeneral";
@@ -189,6 +184,16 @@
             tabGeneral.TabIndex = 0;
             tabGeneral.Text = "General Settings";
             tabGeneral.UseVisualStyleBackColor = true;
+            // 
+            // numInterval
+            // 
+            numInterval.Location = new System.Drawing.Point(137, 18);
+            numInterval.Maximum = new decimal(new int[] { 3600, 0, 0, 0 });
+            numInterval.Minimum = new decimal(new int[] { 15, 0, 0, 0 });
+            numInterval.Name = "numInterval";
+            numInterval.Size = new System.Drawing.Size(53, 23);
+            numInterval.TabIndex = 16;
+            numInterval.Value = new decimal(new int[] { 15, 0, 0, 0 });
             // 
             // label7
             // 
@@ -199,14 +204,6 @@
             label7.Size = new System.Drawing.Size(89, 15);
             label7.TabIndex = 14;
             label7.Text = "Stale build days";
-            // 
-            // txtStaleDays
-            // 
-            txtStaleDays.Location = new System.Drawing.Point(218, 157);
-            txtStaleDays.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            txtStaleDays.Name = "txtStaleDays";
-            txtStaleDays.Size = new System.Drawing.Size(41, 23);
-            txtStaleDays.TabIndex = 15;
             // 
             // cbHideStale
             // 
@@ -229,14 +226,6 @@
             label6.Size = new System.Drawing.Size(146, 15);
             label6.TabIndex = 11;
             label6.Text = "Refresh definition seconds";
-            // 
-            // txtDefinitionInterval
-            // 
-            txtDefinitionInterval.Location = new System.Drawing.Point(218, 100);
-            txtDefinitionInterval.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            txtDefinitionInterval.Name = "txtDefinitionInterval";
-            txtDefinitionInterval.Size = new System.Drawing.Size(41, 23);
-            txtDefinitionInterval.TabIndex = 12;
             // 
             // cbRefreshDefinitions
             // 
@@ -364,6 +353,26 @@
             btnReset.UseVisualStyleBackColor = true;
             btnReset.Click += btnReset_Click;
             // 
+            // numDefinitionInterval
+            // 
+            numDefinitionInterval.Location = new System.Drawing.Point(218, 102);
+            numDefinitionInterval.Maximum = new decimal(new int[] { 3600, 0, 0, 0 });
+            numDefinitionInterval.Minimum = new decimal(new int[] { 15, 0, 0, 0 });
+            numDefinitionInterval.Name = "numDefinitionInterval";
+            numDefinitionInterval.Size = new System.Drawing.Size(53, 23);
+            numDefinitionInterval.TabIndex = 17;
+            numDefinitionInterval.Value = new decimal(new int[] { 15, 0, 0, 0 });
+            // 
+            // numStaleDays
+            // 
+            numStaleDays.Location = new System.Drawing.Point(218, 158);
+            numStaleDays.Maximum = new decimal(new int[] { 365, 0, 0, 0 });
+            numStaleDays.Minimum = new decimal(new int[] { 1, 0, 0, 0 });
+            numStaleDays.Name = "numStaleDays";
+            numStaleDays.Size = new System.Drawing.Size(53, 23);
+            numStaleDays.TabIndex = 18;
+            numStaleDays.Value = new decimal(new int[] { 1, 0, 0, 0 });
+            // 
             // SettingsForm
             // 
             AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
@@ -384,9 +393,12 @@
             tabWindows.PerformLayout();
             tabGeneral.ResumeLayout(false);
             tabGeneral.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)numInterval).EndInit();
             tabADO.ResumeLayout(false);
             tabADO.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)imgBox).EndInit();
+            ((System.ComponentModel.ISupportInitialize)numDefinitionInterval).EndInit();
+            ((System.ComponentModel.ISupportInitialize)numStaleDays).EndInit();
             ResumeLayout(false);
 
         }
@@ -399,7 +411,6 @@
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.Label label3;
-        private System.Windows.Forms.TextBox txtInterval;
         private System.Windows.Forms.TabControl tabControl;
         private System.Windows.Forms.TabPage tabGeneral;
         private System.Windows.Forms.TabPage tabADO;
@@ -413,12 +424,13 @@
         private System.Windows.Forms.PictureBox imgBox;
         private System.Windows.Forms.CheckBox cbRefreshDefinitions;
         private System.Windows.Forms.Label label6;
-        private System.Windows.Forms.TextBox txtDefinitionInterval;
         private System.Windows.Forms.Label label7;
-        private System.Windows.Forms.TextBox txtStaleDays;
         private System.Windows.Forms.CheckBox cbHideStale;
         private System.Windows.Forms.Label label8;
         private System.Windows.Forms.Button btnReset;
         private System.Windows.Forms.LinkLabel lblLinkPat;
+        private System.Windows.Forms.NumericUpDown numInterval;
+        private System.Windows.Forms.NumericUpDown numStaleDays;
+        private System.Windows.Forms.NumericUpDown numDefinitionInterval;
     }
 }
