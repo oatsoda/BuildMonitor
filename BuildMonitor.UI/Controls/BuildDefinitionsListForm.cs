@@ -55,6 +55,7 @@ namespace BuildMonitor.UI.Controls
                                         IAppUpdater appUpdater)
         {
             InitializeComponent();
+            notifyIcon.Text = VersionHelper.AppName;
 
             // This ensures first click on notify icon displays the form. Otherwise the
             // first call to SetDesktopLocation sets the WindowState back to Minimized even

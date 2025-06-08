@@ -42,7 +42,7 @@
             // notifyIcon
             // 
             notifyIcon.ContextMenuStrip = contextMenuStrip;
-            notifyIcon.Text = "Build Monitor";
+            notifyIcon.Text = "Monitor";
             notifyIcon.Visible = true;
             notifyIcon.MouseClick += notifyIcon_MouseClick;
             // 

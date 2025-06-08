@@ -6,7 +6,7 @@ namespace BuildMonitor.UI.Helpers
 {
     internal static class StartupSettingHelper
     {
-        private const string _APP_NAME = "BuildMonitor";
+        private const string _APP_NAME = "AzureDevOpsPipelineMonitor";
         private const string _REG_KEY = "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run";
 
         private static RegistryKey GetKey(bool forWriting = false)

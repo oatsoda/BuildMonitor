@@ -9,5 +9,8 @@ namespace BuildMonitor.UI.Helpers
 
         public static Version Version => s_Version;
         public static string VersionString => s_Version.ToString();
+
+
+        public static string AppName { get; } = "Azure DevOps Pipeline Monitor";
     }
 }

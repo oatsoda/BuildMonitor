@@ -107,7 +107,7 @@
             Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             Name = "AboutForm";
             StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            Text = "About Build Monitor";
+            Text = "About";
             ResumeLayout(false);
             PerformLayout();
 

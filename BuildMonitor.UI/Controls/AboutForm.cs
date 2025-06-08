@@ -10,6 +10,8 @@ namespace BuildMonitor.UI.Controls
             InitializeComponent();
             Icon = Properties.Resources._0031_Tools;
             lblVersion.Text = VersionHelper.VersionString;
+            Text = $"About {VersionHelper.AppName}";
+
         }
 
         private void btnOk_Click(object sender, System.EventArgs e)
