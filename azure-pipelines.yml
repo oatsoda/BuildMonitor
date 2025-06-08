@@ -1,33 +1,45 @@
-# .NET Desktop
-# Build and run tests for .NET Desktop or Windows classic desktop solutions.
-# Add steps that publish symbols, save build artifacts, and more:
-# https://docs.microsoft.com/azure/devops/pipelines/apps/windows/dot-net
-
 trigger:
-- master
+  batch: true
 
+pr: 
+  branches:
+    include:
+    - master
+ 
 pool:
   vmImage: 'windows-latest'
 
 variables:
-  solution: '**/*.sln'
+  solution: '**/BuildMonitor.sln'
   buildPlatform: 'Any CPU with x64 Installer'
   buildConfiguration: 'Release'
+  NUGET_PACKAGES: $(Pipeline.Workspace)/.nuget/packages
 
 steps:
-- task: NuGetToolInstaller@1
-
-- task: NuGetCommand@2
+- task: UseDotNet@2
+  displayName: 'Use .NET 9'
   inputs:
-    restoreSolution: '$(solution)'
+    version: 9.x
 
-- task: VSBuild@1
+- task: Cache@2
+  displayName: 'NuGet Pipeline Cache'
   inputs:
-    solution: '$(solution)'
-    platform: '$(buildPlatform)'
-    configuration: '$(buildConfiguration)'
+    key: 'nuget | "$(Agent.OS)" | **/packages.lock.json,!**/bin/**,!**/obj/**'
+    restoreKeys: |
+       nuget | "$(Agent.OS)"
+       nuget
+    path: '$(NUGET_PACKAGES)'
+    
+- task: DotNetCoreCLI@2
+  displayName: 'Restore Solution'
+  inputs:
+    command: 'restore'
+    projects: '$(solution)'
+    arguments: '-c $(buildConfiguration)'
 
-- task: VSTest@2
+- task: DotNetCoreCLI@2
+  displayName: 'Build Solution'
   inputs:
-    platform: '$(buildPlatform)'
-    configuration: '$(buildConfiguration)'
+    command: 'build'
+    projects: '$(solution)'
+    arguments: '-c $(buildConfiguration) --no-restore /p:Platform="$(buildPlatform)"'
