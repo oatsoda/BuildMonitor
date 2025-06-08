@@ -7,28 +7,19 @@ namespace BuildMonitor.UI.Protection
         public string DataCipher { get; private set; }
         public string DataEntropy { get; private set; }
 
-        public byte[] DataCipherBytes
-        {
-            get { return Convert.FromBase64String(DataCipher ?? string.Empty); }
-            private set { DataCipher = Convert.ToBase64String(value); }
-        }
-
-        public byte[] DataEntropyBytes
-        {
-            get { return Convert.FromBase64String(DataEntropy ?? string.Empty); }
-            private set { DataEntropy = Convert.ToBase64String(value); }
-        }
+        public byte[] DataCipherBytes => Convert.FromBase64String(DataCipher);
+        public byte[] DataEntropyBytes => Convert.FromBase64String(DataEntropy);
 
         public ProtectedInformation(byte[] dataCipher, byte[] dataEntropy)
         {
-            DataEntropyBytes = dataEntropy;
-            DataCipherBytes = dataCipher;
+            DataCipher = Convert.ToBase64String(dataCipher);
+            DataEntropy = Convert.ToBase64String(dataEntropy);
         }
 
         public ProtectedInformation(string dataCipher, string dataEntropy)
         {
-            DataEntropy = dataEntropy;
             DataCipher = dataCipher;
+            DataEntropy = dataEntropy;
         }
     }
 }

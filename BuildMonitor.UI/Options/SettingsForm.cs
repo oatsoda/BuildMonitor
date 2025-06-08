@@ -94,7 +94,7 @@ namespace BuildMonitor.UI.Options
             options.PersonalAccessTokenProtected = ProtectionMethods.Protect(txtAdoPat.Text);
 
             if (m_SavedSettingsValidated) // Tab never loaded, so don't overwrite this setting because it will not be loaded
-                options.ProjectName = (string)cboAdoProjectName.SelectedItem;
+                options.ProjectName = (string)cboAdoProjectName.SelectedItem!;
 
             options.ValidOptions = cboAdoProjectName.Enabled;
         }

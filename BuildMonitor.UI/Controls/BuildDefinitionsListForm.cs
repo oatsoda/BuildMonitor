@@ -294,9 +294,9 @@ namespace BuildMonitor.UI.Controls
 
         #region Build Definition Monitor Events
 
-        private void OnBuildMonitorOnUpdated(object sender, List<BuildDetail> list)
+        private void OnBuildMonitorOnUpdated(object? sender, List<BuildDetail> list)
         {
-            Debug.WriteLine($"OnBuildMonitorOnUpdated: [{string.Join(", ", list.Select(b => $"{b.Definition.Name}: {b.Status.Status}"))}]");
+            Debug.WriteLine($"OnBuildMonitorOnUpdated: [{string.Join(", ", list.Select(b => $"{b.Definition.Name}: {b.Status?.Status}"))}]");
 
             this.InvokeIfRequired(() =>
             {
@@ -305,7 +305,7 @@ namespace BuildMonitor.UI.Controls
             });
         }
 
-        private void OnBuildMonitorOnExceptionOccurred(object sender, Exception exception)
+        private void OnBuildMonitorOnExceptionOccurred(object? sender, Exception exception)
         {
             this.InvokeIfRequired(() =>
             {
@@ -320,7 +320,7 @@ namespace BuildMonitor.UI.Controls
             });
         }
 
-        private void OnBuildMonitorMonitoringStopped(object sender, string stoppedReason)
+        private void OnBuildMonitorMonitoringStopped(object? sender, string stoppedReason)
         {
             this.InvokeIfRequired(() =>
             {
@@ -333,13 +333,13 @@ namespace BuildMonitor.UI.Controls
 
         }
 
-        private void OnBuildMonitorOnOverallStatusChanged(object sender, BuildDetail buildDetail)
+        private void OnBuildMonitorOnOverallStatusChanged(object? sender, BuildDetail buildDetail)
         {
-            Debug.WriteLine($"OnBuildMonitorOnOverallStatusChanged: {buildDetail.Definition.Name} - {buildDetail.Status.Status}");
+            Debug.WriteLine($"OnBuildMonitorOnOverallStatusChanged: {buildDetail.Definition.Name} - {buildDetail.Status?.Status}");
 
             this.InvokeIfRequired(() =>
             {
-                notifyIcon.Icon = buildDetail.Status.Status.ToIcon();
+                notifyIcon.Icon = buildDetail.Status?.Status.ToIcon();
 
                 if (!m_FirstStatusUpdate) // Don't notify on first load
                     new PopupStatusForm(buildDetail).Show();

@@ -122,6 +122,7 @@ namespace BuildMonitor.Core
 
                 var sw = new Stopwatch();
                 var intervalMilliseconds = Options.IntervalSeconds * 1000;
+                // TODO: Defn refresh interval isn't considered here so it ends up being constrained by the other interval
 
                 Debug.WriteLine("Monitor getting store...");
 

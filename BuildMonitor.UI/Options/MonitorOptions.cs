@@ -70,16 +70,16 @@ namespace BuildMonitor.UI.Options
         }
 
         [UserScopedSetting]
-        public string PersonalAccessTokenCipher
+        public string? PersonalAccessTokenCipher
         {
-            get { return (string)this["PersonalAccessTokenCipher"]; }
+            get { return (string?)this["PersonalAccessTokenCipher"]; }
             set { this["PersonalAccessTokenCipher"] = value; }
         }
 
         [UserScopedSetting]
-        public string PersonalAccessTokenEntropy
+        public string? PersonalAccessTokenEntropy
         {
-            get { return (string)this["PersonalAccessTokenEntropy"]; }
+            get { return (string?)this["PersonalAccessTokenEntropy"]; }
             set { this["PersonalAccessTokenEntropy"] = value; }
         }
 
@@ -104,7 +104,7 @@ namespace BuildMonitor.UI.Options
 
         public ProtectedInformation PersonalAccessTokenProtected
         {
-            get { return new ProtectedInformation(PersonalAccessTokenCipher, PersonalAccessTokenEntropy); }
+            get { return new ProtectedInformation(PersonalAccessTokenCipher!, PersonalAccessTokenEntropy!); }
             set
             {
                 PersonalAccessTokenCipher = value.DataCipher;

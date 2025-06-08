@@ -1,4 +1,4 @@
-﻿using System.Reflection;
+﻿using BuildMonitor.UI.Helpers;
 using System.Windows.Forms;
 
 namespace BuildMonitor.UI.Controls
@@ -9,7 +9,7 @@ namespace BuildMonitor.UI.Controls
         {
             InitializeComponent();
             Icon = Properties.Resources._0031_Tools;
-            lblVersion.Text = Assembly.GetAssembly(GetType()).GetName().Version.ToString();
+            lblVersion.Text = VersionHelper.VersionString;
         }
 
         private void btnOk_Click(object sender, System.EventArgs e)

@@ -68,7 +68,7 @@ namespace BuildMonitor.UI.Controls
             Height = 0;
         }
 
-        private void TimerOnTick(object sender, EventArgs eventArgs)
+        private void TimerOnTick(object? sender, EventArgs eventArgs)
         {
             switch (m_TransitionState)
             {

@@ -14,8 +14,8 @@
         string AzureDevOpsOrganisation { get; }
         string ProjectName { get; }
 
-        string PersonalAccessTokenCipher { get; }
-        string PersonalAccessTokenEntropy { get; }
+        string? PersonalAccessTokenCipher { get; }
+        string? PersonalAccessTokenEntropy { get; }
 
         string PersonalAccessTokenPlainText { get; }
 

@@ -3,13 +3,15 @@ using BuildMonitor.UI.Controls;
 using BuildMonitor.UI.Updater;
 using Moq;
 using System;
+using System.Linq;
 using System.Windows.Forms;
 
 namespace BuildMonitor.TestApp
 {
     static class Program
     {
-        private static readonly Random s_Random = new Random();
+        private static readonly Random s_Random = new();
+        private static int RandomBetween(int min, int max) => s_Random.Next(min, max + 1);
 
         /// <summary>
         /// The main entry point for the application.
@@ -20,26 +22,23 @@ namespace BuildMonitor.TestApp
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
 
-            var defnOne = new BuildDefinition
-            {
-                Id = 1,
-                Name = "Test 1",
-                IsVNext = true,
-                Url = "https://fake.dev/pipeline/1"
-            };
-
-            var defnTwo = new BuildDefinition
-            {
-                Id = 2,
-                Name = "Test 2",
-                IsVNext = true,
-                Url = "https://fake.dev/pipeline/2"
-            };
+            BuildDefinition[] definitions =
+                [
+                    ..Enumerable
+                        .Range(1, 8)
+                        .Select(i => new BuildDefinition
+                        {
+                            Id = i,
+                            Name = $"Test {i}",
+                            IsVNext = true,
+                            Url = $"https://fake.dev/pipeline/{i}"
+                        })
+                ];
 
             var storeMoq = new Mock<IBuildStore>();
             storeMoq
                 .Setup(s => s.GetDefinitions())
-                .ReturnsAsync(() => [defnOne, defnTwo]);
+                .ReturnsAsync(() => definitions.Take(RandomBetween(1, 8)));
             storeMoq
                 .Setup(s => s.GetLatestBuild(It.IsAny<BuildDefinition>()))
                 .ReturnsAsync((BuildDefinition defn) => GetRandomStatus(defn));
@@ -48,6 +47,12 @@ namespace BuildMonitor.TestApp
             optionsMoq
                 .SetupGet(o => o.IntervalSeconds)
                 .Returns(20);
+            optionsMoq
+                .SetupGet(o => o.RefreshDefintions)
+                .Returns(true);
+            optionsMoq
+                .SetupGet(o => o.RefreshDefinitionIntervalSeconds)
+                .Returns(45);
             optionsMoq
                 .SetupGet(o => o.ValidOptions)
                 .Returns(true);
@@ -75,10 +80,10 @@ namespace BuildMonitor.TestApp
             {
                 Id = forDefintion.Id,
                 Name = forDefintion.Name,
-                Url = $"{forDefintion.Url}/build/{s_Random.Next(1, 25)}",
+                Url = $"{forDefintion.Url}/build/{RandomBetween(1, 24)}",
                 RequestedBy = $"User{s_Random.Next(1, 100)}",
                 Status = (Status)s_Random.Next(1, 5),
-                Start = DateTimeOffset.Now.AddHours(-s_Random.Next(1, 5)),
+                Start = DateTimeOffset.Now.AddHours(-RandomBetween(1, 4)),
             };
         }
     }

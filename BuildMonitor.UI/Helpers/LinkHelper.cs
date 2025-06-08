@@ -18,7 +18,7 @@ namespace BuildMonitor.UI.Helpers
 
     public static class LinkLabelExtensions
     {
-        public static void SetUrl(this LinkLabel linkLabel, string url, string changeText = null)
+        public static void SetUrl(this LinkLabel linkLabel, string url, string? changeText = null)
         {
             if (changeText != null)
                 linkLabel.Text = changeText;
@@ -29,8 +29,8 @@ namespace BuildMonitor.UI.Helpers
 
         public static void VisitUrl(this LinkLabelLinkClickedEventArgs e, object sender)
         {
-            var url = e.Link.LinkData.ToString();
-            LinkHelper.OpenUrl(url);
+            var url = e.Link!.LinkData!.ToString();
+            LinkHelper.OpenUrl(url!);
             ((LinkLabel)sender).LinkVisited = true;
         }
     }

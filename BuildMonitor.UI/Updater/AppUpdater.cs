@@ -1,7 +1,6 @@
 ﻿using BuildMonitor.UI.Helpers;
 using System;
 using System.Net.Http;
-using System.Reflection;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
@@ -14,8 +13,6 @@ namespace BuildMonitor.UI.Updater
         private readonly string m_VersionUrl;
         private readonly string m_LatestBinaryUrl;
 
-        private Version CurrentVersion => Assembly.GetAssembly(GetType()).GetName().Version;
-
         public AppUpdater(string versionUrl, string installUrl)
         {
             m_VersionUrl = versionUrl;
@@ -26,7 +23,7 @@ namespace BuildMonitor.UI.Updater
         {
             var latestVersion = await GetLatestVersion();
 
-            if (latestVersion <= CurrentVersion)
+            if (latestVersion <= VersionHelper.Version)
                 return false;
 
             var msg = $"A newer version ({latestVersion}) of Build Monitor is available? Do you want to download and install it?";
