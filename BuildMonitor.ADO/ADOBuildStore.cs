@@ -85,7 +85,7 @@ namespace BuildMonitor.ADO
         public enum ADOResult { None, Succeeded, PartiallySucceeded, Canceled, Failed };
         public enum ADOStatus { None, InProgress, Completed, NotStarted, Postponed, Canceling, All };
 
-        public async Task<BuildStatus> GetLatestBuild(BuildDefinition definition)
+        public async Task<BuildStatus?> GetLatestBuild(BuildDefinition definition)
         {
             // https://learn.microsoft.com/en-us/rest/api/azure/devops/build/builds/get?view=azure-devops-rest-7.1
             var statuses = m_IncludeRunningBuilds ? "completed,inProgress" : "completed";
@@ -164,7 +164,7 @@ namespace BuildMonitor.ADO
         {
             var json = await GetADOJsonResult(queryPath);
 
-            return JsonSerializer.Deserialize<T>(json, s_JsonOptions);
+            return JsonSerializer.Deserialize<T>(json, s_JsonOptions)!;
         }
 
         private async Task<string> GetADOJsonResult(string path)
@@ -193,11 +193,5 @@ namespace BuildMonitor.ADO
         {
             m_HttpClient?.Dispose();
         }
-    }
-
-    public static class JsonSerializerExtensions
-    {
-        public static T DeserializeAnonymousType<T>(this string json, T _)
-            => JsonSerializer.Deserialize<T>(json);
     }
 }

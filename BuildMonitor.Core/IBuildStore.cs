@@ -7,6 +7,6 @@ namespace BuildMonitor.Core
     {
         Task<IEnumerable<string>> GetProjects();
         Task<IEnumerable<BuildDefinition>> GetDefinitions();
-        Task<BuildStatus> GetLatestBuild(BuildDefinition definition);
+        Task<BuildStatus?> GetLatestBuild(BuildDefinition definition);
     }
 }
