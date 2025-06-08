@@ -6,41 +6,49 @@ using System.Linq;
 using System.Security.Authentication;
 using System.Threading;
 using System.Threading.Tasks;
-using BuildMonitor.Core.InterfaceExtensions;
 
 namespace BuildMonitor.Core
 {
-    public sealed class BuildDefinitionMonitor : IBuildDefinitionMonitor, IDisposable
+    public sealed class BuildDefinitionMonitor : IDisposable
     {
         private bool m_RequestStop;
         private bool m_Stopped;
         private readonly ManualResetEvent m_StopWaitHandle;
 
         private readonly IBuildStoreFactory m_BuildStoreFactory;
-        private IMonitorOptions m_Options;
-        
-        private Status m_OverallStatus;
-        private List<IBuildDefinition> m_MonitoredDefinitions;
-        private Dictionary<int, IBuildStatus> m_LatestStatuses;
-        private DateTime m_LastDefinitionRefresh;
-
-        public event EventHandler<BuildDetail> OverallStatusChanged;
-        public event EventHandler<Exception> ExceptionOccurred;
-        public event EventHandler<string> MonitoringStopped;
-        public event EventHandler<List<BuildDetail>> Updated;
-
-        private ReadOnlyDictionary<int, IBuildStatus> LatestStatuses
+        private IMonitorOptions? m_Options;
+        private IMonitorOptions Options
         {
             get
             {
-                if (!m_Options.HideStaleDefinitions) // Option is not enabled
-                    return new ReadOnlyDictionary<int, IBuildStatus>(m_LatestStatuses);
+                if (m_Options == null)
+                    throw new InvalidOperationException("Monitor options have not been set.");
+                return m_Options;
+            }
+        }
+
+        private Status m_OverallStatus;
+        private List<BuildDefinition> m_MonitoredDefinitions = [];
+        private Dictionary<int, BuildStatus> m_LatestStatuses = [];
+        private DateTime m_LastDefinitionRefresh;
+
+        public event EventHandler<BuildDetail>? OverallStatusChanged;
+        public event EventHandler<Exception>? ExceptionOccurred;
+        public event EventHandler<string>? MonitoringStopped;
+        public event EventHandler<List<BuildDetail>>? Updated;
+
+        private ReadOnlyDictionary<int, BuildStatus> LatestStatuses
+        {
+            get
+            {
+                if (!Options.HideStaleDefinitions) // Option is not enabled
+                    return new ReadOnlyDictionary<int, BuildStatus>(m_LatestStatuses);
 
                 return
-                    new ReadOnlyDictionary<int, IBuildStatus>(
+                    new ReadOnlyDictionary<int, BuildStatus>(
                         m_LatestStatuses
                         .Where(kvp =>
-                            kvp.Value.TimeSpanSinceStart().TotalDays < m_Options.StaleDefinitionDays // Status is within days
+                            kvp.Value.TimeSpanSinceStart().TotalDays < Options.StaleDefinitionDays // Status is within days
                         )
                         .ToDictionary(pair => pair.Key, pair => pair.Value)
                     );
@@ -55,17 +63,31 @@ namespace BuildMonitor.Core
             m_StopWaitHandle = new ManualResetEvent(true); // Initial value is Signalled.
         }
 
-        public void Start(IMonitorOptions options)
+        public async Task Start(IMonitorOptions options)
         {
+            Debug.WriteLine("Monitor starting...");
+
             Stop();
+
+            Debug.WriteLine("Monitor ensuring any previous stops have completed...");
             // First time this is already signalled so will immediately pass.
             // Subsequent calls to Start will wait for it to stop first.
             m_StopWaitHandle.WaitOne();
-            
+
+            Debug.WriteLine("Monitor setting options...");
+
             m_Options = options;
 
-            m_MonitoredDefinitions = null;
-            m_LatestStatuses = new Dictionary<int, IBuildStatus>();
+            m_OverallStatus = Status.Unknown;
+
+            if (m_MonitoredDefinitions.Count > 0)
+                m_MonitoredDefinitions = [];
+
+            if (m_LatestStatuses.Count > 0)
+                m_LatestStatuses = [];
+
+            m_LastDefinitionRefresh = DateTime.MinValue;
+
             m_RequestStop = false;
             m_Stopped = false;
 
@@ -76,7 +98,9 @@ namespace BuildMonitor.Core
                 return;
             }
 
-            Task.Factory.StartNew(Run);
+            Debug.WriteLine("Monitor running...");
+
+            await Run();
         }
 
         public void Stop()
@@ -84,76 +108,85 @@ namespace BuildMonitor.Core
             if (!m_Stopped)
                 m_RequestStop = true;
         }
-        
-        private void Run()
-        {
-            m_StopWaitHandle.Reset();
 
+        private async Task Run()
+        {
             var restartAfterException = false;
 
-            var sw = new Stopwatch();
-            var intervalMilliseconds = m_Options.IntervalSeconds*1000;
-
-            var buildStore = m_BuildStoreFactory.GetBuildStore(m_Options);
-
-            try
+            do
             {
-                while (!m_RequestStop)
+                Debug.WriteLine("Monitor Run...");
+
+                m_StopWaitHandle.Reset();
+
+
+                var sw = new Stopwatch();
+                var intervalMilliseconds = Options.IntervalSeconds * 1000;
+                // TODO: Defn refresh interval isn't considered here so it ends up being constrained by the other interval
+
+                Debug.WriteLine("Monitor getting store...");
+
+                var buildStore = m_BuildStoreFactory.GetBuildStore(Options);
+
+                try
                 {
-                    if (!m_RequestStop)
-                        RefreshDefinitionsIfRequired(buildStore);
-
-                    if (!m_RequestStop)
-                        RefreshStatuses(buildStore).Wait(); // Async ends here at the mo.
-
-                    if (!m_RequestStop)
-                        RaiseUpdated();
-
-                    if (!m_RequestStop)
+                    while (!m_RequestStop)
                     {
-                        sw.Start();
+                        Debug.WriteLine("Monitor checking now...");
 
-                        while (sw.ElapsedMilliseconds < intervalMilliseconds)
+                        if (!m_RequestStop)
+                            await RefreshDefinitionsIfRequired(buildStore);
+
+                        if (!m_RequestStop)
+                            await RefreshStatuses(buildStore);
+
+                        if (!m_RequestStop)
+                            RaiseUpdated();
+
+                        if (!m_RequestStop)
                         {
-                            Thread.Sleep(1000);
+                            sw.Start();
 
-                            if (m_RequestStop)
-                                break;
+                            while (!m_RequestStop && sw.ElapsedMilliseconds < intervalMilliseconds)
+                            {
+                                await Task.Delay(1000);
+                            }
+
+                            sw.Reset();
                         }
-
-                        sw.Reset();
                     }
                 }
-            }
-            catch (AuthenticationException)
-            {
-                OnMonitoringStopped("Authentication failed.");
-            }
-            catch (Exception ex)
-            {
-                ExceptionOccurred?.Invoke(this, ex);
+                catch (AuthenticationException)
+                {
+                    OnMonitoringStopped("Authentication failed.");
+                }
+                catch (Exception ex)
+                {
+                    ExceptionOccurred?.Invoke(this, ex);
 
-                if (!m_RequestStop && !m_Stopped)
-                    restartAfterException = true;
-            }
-            finally
-            {
+                    if (!m_RequestStop && !m_Stopped)
+                        restartAfterException = true;
+                }
+
                 if (restartAfterException)
                 {
-                    Thread.Sleep(10000); // Wait for 10 secs before starting again
-                    Run();
+                    Thread.Sleep(10000); // Wait for 10 secs before starting again                        
                 }
                 else
                 {
                     m_RequestStop = false;
                     m_Stopped = true;
                     m_StopWaitHandle.Set();
+                    return;
                 }
-            }
+
+            } while (restartAfterException);
         }
 
         private void RaiseUpdated()
         {
+            Debug.WriteLine("Monitor raising updated event...");
+
             Updated?.Invoke(this, GetBuildDetails());
         }
 
@@ -161,39 +194,43 @@ namespace BuildMonitor.Core
         private List<BuildDetail> GetBuildDetails()
         {
             return m_MonitoredDefinitions
-                .Where(d => 
-                    !m_Options.HideStaleDefinitions || // Option is disabled
+                .Where(d =>
+                    !Options.HideStaleDefinitions || // Option is disabled
                     LatestStatuses.ContainsKey(d.Id) // No status means either no status or stale status
                     )
-                .Select(d => new BuildDetail(d, LatestStatuses.ContainsKey(d.Id) ? LatestStatuses[d.Id] : null))
+                .Select(d => new BuildDetail(d, LatestStatuses.TryGetValue(d.Id, out var value) ? value : null))
                 .OrderBy(d => d.Definition.Name)
                 .ToList();
         }
 
-        private void RefreshDefinitionsIfRequired(IBuildStore buildStore)
+        private async Task RefreshDefinitionsIfRequired(IBuildStore buildStore)
         {
             // Don't refresh defns if: a) already loaded AND 
             // ( b) option to refresh is off OR c) option is on but interval not exceeded
 
-            if (m_MonitoredDefinitions != null &&
-                (!m_Options.RefreshDefintions || DateTime.UtcNow.Subtract(m_LastDefinitionRefresh).Seconds < m_Options.RefreshDefinitionIntervalSeconds))
+            if (m_MonitoredDefinitions.Count > 0 &&
+                (!Options.RefreshDefintions || DateTime.UtcNow.Subtract(m_LastDefinitionRefresh).Seconds < Options.RefreshDefinitionIntervalSeconds))
                 return;
 
-            RefreshDefinitions(buildStore).Wait(); // Async ends here at the mo.
+            await RefreshDefinitions(buildStore);
         }
 
         private async Task RefreshDefinitions(IBuildStore buildStore)
         {
-            var definitions = await buildStore.GetDefinitions(m_Options.ProjectName);
-            m_MonitoredDefinitions = definitions.ToList();
+            Debug.WriteLine("Monitor refreshing definitions...");
+
+            var definitions = await buildStore.GetDefinitions();
+            m_MonitoredDefinitions = [.. definitions];
             m_LastDefinitionRefresh = DateTime.UtcNow;
         }
 
         private async Task RefreshStatuses(IBuildStore buildStore)
         {
+            Debug.WriteLine("Monitor refreshing statuses...");
+
             foreach (var definition in m_MonitoredDefinitions)
             {
-                var status = await buildStore.GetLatestBuild(m_Options.ProjectName, definition);
+                var status = await buildStore.GetLatestBuild(definition);
 
                 if (status == null)
                     continue;

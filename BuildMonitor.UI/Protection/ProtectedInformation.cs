@@ -4,31 +4,22 @@ namespace BuildMonitor.UI.Protection
 {
     public class ProtectedInformation
     {
-        public string DataHash { get; private set; }
+        public string DataCipher { get; private set; }
         public string DataEntropy { get; private set; }
 
-        public byte[] DataHashBytes
+        public byte[] DataCipherBytes => Convert.FromBase64String(DataCipher);
+        public byte[] DataEntropyBytes => Convert.FromBase64String(DataEntropy);
+
+        public ProtectedInformation(byte[] dataCipher, byte[] dataEntropy)
         {
-            get { return Convert.FromBase64String(DataHash ?? string.Empty); }
-            private set { DataHash = Convert.ToBase64String(value); }
+            DataCipher = Convert.ToBase64String(dataCipher);
+            DataEntropy = Convert.ToBase64String(dataEntropy);
         }
 
-        public byte[] DataEntropyBytes
+        public ProtectedInformation(string dataCipher, string dataEntropy)
         {
-            get { return Convert.FromBase64String(DataEntropy ?? string.Empty); }
-            private set { DataEntropy = Convert.ToBase64String(value); }
-        }
-
-        public ProtectedInformation(byte[] dataHash, byte[] dataEntropy)
-        {
-            DataEntropyBytes = dataEntropy;
-            DataHashBytes = dataHash;
-        }
-
-        public ProtectedInformation(string dataHash, string dataEntropy)
-        {
+            DataCipher = dataCipher;
             DataEntropy = dataEntropy;
-            DataHash = dataHash;
         }
     }
 }

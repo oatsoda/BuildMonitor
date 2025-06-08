@@ -1,8 +1,8 @@
-﻿using System;
+﻿using BuildMonitor.Core;
+using BuildMonitor.UI.Helpers;
+using System;
 using System.Drawing;
 using System.Windows.Forms;
-using BuildMonitor.Core;
-using BuildMonitor.UI.Helpers;
 
 namespace BuildMonitor.UI.Controls
 {
@@ -18,12 +18,13 @@ namespace BuildMonitor.UI.Controls
         private int m_ExpectedMaxTop;
         private int m_ExpectedMinTop;
         private TransitionState m_TransitionState = TransitionState.Opening;
-        
+
         public PopupStatusForm(BuildDetail buildDetail)
         {
             InitializeComponent();
 
             TopMost = true;
+
             Width = buildDetailControl.Width;
             Height = buildDetailControl.Height;
             MinimumSize = new Size(Width, 0);
@@ -44,7 +45,7 @@ namespace BuildMonitor.UI.Controls
             buildDetailControl.DisplayDetail(buildDetail);
             SetStartLocation();
         }
-        
+
         protected override void OnShown(EventArgs e)
         {
             base.OnShown(e);
@@ -54,20 +55,20 @@ namespace BuildMonitor.UI.Controls
 
         private void SetStartLocation()
         {
-            var bounds = this.GetSreenBounds();
+            var bounds = this.GetScreenBounds();
 
             m_ExpectedMinTop = bounds.Height;
             m_ExpectedMaxTop = (bounds.Height - Height) - 2;
 
-            
+
             var x = (bounds.Width - Width) - BuildDefinitionsListForm.OFFSET_X;
             var y = (bounds.Height) - BuildDefinitionsListForm.OFFSET_Y;
             SetDesktopLocation(x, y);
-        
+
             Height = 0;
         }
-        
-        private void TimerOnTick(object sender, EventArgs eventArgs)
+
+        private void TimerOnTick(object? sender, EventArgs eventArgs)
         {
             switch (m_TransitionState)
             {

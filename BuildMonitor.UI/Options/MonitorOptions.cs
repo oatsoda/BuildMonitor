@@ -1,7 +1,6 @@
-﻿using System.Configuration;
-using System.Net;
-using BuildMonitor.Core;
+﻿using BuildMonitor.Core;
 using BuildMonitor.UI.Protection;
+using System.Configuration;
 
 namespace BuildMonitor.UI.Options
 {
@@ -9,7 +8,7 @@ namespace BuildMonitor.UI.Options
     public sealed class MonitorOptions : ApplicationSettingsBase, IMonitorOptions
     {
         [UserScopedSetting]
-        [DefaultSettingValue("false")]
+        [DefaultSettingValue("true")]
         public bool IncludeRunningBuilds
         {
             get { return (bool)this["IncludeRunningBuilds"]; }
@@ -49,7 +48,7 @@ namespace BuildMonitor.UI.Options
         }
 
         [UserScopedSetting]
-        [DefaultSettingValue("30")]
+        [DefaultSettingValue("90")]
         public int StaleDefinitionDays
         {
             get { return (int)this["StaleDefinitionDays"]; }
@@ -57,10 +56,10 @@ namespace BuildMonitor.UI.Options
         }
 
         [UserScopedSetting]
-        public string TfsApiUrl
+        public string AzureDevOpsOrganisation
         {
-            get { return (string)this["TfsApiUrl"]; }
-            set { this["TfsApiUrl"] = value; }
+            get { return (string)this["AzureDevOpsOrganisation"]; }
+            set { this["AzureDevOpsOrganisation"] = value; }
         }
 
         [UserScopedSetting]
@@ -71,39 +70,17 @@ namespace BuildMonitor.UI.Options
         }
 
         [UserScopedSetting]
-        [DefaultSettingValue("false")]
-        public bool UseCredentials
+        public string? PersonalAccessTokenCipher
         {
-            get { return (bool)this["UseCredentials"]; }
-            set { this["UseCredentials"] = value; }
+            get { return (string?)this["PersonalAccessTokenCipher"]; }
+            set { this["PersonalAccessTokenCipher"] = value; }
         }
 
         [UserScopedSetting]
-        public string Username
+        public string? PersonalAccessTokenEntropy
         {
-            get { return (string)this["Username"]; }
-            set { this["Username"] = value; }
-        }
-
-        [UserScopedSetting]
-        public string UsernameEntropy
-        {
-            get { return (string)this["UsernameEntropy"]; }
-            set { this["UsernameEntropy"] = value; }
-        }
-
-        [UserScopedSetting]
-        public string Password
-        {
-            get { return (string)this["Password"]; }
-            set { this["Password"] = value; }
-        }
-
-        [UserScopedSetting]
-        public string PasswordEntropy
-        {
-            get { return (string)this["PasswordEntropy"]; }
-            set { this["PasswordEntropy"] = value; }
+            get { return (string?)this["PersonalAccessTokenEntropy"]; }
+            set { this["PersonalAccessTokenEntropy"] = value; }
         }
 
         [UserScopedSetting]
@@ -114,40 +91,35 @@ namespace BuildMonitor.UI.Options
             set { this["ValidOptions"] = value; }
         }
 
-
-        public NetworkCredential Credential => new NetworkCredential(
-            ProtectionMethods.Unprotect(UsernameProtected),
-            ProtectionMethods.Unprotect(PasswordProtected)
-            );
-
-        public ProtectedInformation UsernameProtected
+        [UserScopedSetting]
+        [DefaultSettingValue("true")]
+        public bool SettingsUpgradeRequired
         {
-            get { return new ProtectedInformation(Username, UsernameEntropy); }
-            set 
-            {
-                Username = value.DataHash;
-                UsernameEntropy = value.DataEntropy;
-            }
+            get { return (bool)this["SettingsUpgradeRequired"]; }
+            set { this["SettingsUpgradeRequired"] = value; }
         }
 
-        public ProtectedInformation PasswordProtected
+        public string PersonalAccessTokenPlainText =>
+            ProtectionMethods.Unprotect(PersonalAccessTokenProtected);
+
+        public ProtectedInformation PersonalAccessTokenProtected
         {
-            get { return new ProtectedInformation(Password, PasswordEntropy); }
+            get { return new ProtectedInformation(PersonalAccessTokenCipher!, PersonalAccessTokenEntropy!); }
             set
             {
-                Password = value.DataHash;
-                PasswordEntropy = value.DataEntropy;
+                PersonalAccessTokenCipher = value.DataCipher;
+                PersonalAccessTokenEntropy = value.DataEntropy;
             }
         }
 
-        public MonitorOptions(IUpgradeSettingsCheck upgradeSettingsCheck = null)
+        public MonitorOptions()
         {
-            if (upgradeSettingsCheck == null || !upgradeSettingsCheck.UpgradeSettings) 
+            if (!SettingsUpgradeRequired)
                 return;
 
             Upgrade();
-            upgradeSettingsCheck.UpgradeSettings = false;
-            upgradeSettingsCheck.Save();
+            SettingsUpgradeRequired = false;
+            Save();
         }
 
         public MonitorOptions(IMonitorOptions existingOptions)
@@ -157,15 +129,11 @@ namespace BuildMonitor.UI.Options
             RefreshDefintions = existingOptions.RefreshDefintions;
             RefreshDefinitionIntervalSeconds = existingOptions.RefreshDefinitionIntervalSeconds;
 
-            TfsApiUrl = existingOptions.TfsApiUrl;
+            AzureDevOpsOrganisation = existingOptions.AzureDevOpsOrganisation;
             ProjectName = existingOptions.ProjectName;
 
-            UseCredentials = existingOptions.UseCredentials;
-            //Credential
-            Username = existingOptions.Username;
-            UsernameEntropy = existingOptions.UsernameEntropy;
-            Password = existingOptions.Password;
-            PasswordEntropy = existingOptions.PasswordEntropy;
+            PersonalAccessTokenCipher = existingOptions.PersonalAccessTokenCipher;
+            PersonalAccessTokenEntropy = existingOptions.PersonalAccessTokenEntropy;
             ValidOptions = existingOptions.ValidOptions;
         }
     }

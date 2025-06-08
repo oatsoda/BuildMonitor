@@ -1,6 +1,4 @@
-﻿using System.Net;
-
-namespace BuildMonitor.Core
+﻿namespace BuildMonitor.Core
 {
     public interface IMonitorOptions
     {
@@ -13,15 +11,14 @@ namespace BuildMonitor.Core
         bool HideStaleDefinitions { get; }
         int StaleDefinitionDays { get; }
 
-        string TfsApiUrl { get; }
+        string AzureDevOpsOrganisation { get; }
         string ProjectName { get; }
 
-        bool UseCredentials { get; }
-        NetworkCredential Credential { get; }
-        string Username { get; }
-        string UsernameEntropy { get; }
-        string Password { get; }
-        string PasswordEntropy { get; }
+        string? PersonalAccessTokenCipher { get; }
+        string? PersonalAccessTokenEntropy { get; }
+
+        string PersonalAccessTokenPlainText { get; }
+
         bool ValidOptions { get; }
     }
 }

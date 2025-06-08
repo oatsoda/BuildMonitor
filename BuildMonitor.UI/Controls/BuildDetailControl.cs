@@ -1,19 +1,20 @@
-﻿using System.Diagnostics;
-using System.Windows.Forms;
-using BuildMonitor.Core;
-using BuildMonitor.Core.InterfaceExtensions;
+﻿using BuildMonitor.Core;
 using BuildMonitor.UI.Helpers;
+using System.ComponentModel;
+using System.Windows.Forms;
 
 namespace BuildMonitor.UI.Controls
 {
     public partial class BuildDetailControl : UserControl
     {
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
         public ToolTip ToolTip { get; set; }
 
         public BuildDetailControl()
         {
             InitializeComponent();
 
+            ToolTip = new();
             imgErrors.Image = Status.Failed.ToBitmap(imgErrors.Size);
             imgWarnings.Image = Status.PartiallySucceeded.ToBitmap(imgErrors.Size);
         }
@@ -36,18 +37,17 @@ namespace BuildMonitor.UI.Controls
 
         public void DisplayDetail(BuildDetail buildDetail)
         {
-            var url = buildDetail.Status == null ? buildDetail.Definition.Url : buildDetail.Status.Url;
-            
-            lblLinkTitle.Text = buildDetail.Definition.Name;
+            var url = buildDetail.Status == null
+                ? buildDetail.Definition.Url
+                : buildDetail.Status.Url;
 
-            lblLinkTitle.Links.Clear();
-            lblLinkTitle.Links.Add(0, lblLinkTitle.Text.Length, url);
+            lblLinkTitle.SetUrl(url, buildDetail.Definition.Name);
 
             if (buildDetail.Status != null)
                 ToolTip.SetToolTip(lblLinkTitle, buildDetail.Status.Name);
 
-            lblRequestedBy.Text = buildDetail.Status.ToRequestedByDescription(18);
-            lblStart.Text = buildDetail.Status.ToCurrentTimeDescription();
+            lblRequestedBy.Text = buildDetail.Status?.ToRequestedByDescription(30);
+            lblStart.Text = buildDetail.Status?.ToCurrentTimeDescription();
 
             if (buildDetail.Definition.IsVNext)
             {
@@ -55,19 +55,17 @@ namespace BuildMonitor.UI.Controls
                 lblWarnings.Text = buildDetail.Status?.WarningCount.ToString() ?? "0";
             }
 
-            lblErrors.Visible = 
-            imgErrors.Visible = 
-            lblWarnings.Visible = 
-            imgWarnings.Visible = buildDetail.Definition.IsVNext;
+            lblErrors.Visible =
+                imgErrors.Visible =
+                lblWarnings.Visible =
+                imgWarnings.Visible = buildDetail.Definition.IsVNext;
 
             picStatus.Image = buildDetail.Status?.Status.ToBitmap(picStatus.Size);
         }
 
         private void lblLinkTitle_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
-            var si = new ProcessStartInfo(e.Link.LinkData.ToString());
-            Process.Start(si);
-            lblLinkTitle.LinkVisited = true;
+            e.VisitUrl(sender);
         }
     }
 }

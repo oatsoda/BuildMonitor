@@ -1,18 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using System.Windows.Forms;
-using BuildMonitor.Core;
+﻿using BuildMonitor.Core;
 using BuildMonitor.UI.Controls;
-using BuildMonitor.UI.Options;
 using BuildMonitor.UI.Updater;
 using Moq;
+using System;
+using System.Linq;
+using System.Windows.Forms;
 
 namespace BuildMonitor.TestApp
 {
     static class Program
     {
-        private static readonly Random s_Random = new Random();
+        private static readonly Random s_Random = new();
+        private static int RandomBetween(int min, int max) => s_Random.Next(min, max + 1);
 
         /// <summary>
         /// The main entry point for the application.
@@ -22,43 +21,41 @@ namespace BuildMonitor.TestApp
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            
-            var defnOneMoq = new Mock<IBuildDefinition>();
-            defnOneMoq
-                .SetupGet(d => d.Id)
-                .Returns(1);
-            defnOneMoq
-                .SetupGet(d => d.Name)
-                .Returns("Test 1");
 
-            var defnTwoMoq = new Mock<IBuildDefinition>();
-            defnTwoMoq
-                .SetupGet(d => d.Id)
-                .Returns(2);
-            defnTwoMoq
-                .SetupGet(d => d.Name)
-                .Returns("Test 2");
+            BuildDefinition[] definitions =
+                [
+                    ..Enumerable
+                        .Range(1, 8)
+                        .Select(i => new BuildDefinition
+                        {
+                            Id = i,
+                            Name = $"Test {i}",
+                            IsVNext = true,
+                            Url = $"https://fake.dev/pipeline/{i}"
+                        })
+                ];
 
             var storeMoq = new Mock<IBuildStore>();
             storeMoq
-                .Setup(s => s.GetDefinitions(It.IsAny<string>()))
-                .Returns(Task.Run(() => (IEnumerable<IBuildDefinition>)new[] { defnOneMoq.Object, defnTwoMoq.Object }));
+                .Setup(s => s.GetDefinitions())
+                .ReturnsAsync(() => definitions.Take(RandomBetween(1, 8)));
             storeMoq
-                .Setup(s => s.GetLatestBuild(It.IsAny<string>(), It.Is<IBuildDefinition>(d => d.Id == 1)))
-                .Returns(Task.Run(() => GetRandomStatus(1)));
-            storeMoq
-                .Setup(s => s.GetLatestBuild(It.IsAny<string>(), It.Is<IBuildDefinition>(d => d.Id == 2)))
-                .Returns(Task.Run(() => GetRandomStatus(2)));
+                .Setup(s => s.GetLatestBuild(It.IsAny<BuildDefinition>()))
+                .ReturnsAsync((BuildDefinition defn) => GetRandomStatus(defn));
 
             var optionsMoq = new Mock<IMonitorOptions>();
             optionsMoq
                 .SetupGet(o => o.IntervalSeconds)
                 .Returns(20);
             optionsMoq
+                .SetupGet(o => o.RefreshDefintions)
+                .Returns(true);
+            optionsMoq
+                .SetupGet(o => o.RefreshDefinitionIntervalSeconds)
+                .Returns(45);
+            optionsMoq
                 .SetupGet(o => o.ValidOptions)
                 .Returns(true);
-
-
 
             var factoryMoq = new Mock<IBuildStoreFactory>();
             factoryMoq
@@ -67,22 +64,27 @@ namespace BuildMonitor.TestApp
 
             var appUpdaterMoq = new Mock<IAppUpdater>();
 
-            IBuildDefinitionMonitor monitor = new BuildDefinitionMonitor(factoryMoq.Object);
+            var monitor = new BuildDefinitionMonitor(factoryMoq.Object);
 
             Application.Run(
-                new BuildDefinitionsListForm(monitor, 
-                                             optionsMoq.Object, 
+                new BuildDefinitionsListForm(monitor,
+                                             optionsMoq.Object,
                                              factoryMoq.Object,
                                              appUpdaterMoq.Object)
                 );
         }
 
-        private static IBuildStatus GetRandomStatus(int id)
+        private static BuildStatus GetRandomStatus(BuildDefinition forDefintion)
         {
-            var statusMoq = new Mock<IBuildStatus>();
-            statusMoq.Setup(s => s.Status).Returns((Status) s_Random.Next(1, 5));
-            statusMoq.Setup(s => s.Id).Returns(id);
-            return statusMoq.Object;
+            return new()
+            {
+                Id = forDefintion.Id,
+                Name = forDefintion.Name,
+                Url = $"{forDefintion.Url}/build/{RandomBetween(1, 24)}",
+                RequestedBy = $"User{s_Random.Next(1, 100)}",
+                Status = (Status)s_Random.Next(1, 5),
+                Start = DateTimeOffset.Now.AddHours(-RandomBetween(1, 4)),
+            };
         }
     }
 }

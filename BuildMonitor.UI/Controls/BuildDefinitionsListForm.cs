@@ -1,13 +1,14 @@
-﻿using System;
+﻿using BuildMonitor.Core;
+using BuildMonitor.UI.Helpers;
+using BuildMonitor.UI.Options;
+using BuildMonitor.UI.Updater;
+using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using BuildMonitor.Core;
-using BuildMonitor.UI.Helpers;
-using BuildMonitor.UI.Options;
-using BuildMonitor.UI.Updater;
 
 namespace BuildMonitor.UI.Controls
 {
@@ -32,29 +33,35 @@ namespace BuildMonitor.UI.Controls
         private readonly IBuildStoreFactory m_BuildStoreFactory;
         private readonly IAppUpdater m_AppUpdater;
 
-        private readonly IBuildDefinitionMonitor m_Monitor;
-        
+        private readonly BuildDefinitionMonitor m_Monitor;
+
         private IEnumerable<BuildDetailControl> BuildDetailControls => Controls.OfType<BuildDetailControl>();
 
-        private ToolTip m_ToolTip;
+        private readonly ToolTip m_ToolTip;
+
+        private bool m_IsSettingsOpen;
+        private bool m_IsAboutOpen;
+
+        private int m_MessageOnlyHeight;
+        private int m_MessageOnlyWidth;
 
         #endregion
 
         #region Constructor
 
-        public BuildDefinitionsListForm(IBuildDefinitionMonitor monitor, 
-                                        IMonitorOptions currentOptions, 
+        public BuildDefinitionsListForm(BuildDefinitionMonitor monitor,
+                                        IMonitorOptions currentOptions,
                                         IBuildStoreFactory buildStoreFactory,
                                         IAppUpdater appUpdater)
         {
             InitializeComponent();
+            notifyIcon.Text = VersionHelper.AppName;
 
             // This ensures first click on notify icon displays the form. Otherwise the
             // first call to SetDesktopLocation sets the WindowState back to Minimized even
             // though we have just set it to Normal.
-            Visible = false; 
-
-            m_FirstStatusUpdate = true;
+            // (TODO: Actually this sometimes seem to still happen and the weird form appears)
+            Visible = false;
 
             m_Monitor = monitor;
             m_CurrentMonitorOptions = currentOptions;
@@ -67,9 +74,14 @@ namespace BuildMonitor.UI.Controls
             m_Monitor.MonitoringStopped += OnBuildMonitorMonitoringStopped;
 
             TopMost = true;
-            notifyIcon.Icon = Icon;
 
             m_CalculatedHeight = m_CalculatedWidth = 0;
+            Controls.Clear();
+            using (var dimension = new BuildDetailControl())
+            {
+                m_MessageOnlyHeight = Height = dimension.Height;
+                m_MessageOnlyWidth = Width = dimension.Width;
+            }
 
             ApplyOptions();
 
@@ -79,17 +91,22 @@ namespace BuildMonitor.UI.Controls
                 IsBalloon = true
             };
         }
-        
+
         #endregion
 
         #region Private Methods
 
         private void ApplyOptions()
         {
-            Controls.Clear();
+            Debug.WriteLine("ApplyOptions...");
 
+            m_FirstStatusUpdate = true;
+            notifyIcon.Icon = Icon;
             SetMessageOnly("Waiting for builds...");
-            
+            SetSizeAndPosition();
+
+            Debug.WriteLine("Triggering start...");
+
             Task.Run(() => m_Monitor.Start(m_CurrentMonitorOptions));
         }
 
@@ -119,7 +136,7 @@ namespace BuildMonitor.UI.Controls
                 else
                 {
                     c = new BuildDetailControl();
-                    c.Top = ((x - 1)*c.Height);
+                    c.Top = ((x - 1) * c.Height);
                     c.ToolTip = m_ToolTip;
                     c.DisplayDetail(detail);
                     Controls.Add(c);
@@ -171,13 +188,18 @@ namespace BuildMonitor.UI.Controls
                 AutoSize = true,
                 Text = message,
                 Dock = DockStyle.Fill,
-                MaximumSize = new Size(Width, 0)
+                MaximumSize = new Size(m_MessageOnlyWidth, m_MessageOnlyHeight * 10),
+                MinimumSize = new Size(100, m_MessageOnlyHeight),
+
+                Font = new Font("Segoe UI", 11F),
+                ForeColor = Color.OrangeRed,
+                Padding = new Padding(3)
             };
 
             Controls.Add(label);
 
             m_CalculatedHeight = label.Height;
-            m_CalculatedWidth = label.Width;
+            m_CalculatedWidth = m_MessageOnlyWidth;
         }
 
         private void SetSizeAndPosition()
@@ -185,7 +207,9 @@ namespace BuildMonitor.UI.Controls
             Height = m_CalculatedHeight;
             Width = m_CalculatedWidth;
 
-            var bounds = this.GetSreenBounds();
+            Debug.WriteLine($"Setting Size [{m_CalculatedWidth},{m_CalculatedHeight} / {Width},{Height}]");
+
+            var bounds = this.GetScreenBounds();
             var x = (bounds.Width - Width) - OFFSET_X;
             var y = (bounds.Height - Height) - OFFSET_Y;
             SetDesktopLocation(x, y);
@@ -205,6 +229,50 @@ namespace BuildMonitor.UI.Controls
             m_Monitor.Dispose();
 
             Close();
+        }
+
+        private void ShowSettingsForm()
+        {
+            if (m_IsSettingsOpen)
+                return;
+
+            m_IsSettingsOpen = true;
+
+            // Stop monitoring while changing settings
+            m_Monitor.Stop();
+
+            using (var settingsForm = new SettingsForm(m_CurrentMonitorOptions, m_BuildStoreFactory))
+            {
+                settingsForm.ShowDialog(this);
+
+                m_IsSettingsOpen = false;
+
+                if (settingsForm.DialogResult == DialogResult.OK ||
+                    settingsForm.DialogResult == DialogResult.Abort)
+                {
+                    m_CurrentMonitorOptions = settingsForm.Options;
+                }
+                else
+                {
+                    return;
+                }
+            }
+
+            Hide();
+            ApplyOptions();
+        }
+
+        private void ShowAboutForm()
+        {
+            if (m_IsAboutOpen)
+                return;
+
+            m_IsAboutOpen = true;
+
+            using (var aboutForm = new AboutForm())
+                aboutForm.ShowDialog(this);
+
+            m_IsAboutOpen = false;
         }
 
         #endregion
@@ -227,17 +295,18 @@ namespace BuildMonitor.UI.Controls
 
         #region Build Definition Monitor Events
 
-        private void OnBuildMonitorOnUpdated(object sender, List<BuildDetail> list)
+        private void OnBuildMonitorOnUpdated(object? sender, List<BuildDetail> list)
         {
+            Debug.WriteLine($"OnBuildMonitorOnUpdated: [{string.Join(", ", list.Select(b => $"{b.Definition.Name}: {b.Status?.Status}"))}]");
+
             this.InvokeIfRequired(() =>
             {
                 UpdateBuildControls(list);
-                if (WindowState != FormWindowState.Minimized)
-                    SetSizeAndPosition();
+                SetSizeAndPosition();
             });
         }
 
-        private void OnBuildMonitorOnExceptionOccurred(object sender, Exception exception)
+        private void OnBuildMonitorOnExceptionOccurred(object? sender, Exception exception)
         {
             this.InvokeIfRequired(() =>
             {
@@ -246,28 +315,34 @@ namespace BuildMonitor.UI.Controls
                     exception = aggEx.Flatten();
 
                 SetMessageOnly(exception.ToString());
+                SetSizeAndPosition();
                 notifyIcon.BalloonTipText = $"Monitor error: {exception}";
                 notifyIcon.ShowBalloonTip(20000);
             });
         }
 
-        private void OnBuildMonitorMonitoringStopped(object sender, string stoppedReason)
+        private void OnBuildMonitorMonitoringStopped(object? sender, string stoppedReason)
         {
             this.InvokeIfRequired(() =>
             {
                 SetMessageOnly(stoppedReason);
+                SetSizeAndPosition();
                 notifyIcon.BalloonTipText = $"Monitor stopped: {stoppedReason}";
                 notifyIcon.ShowBalloonTip(20000);
+                ShowSettingsForm();
             });
+
         }
 
-        private void OnBuildMonitorOnOverallStatusChanged(object sender, BuildDetail buildDetail)
+        private void OnBuildMonitorOnOverallStatusChanged(object? sender, BuildDetail buildDetail)
         {
+            Debug.WriteLine($"OnBuildMonitorOnOverallStatusChanged: {buildDetail.Definition.Name} - {buildDetail.Status?.Status}");
+
             this.InvokeIfRequired(() =>
             {
-                notifyIcon.Icon = buildDetail.Status.Status.ToIcon();
+                notifyIcon.Icon = buildDetail.Status?.Status.ToIcon();
 
-                if (!m_FirstStatusUpdate || buildDetail.Status.Status != Status.Succeeded) // Don't notify if first load is Succeeded
+                if (!m_FirstStatusUpdate) // Don't notify on first load
                     new PopupStatusForm(buildDetail).Show();
 
                 m_FirstStatusUpdate = false;
@@ -292,41 +367,26 @@ namespace BuildMonitor.UI.Controls
         #endregion
 
         #region Toolstrip Event Handlers
-        
+
         private void exitToolStripMenuItem_Click(object sender, EventArgs e)
         {
             CloseApplication();
         }
-        
-        private void updateToolStripMenuItem_Click(object sender, EventArgs e)
+
+        private async void updateToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            if (m_AppUpdater.CheckForUpdates())
+            if (await m_AppUpdater.CheckForUpdates())
                 CloseApplication();
         }
 
         private void settingsToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            // Stop monitoring while changing settings
-            m_Monitor.Stop();
-
-            using (var settingsForm = new SettingsForm(m_CurrentMonitorOptions, m_BuildStoreFactory))
-            {
-                settingsForm.ShowDialog(this);
-
-                if (settingsForm.DialogResult != DialogResult.OK)
-                    return;
-
-                m_CurrentMonitorOptions = settingsForm.Options;
-                Hide();
-            }
-
-            ApplyOptions();
+            ShowSettingsForm();
         }
 
         private void aboutToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            using (var aboutForm = new AboutForm())
-                aboutForm.ShowDialog(this);
+            ShowAboutForm();
         }
 
         #endregion
@@ -338,21 +398,34 @@ namespace BuildMonitor.UI.Controls
             if (e.Button != MouseButtons.Left)
                 return;
 
+            Debug.WriteLine($"NotifyItem Click {WindowState} [{m_CalculatedWidth},{m_CalculatedHeight} / {Width},{Height}]");
+
             if (WindowState == FormWindowState.Normal)
             {
+                Debug.WriteLine($"NotifyItem Hiding...");
                 Hide();
                 WindowState = FormWindowState.Minimized;
             }
             else
             {
+                Debug.WriteLine($"NotifyItem Set Size...");
                 WindowState = FormWindowState.Normal;
                 SetSizeAndPosition();
+
+                Debug.WriteLine($"NotifyItem Showing [{m_CalculatedWidth},{m_CalculatedHeight} / {Width},{Height}]");
+
                 Show();
+
+                Debug.WriteLine($"NotifyItem Shown ({WindowState}) [{m_CalculatedWidth},{m_CalculatedHeight} / {Width},{Height}]");
+
+                if (WindowState == FormWindowState.Minimized)
+                {
+                    Debug.WriteLine($"Incorrect Show(); State still Minimised...");
+                    WindowState = FormWindowState.Normal;
+                }
             }
         }
 
         #endregion
-
-
     }
 }

@@ -1,19 +1,21 @@
-﻿using System;
-using System.Drawing;
-using BuildMonitor.Core;
+﻿using BuildMonitor.Core;
 using BuildMonitor.UI.Properties;
+using System;
+using System.Drawing;
 
 namespace BuildMonitor.UI.Helpers
 {
     internal static class StatusExtensions
     {
-        public static Bitmap ToBitmap(this Status status, Size size)
+        public static Bitmap? ToBitmap(this Status status, Size size)
         {
             var ico = status.ToIcon();
+            if (ico == null)
+                return null;
             return new Bitmap(ico.ToBitmap(), size);
         }
 
-        public static Icon ToIcon(this Status status)
+        public static Icon? ToIcon(this Status status)
         {
             switch (status)
             {

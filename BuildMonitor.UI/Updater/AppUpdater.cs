@@ -1,17 +1,17 @@
-﻿using System;
-using System.Diagnostics;
-using System.Net;
-using System.Reflection;
+﻿using BuildMonitor.UI.Helpers;
+using System;
+using System.Net.Http;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace BuildMonitor.UI.Updater
 {
     public class AppUpdater : IAppUpdater
     {
+        private readonly HttpClient m_HttpClient = new();
+
         private readonly string m_VersionUrl;
         private readonly string m_LatestBinaryUrl;
-
-        private Version CurrentVersion => Assembly.GetAssembly(GetType()).GetName().Version;
 
         public AppUpdater(string versionUrl, string installUrl)
         {
@@ -19,14 +19,14 @@ namespace BuildMonitor.UI.Updater
             m_LatestBinaryUrl = installUrl;
         }
 
-        public bool CheckForUpdates()
+        public async Task<bool> CheckForUpdates()
         {
-            var latestVersion = GetLatestVersion();
+            var latestVersion = await GetLatestVersion();
 
-            if (latestVersion <= CurrentVersion)
+            if (latestVersion <= VersionHelper.Version)
                 return false;
 
-            var msg = $"A newer version ({latestVersion}) of Build Monitor is available? Do you want to download and install it?";
+            var msg = $"A newer version ({latestVersion}) of {VersionHelper.AppName} is available? Do you want to download and install it?";
 
             if (DialogResult.Cancel == MessageBox.Show(
                 msg,
@@ -41,21 +41,16 @@ namespace BuildMonitor.UI.Updater
             return true;
         }
 
-        private Version GetLatestVersion()
+        private async Task<Version> GetLatestVersion()
         {
-            string latestVersion;
-            using (var wc = new WebClient())
-            {
-                latestVersion = wc.DownloadString(m_VersionUrl);
-            }
+            string latestVersion = await m_HttpClient.GetStringAsync(m_VersionUrl);
 
             return Version.Parse(latestVersion);
         }
 
         private void RunUpdate()
         {
-            var si = new ProcessStartInfo(m_LatestBinaryUrl);
-            Process.Start(si);
+            LinkHelper.OpenUrl(m_LatestBinaryUrl);
         }
     }
 }

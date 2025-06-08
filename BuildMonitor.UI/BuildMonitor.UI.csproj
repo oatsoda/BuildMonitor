@@ -1,149 +1,22 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{A210FEC6-E551-4017-9FA3-686C35E040F7}</ProjectGuid>
-    <OutputType>Library</OutputType>
-    <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>BuildMonitor.UI</RootNamespace>
-    <AssemblyName>BuildMonitor.UI</AssemblyName>
-    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
-    <FileAlignment>512</FileAlignment>
-    <TargetFrameworkProfile />
-    <PublishUrl>publish\</PublishUrl>
-    <Install>true</Install>
-    <InstallFrom>Disk</InstallFrom>
-    <UpdateEnabled>false</UpdateEnabled>
-    <UpdateMode>Foreground</UpdateMode>
-    <UpdateInterval>7</UpdateInterval>
-    <UpdateIntervalUnits>Days</UpdateIntervalUnits>
-    <UpdatePeriodically>false</UpdatePeriodically>
-    <UpdateRequired>false</UpdateRequired>
-    <MapFileExtensions>true</MapFileExtensions>
-    <ApplicationRevision>0</ApplicationRevision>
-    <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
-    <IsWebBootstrapper>false</IsWebBootstrapper>
-    <UseApplicationTrust>false</UseApplicationTrust>
-    <BootstrapperEnabled>true</BootstrapperEnabled>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
-    <DebugType>pdbonly</DebugType>
-    <Optimize>true</Optimize>
-    <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-  </PropertyGroup>
-  <PropertyGroup>
-    <StartupObject />
+    <TargetFramework>net9.0-windows</TargetFramework>
+    <OutputType>Library</OutputType>    
+    <UseWindowsForms>true</UseWindowsForms>
+    <ImportWindowsDesktopTargets>true</ImportWindowsDesktopTargets>
+    <Nullable>enable</Nullable>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="System" />
-    <Reference Include="System.Core" />
-    <Reference Include="System.Security" />
-    <Reference Include="System.Xml.Linq" />
-    <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="Microsoft.CSharp" />
-    <Reference Include="System.Data" />
-    <Reference Include="System.Deployment" />
-    <Reference Include="System.Drawing" />
-    <Reference Include="System.Windows.Forms" />
-    <Reference Include="System.Xml" />
+    <PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
+    <PackageReference Include="System.Data.DataSetExtensions" Version="4.5.0" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="..\AssemblyVersionInfo.cs">
-      <Link>Properties\AssemblyVersionInfo.cs</Link>
-    </Compile>
-    <Compile Include="..\SharedAssemblyInfo.cs">
-      <Link>Properties\SharedAssemblyInfo.cs</Link>
-    </Compile>
-    <Compile Include="Controls\AboutForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Controls\AboutForm.Designer.cs">
-      <DependentUpon>AboutForm.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Controls\BuildDetailControl.cs">
+    <Compile Update="Controls\BuildDetailControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Controls\BuildDetailControl.Designer.cs">
-      <DependentUpon>BuildDetailControl.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Controls\BuildDefinitionsListForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Controls\BuildDefinitionsListForm.Designer.cs">
-      <DependentUpon>BuildDefinitionsListForm.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Helpers\ControlExtensions.cs" />
-    <Compile Include="Helpers\StartupSettingHelper.cs" />
-    <Compile Include="Options\IUpgradeSettingsCheck.cs" />
-    <Compile Include="Protection\ProtectionMethods.cs" />
-    <Compile Include="Options\MonitorOptions.cs" />
-    <Compile Include="Controls\PopupStatusForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Controls\PopupStatusForm.Designer.cs">
-      <DependentUpon>PopupStatusForm.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Protection\ProtectedInformation.cs" />
-    <Compile Include="Options\SettingsForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Options\SettingsForm.Designer.cs">
-      <DependentUpon>SettingsForm.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Helpers\StatusExtensions.cs" />
-    <Compile Include="Updater\AppUpdater.cs" />
-    <Compile Include="Updater\IAppUpdater.cs" />
-    <EmbeddedResource Include="Controls\AboutForm.resx">
-      <DependentUpon>AboutForm.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Controls\BuildDetailControl.resx">
-      <DependentUpon>BuildDetailControl.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Controls\BuildDefinitionsListForm.resx">
-      <DependentUpon>BuildDefinitionsListForm.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Controls\PopupStatusForm.resx">
-      <DependentUpon>PopupStatusForm.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Properties\Resources.resx">
-      <Generator>ResXFileCodeGenerator</Generator>
-      <SubType>Designer</SubType>
-      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
-    </EmbeddedResource>
-    <Compile Include="Properties\Resources.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Resources.resx</DependentUpon>
-    </Compile>
-    <EmbeddedResource Include="Options\SettingsForm.resx">
-      <DependentUpon>SettingsForm.cs</DependentUpon>
-    </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\BuildMonitor.Core\BuildMonitor.Core.csproj">
-      <Project>{DE3567CC-3FA4-4F55-A3AA-F220D6A49C1C}</Project>
-      <Name>BuildMonitor.Core</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\_0031_Tools.ico" />
+    <ProjectReference Include="..\BuildMonitor.Core\BuildMonitor.Core.csproj" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Resources\1437954459_cancel_24.ico" />
@@ -151,27 +24,4 @@
     <Content Include="Resources\1437954472_arrow_right_24.ico" />
     <Content Include="Resources\1437954485_accepted_24.ico" />
   </ItemGroup>
-  <ItemGroup>
-    <BootstrapperPackage Include=".NETFramework,Version=v4.5">
-      <Visible>False</Visible>
-      <ProductName>Microsoft .NET Framework 4.5 %28x86 and x64%29</ProductName>
-      <Install>true</Install>
-    </BootstrapperPackage>
-    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
-      <Visible>False</Visible>
-      <ProductName>.NET Framework 3.5 SP1</ProductName>
-      <Install>false</Install>
-    </BootstrapperPackage>
-  </ItemGroup>
-  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
-       Other similar extension points exist, see Microsoft.Common.targets.
-  <Target Name="BeforeBuild">
-  </Target>
-  <Target Name="AfterBuild">
-  </Target>
-  -->
-  <Target Name="BeforePublish">
-    <!--<Exec Command="&quot;C:\Program Files (x86)\Microsoft SDKs\Windows\v7.0A\bin\signtool.exe&quot; sign /f &quot;$(ProjectDir)TestWin8CO_TemporaryKey.pfx&quot; /p nightbird /v &quot;$(ProjectDir)obj\x86\$(ConfigurationName)\$(TargetFileName)&quot;" />-->
-  </Target>
 </Project>

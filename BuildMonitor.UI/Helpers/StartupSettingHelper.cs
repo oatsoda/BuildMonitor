@@ -1,29 +1,32 @@
-﻿using System.Windows.Forms;
-using Microsoft.Win32;
+﻿using Microsoft.Win32;
+using System;
+using System.Windows.Forms;
 
 namespace BuildMonitor.UI.Helpers
 {
     internal static class StartupSettingHelper
     {
-        private const string _APP_NAME = "BuildMonitor";
+        private const string _APP_NAME = "AzureDevOpsPipelineMonitor";
         private const string _REG_KEY = "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run";
 
-        // ReSharper disable once PossibleNullReferenceException - Expect Key to always be there (std Windows thing)
-        public static bool RunOnStartup => Registry.CurrentUser.OpenSubKey(_REG_KEY).GetValue(_APP_NAME) != null;
+        private static RegistryKey GetKey(bool forWriting = false)
+        {
+            var regKey = Registry.CurrentUser.OpenSubKey(_REG_KEY, forWriting);
+
+            if (regKey == null)
+                throw new InvalidOperationException($"Registry key '{_REG_KEY}' could not be opened for {(forWriting ? "writing" : "reading")}.");
+
+            return regKey;
+        }
+
+        public static bool RunOnStartup => GetKey().GetValue(_APP_NAME) != null;
 
         public static void SetStartup(bool runOnStartup)
         {
-#if DEBUG
-            return;
-#endif
-            var key = Registry.CurrentUser.OpenSubKey(_REG_KEY, true);
-
-            // ReSharper disable PossibleNullReferenceException - Expect Key to always be there (std Windows thing)
             if (runOnStartup)
-                key.SetValue(_APP_NAME, Application.ExecutablePath);
+                GetKey(true).SetValue(_APP_NAME, Application.ExecutablePath);
             else
-                key.DeleteValue(_APP_NAME, false);
-            // ReSharper restore PossibleNullReferenceException - Expect Key to always be there (std Windows thing)
+                GetKey(true).DeleteValue(_APP_NAME, false);
         }
     }
 }
