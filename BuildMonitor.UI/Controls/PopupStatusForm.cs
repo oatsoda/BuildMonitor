@@ -31,6 +31,10 @@ namespace BuildMonitor.UI.Controls
                 ShowAlways = true,
                 IsBalloon = true
             };
+            buildDetailControl.BackColor = System.Drawing.Color.FromArgb(
+                buildDetailControl.BackColor.R + 20,
+                buildDetailControl.BackColor.G + 20,
+                buildDetailControl.BackColor.B + 20);
 
             m_Timer = new Timer
             {

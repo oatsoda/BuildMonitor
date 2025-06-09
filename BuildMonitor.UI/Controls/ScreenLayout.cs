@@ -9,7 +9,7 @@ namespace BuildMonitor.UI.Controls
         // be manually set in the designers to aid visual designing as they don't work well with constants.
 
         public const int SECTION_WIDTH = 370;
-        public const int SECTION_HEIGHT = 65;
+        public const int SECTION_HEIGHT = 53;
 
         public static Size SectionSize { get; } = new(SECTION_WIDTH, SECTION_HEIGHT);
 
