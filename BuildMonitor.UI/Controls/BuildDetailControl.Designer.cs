@@ -48,7 +48,7 @@
             lblLinkTitle.AutoSize = true;
             lblLinkTitle.Font = new System.Drawing.Font("Segoe UI", 11F);
             lblLinkTitle.LinkColor = System.Drawing.Color.FromArgb(0, 122, 204);
-            lblLinkTitle.Location = new System.Drawing.Point(42, 5);
+            lblLinkTitle.Location = new System.Drawing.Point(40, 4);
             lblLinkTitle.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             lblLinkTitle.Name = "lblLinkTitle";
             lblLinkTitle.Size = new System.Drawing.Size(81, 20);
@@ -63,7 +63,7 @@
             lblRequestedBy.AutoSize = true;
             lblRequestedBy.Font = new System.Drawing.Font("Segoe UI", 11F);
             lblRequestedBy.ForeColor = System.Drawing.Color.FromArgb(241, 241, 241);
-            lblRequestedBy.Location = new System.Drawing.Point(42, 34);
+            lblRequestedBy.Location = new System.Drawing.Point(40, 28);
             lblRequestedBy.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             lblRequestedBy.Name = "lblRequestedBy";
             lblRequestedBy.Size = new System.Drawing.Size(112, 20);
@@ -75,7 +75,7 @@
             lblStart.AutoSize = true;
             lblStart.Font = new System.Drawing.Font("Segoe UI", 11F);
             lblStart.ForeColor = System.Drawing.Color.FromArgb(241, 241, 241);
-            lblStart.Location = new System.Drawing.Point(254, 34);
+            lblStart.Location = new System.Drawing.Point(254, 28);
             lblStart.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             lblStart.Name = "lblStart";
             lblStart.Size = new System.Drawing.Size(57, 20);
@@ -84,7 +84,7 @@
             // 
             // picStatus
             // 
-            picStatus.Location = new System.Drawing.Point(11, 7);
+            picStatus.Location = new System.Drawing.Point(9, 7);
             picStatus.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             picStatus.Name = "picStatus";
             picStatus.Size = new System.Drawing.Size(24, 24);
@@ -161,10 +161,8 @@
             Controls.Add(lblRequestedBy);
             Controls.Add(lblLinkTitle);
             Margin = new System.Windows.Forms.Padding(0);
-            MaximumSize = new System.Drawing.Size(370, 65);
-            MinimumSize = new System.Drawing.Size(370, 65);
             Name = "BuildDetailControl";
-            Size = new System.Drawing.Size(370, 65);
+            Size = new System.Drawing.Size(370, 53);
             ((System.ComponentModel.ISupportInitialize)picStatus).EndInit();
             ((System.ComponentModel.ISupportInitialize)imgErrors).EndInit();
             ((System.ComponentModel.ISupportInitialize)imgWarnings).EndInit();

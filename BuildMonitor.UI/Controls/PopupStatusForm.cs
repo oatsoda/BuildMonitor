@@ -1,7 +1,6 @@
 ﻿using BuildMonitor.Core;
 using BuildMonitor.UI.Helpers;
 using System;
-using System.Drawing;
 using System.Windows.Forms;
 
 namespace BuildMonitor.UI.Controls
@@ -22,18 +21,20 @@ namespace BuildMonitor.UI.Controls
         public PopupStatusForm(BuildDetail buildDetail)
         {
             InitializeComponent();
+            ScreenLayout.SetToSectionSizeWithZeroMinHeight(this);
+            ScreenLayout.SetToSectionSizeFixed(buildDetailControl);
 
             TopMost = true;
-
-            Width = buildDetailControl.Width;
-            Height = buildDetailControl.Height;
-            MinimumSize = new Size(Width, 0);
 
             buildDetailControl.ToolTip = new ToolTip()
             {
                 ShowAlways = true,
                 IsBalloon = true
             };
+            buildDetailControl.BackColor = System.Drawing.Color.FromArgb(
+                buildDetailControl.BackColor.R + 20,
+                buildDetailControl.BackColor.G + 20,
+                buildDetailControl.BackColor.B + 20);
 
             m_Timer = new Timer
             {
@@ -60,9 +61,8 @@ namespace BuildMonitor.UI.Controls
             m_ExpectedMinTop = bounds.Height;
             m_ExpectedMaxTop = (bounds.Height - Height) - 2;
 
-
-            var x = (bounds.Width - Width) - BuildDefinitionsListForm.OFFSET_X;
-            var y = (bounds.Height) - BuildDefinitionsListForm.OFFSET_Y;
+            var x = (bounds.Width - Width) - ScreenLayout.OFFSET_X;
+            var y = (bounds.Height) - ScreenLayout.OFFSET_Y;
             SetDesktopLocation(x, y);
 
             Height = 0;
@@ -74,8 +74,8 @@ namespace BuildMonitor.UI.Controls
             {
                 case TransitionState.Opening:
 
-                    Top = Top - _INTERVAL_PIXELS;
-                    Height = Height + _INTERVAL_PIXELS;
+                    Top -= _INTERVAL_PIXELS;
+                    Height += _INTERVAL_PIXELS;
 
                     var reachedHold = Top <= m_ExpectedMaxTop;
 
@@ -96,8 +96,8 @@ namespace BuildMonitor.UI.Controls
 
                 case TransitionState.Closing:
 
-                    Top = Top + _INTERVAL_PIXELS;
-                    Height = Height - _INTERVAL_PIXELS;
+                    Top += _INTERVAL_PIXELS;
+                    Height -= _INTERVAL_PIXELS;
 
                     var reachedBottom = Top >= m_ExpectedMinTop;
 

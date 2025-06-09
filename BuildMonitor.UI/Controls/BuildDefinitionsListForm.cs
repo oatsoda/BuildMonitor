@@ -14,13 +14,6 @@ namespace BuildMonitor.UI.Controls
 {
     public partial class BuildDefinitionsListForm : Form
     {
-        #region Public Constants
-
-        public const int OFFSET_X = 10;
-        public const int OFFSET_Y = 3;
-
-        #endregion
-
         #region Private Fields & Properties
 
         private bool m_Closing;
@@ -42,9 +35,6 @@ namespace BuildMonitor.UI.Controls
         private bool m_IsSettingsOpen;
         private bool m_IsAboutOpen;
 
-        private int m_MessageOnlyHeight;
-        private int m_MessageOnlyWidth;
-
         #endregion
 
         #region Constructor
@@ -56,6 +46,7 @@ namespace BuildMonitor.UI.Controls
         {
             InitializeComponent();
             notifyIcon.Text = VersionHelper.AppName;
+            ScreenLayout.SetToSectionSizeWithoutMaximum(this);
 
             // This ensures first click on notify icon displays the form. Otherwise the
             // first call to SetDesktopLocation sets the WindowState back to Minimized even
@@ -77,11 +68,6 @@ namespace BuildMonitor.UI.Controls
 
             m_CalculatedHeight = m_CalculatedWidth = 0;
             Controls.Clear();
-            using (var dimension = new BuildDetailControl())
-            {
-                m_MessageOnlyHeight = Height = dimension.Height;
-                m_MessageOnlyWidth = Width = dimension.Width;
-            }
 
             ApplyOptions();
 
@@ -119,7 +105,9 @@ namespace BuildMonitor.UI.Controls
 
             var buildDetailControls = BuildDetailControls.ToList();
 
-            var buildDetailsList = buildDetails.ToList();
+            var buildDetailsList = m_CurrentMonitorOptions.OrderByMostRecent
+                ? buildDetails.OrderBy(b => b.Status?.Start ?? DateTimeOffset.MinValue).ToList()
+                : [.. buildDetails.OrderBy(b => b.Definition.Name)];
 
             var x = 0;
             foreach (var detail in buildDetailsList)
@@ -188,8 +176,8 @@ namespace BuildMonitor.UI.Controls
                 AutoSize = true,
                 Text = message,
                 Dock = DockStyle.Fill,
-                MaximumSize = new Size(m_MessageOnlyWidth, m_MessageOnlyHeight * 10),
-                MinimumSize = new Size(100, m_MessageOnlyHeight),
+                MaximumSize = new Size(ScreenLayout.SECTION_WIDTH, ScreenLayout.SECTION_HEIGHT * 10),
+                MinimumSize = ScreenLayout.SectionSize,
 
                 Font = new Font("Segoe UI", 11F),
                 ForeColor = Color.OrangeRed,
@@ -199,7 +187,7 @@ namespace BuildMonitor.UI.Controls
             Controls.Add(label);
 
             m_CalculatedHeight = label.Height;
-            m_CalculatedWidth = m_MessageOnlyWidth;
+            m_CalculatedWidth = ScreenLayout.SECTION_WIDTH;
         }
 
         private void SetSizeAndPosition()
@@ -210,8 +198,8 @@ namespace BuildMonitor.UI.Controls
             Debug.WriteLine($"Setting Size [{m_CalculatedWidth},{m_CalculatedHeight} / {Width},{Height}]");
 
             var bounds = this.GetScreenBounds();
-            var x = (bounds.Width - Width) - OFFSET_X;
-            var y = (bounds.Height - Height) - OFFSET_Y;
+            var x = (bounds.Width - m_CalculatedWidth) - ScreenLayout.OFFSET_X;
+            var y = (bounds.Height - m_CalculatedHeight) - ScreenLayout.OFFSET_Y;
             SetDesktopLocation(x, y);
         }
 

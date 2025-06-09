@@ -38,6 +38,9 @@
             tabWindows = new System.Windows.Forms.TabPage();
             cbStartup = new System.Windows.Forms.CheckBox();
             tabGeneral = new System.Windows.Forms.TabPage();
+            cbOrderByMostRecent = new System.Windows.Forms.CheckBox();
+            numStaleDays = new System.Windows.Forms.NumericUpDown();
+            numDefinitionInterval = new System.Windows.Forms.NumericUpDown();
             numInterval = new System.Windows.Forms.NumericUpDown();
             label7 = new System.Windows.Forms.Label();
             cbHideStale = new System.Windows.Forms.CheckBox();
@@ -53,16 +56,14 @@
             label5 = new System.Windows.Forms.Label();
             txtAdoPat = new System.Windows.Forms.TextBox();
             btnReset = new System.Windows.Forms.Button();
-            numDefinitionInterval = new System.Windows.Forms.NumericUpDown();
-            numStaleDays = new System.Windows.Forms.NumericUpDown();
             tabControl.SuspendLayout();
             tabWindows.SuspendLayout();
             tabGeneral.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)numStaleDays).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)numDefinitionInterval).BeginInit();
             ((System.ComponentModel.ISupportInitialize)numInterval).BeginInit();
             tabADO.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)imgBox).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)numDefinitionInterval).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)numStaleDays).BeginInit();
             SuspendLayout();
             // 
             // txtAdoOrganisation
@@ -167,6 +168,7 @@
             // 
             // tabGeneral
             // 
+            tabGeneral.Controls.Add(cbOrderByMostRecent);
             tabGeneral.Controls.Add(numStaleDays);
             tabGeneral.Controls.Add(numDefinitionInterval);
             tabGeneral.Controls.Add(numInterval);
@@ -184,6 +186,37 @@
             tabGeneral.TabIndex = 0;
             tabGeneral.Text = "General Settings";
             tabGeneral.UseVisualStyleBackColor = true;
+            // 
+            // cbOrderByMostRecent
+            // 
+            cbOrderByMostRecent.AutoSize = true;
+            cbOrderByMostRecent.Location = new System.Drawing.Point(341, 19);
+            cbOrderByMostRecent.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            cbOrderByMostRecent.Name = "cbOrderByMostRecent";
+            cbOrderByMostRecent.Size = new System.Drawing.Size(197, 19);
+            cbOrderByMostRecent.TabIndex = 19;
+            cbOrderByMostRecent.Text = "Order definitions by most recent";
+            cbOrderByMostRecent.UseVisualStyleBackColor = true;
+            // 
+            // numStaleDays
+            // 
+            numStaleDays.Location = new System.Drawing.Point(218, 158);
+            numStaleDays.Maximum = new decimal(new int[] { 365, 0, 0, 0 });
+            numStaleDays.Minimum = new decimal(new int[] { 1, 0, 0, 0 });
+            numStaleDays.Name = "numStaleDays";
+            numStaleDays.Size = new System.Drawing.Size(53, 23);
+            numStaleDays.TabIndex = 18;
+            numStaleDays.Value = new decimal(new int[] { 1, 0, 0, 0 });
+            // 
+            // numDefinitionInterval
+            // 
+            numDefinitionInterval.Location = new System.Drawing.Point(218, 102);
+            numDefinitionInterval.Maximum = new decimal(new int[] { 3600, 0, 0, 0 });
+            numDefinitionInterval.Minimum = new decimal(new int[] { 15, 0, 0, 0 });
+            numDefinitionInterval.Name = "numDefinitionInterval";
+            numDefinitionInterval.Size = new System.Drawing.Size(53, 23);
+            numDefinitionInterval.TabIndex = 17;
+            numDefinitionInterval.Value = new decimal(new int[] { 15, 0, 0, 0 });
             // 
             // numInterval
             // 
@@ -353,26 +386,6 @@
             btnReset.UseVisualStyleBackColor = true;
             btnReset.Click += btnReset_Click;
             // 
-            // numDefinitionInterval
-            // 
-            numDefinitionInterval.Location = new System.Drawing.Point(218, 102);
-            numDefinitionInterval.Maximum = new decimal(new int[] { 3600, 0, 0, 0 });
-            numDefinitionInterval.Minimum = new decimal(new int[] { 15, 0, 0, 0 });
-            numDefinitionInterval.Name = "numDefinitionInterval";
-            numDefinitionInterval.Size = new System.Drawing.Size(53, 23);
-            numDefinitionInterval.TabIndex = 17;
-            numDefinitionInterval.Value = new decimal(new int[] { 15, 0, 0, 0 });
-            // 
-            // numStaleDays
-            // 
-            numStaleDays.Location = new System.Drawing.Point(218, 158);
-            numStaleDays.Maximum = new decimal(new int[] { 365, 0, 0, 0 });
-            numStaleDays.Minimum = new decimal(new int[] { 1, 0, 0, 0 });
-            numStaleDays.Name = "numStaleDays";
-            numStaleDays.Size = new System.Drawing.Size(53, 23);
-            numStaleDays.TabIndex = 18;
-            numStaleDays.Value = new decimal(new int[] { 1, 0, 0, 0 });
-            // 
             // SettingsForm
             // 
             AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
@@ -393,12 +406,12 @@
             tabWindows.PerformLayout();
             tabGeneral.ResumeLayout(false);
             tabGeneral.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)numStaleDays).EndInit();
+            ((System.ComponentModel.ISupportInitialize)numDefinitionInterval).EndInit();
             ((System.ComponentModel.ISupportInitialize)numInterval).EndInit();
             tabADO.ResumeLayout(false);
             tabADO.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)imgBox).EndInit();
-            ((System.ComponentModel.ISupportInitialize)numDefinitionInterval).EndInit();
-            ((System.ComponentModel.ISupportInitialize)numStaleDays).EndInit();
             ResumeLayout(false);
 
         }
@@ -432,5 +445,6 @@
         private System.Windows.Forms.NumericUpDown numInterval;
         private System.Windows.Forms.NumericUpDown numStaleDays;
         private System.Windows.Forms.NumericUpDown numDefinitionInterval;
+        private System.Windows.Forms.CheckBox cbOrderByMostRecent;
     }
 }

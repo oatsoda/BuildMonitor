@@ -13,6 +13,7 @@ namespace BuildMonitor.UI.Controls
         public BuildDetailControl()
         {
             InitializeComponent();
+            ScreenLayout.SetToSectionSizeFixed(this);
 
             ToolTip = new();
             imgErrors.Image = Status.Failed.ToBitmap(imgErrors.Size);
@@ -51,14 +52,20 @@ namespace BuildMonitor.UI.Controls
 
             if (buildDetail.Definition.IsVNext)
             {
-                lblErrors.Text = buildDetail.Status?.ErrorCount.ToString() ?? "0";
+                var errorCount = buildDetail.Status?.ErrorCount ?? 0;
+                var hasErrors = errorCount > 0;
+                lblErrors.Text = errorCount.ToString();
+                lblErrors.Visible = imgErrors.Visible = hasErrors;
                 lblWarnings.Text = buildDetail.Status?.WarningCount.ToString() ?? "0";
+                lblWarnings.Visible = imgWarnings.Visible = hasErrors || buildDetail.Status?.WarningCount > 0;
             }
-
-            lblErrors.Visible =
-                imgErrors.Visible =
-                lblWarnings.Visible =
-                imgWarnings.Visible = buildDetail.Definition.IsVNext;
+            else
+            {
+                lblErrors.Visible =
+                    imgErrors.Visible =
+                    lblWarnings.Visible =
+                    imgWarnings.Visible = false;
+            }
 
             picStatus.Image = buildDetail.Status?.Status.ToBitmap(picStatus.Size);
         }
