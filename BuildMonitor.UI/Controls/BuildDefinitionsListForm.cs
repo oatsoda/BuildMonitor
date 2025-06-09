@@ -105,7 +105,9 @@ namespace BuildMonitor.UI.Controls
 
             var buildDetailControls = BuildDetailControls.ToList();
 
-            var buildDetailsList = buildDetails.ToList();
+            var buildDetailsList = m_CurrentMonitorOptions.OrderByMostRecent
+                ? buildDetails.OrderBy(b => b.Status?.Start ?? DateTimeOffset.MinValue).ToList()
+                : [.. buildDetails.OrderBy(b => b.Definition.Name)];
 
             var x = 0;
             foreach (var detail in buildDetailsList)

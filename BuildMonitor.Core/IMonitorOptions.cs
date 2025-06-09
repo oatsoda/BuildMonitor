@@ -11,6 +11,8 @@
         bool HideStaleDefinitions { get; }
         int StaleDefinitionDays { get; }
 
+        bool OrderByMostRecent { get; }
+
         string AzureDevOpsOrganisation { get; }
         string ProjectName { get; }
 

@@ -48,6 +48,8 @@ namespace BuildMonitor.UI.Options
             numStaleDays.Value = m_Options.StaleDefinitionDays;
             numStaleDays.Enabled = m_Options.HideStaleDefinitions;
 
+            cbOrderByMostRecent.Checked = m_Options.OrderByMostRecent;
+
             // ADO Tab
             txtAdoOrganisation.Text = m_Options.AzureDevOpsOrganisation;
 
@@ -89,6 +91,9 @@ namespace BuildMonitor.UI.Options
             options.HideStaleDefinitions = cbHideStale.Checked;
             options.StaleDefinitionDays = (int)numStaleDays.Value;
 
+            options.OrderByMostRecent = cbOrderByMostRecent.Checked;
+
+            // ADO Tab
             options.AzureDevOpsOrganisation = txtAdoOrganisation.Text;
             options.PersonalAccessTokenProtected = ProtectionMethods.Protect(txtAdoPat.Text);
 

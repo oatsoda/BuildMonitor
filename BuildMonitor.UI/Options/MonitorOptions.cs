@@ -7,6 +7,7 @@ namespace BuildMonitor.UI.Options
 
     public sealed class MonitorOptions : ApplicationSettingsBase, IMonitorOptions
     {
+        // ** General Options
         [UserScopedSetting]
         [DefaultSettingValue("true")]
         public bool IncludeRunningBuilds
@@ -56,6 +57,17 @@ namespace BuildMonitor.UI.Options
         }
 
         [UserScopedSetting]
+        [DefaultSettingValue("true")]
+        public bool OrderByMostRecent
+        {
+            get { return (bool)this[nameof(OrderByMostRecent)]; }
+            set { this[nameof(OrderByMostRecent)] = value; }
+        }
+
+
+        // ** ADO Options
+
+        [UserScopedSetting]
         public string AzureDevOpsOrganisation
         {
             get { return (string)this[nameof(AzureDevOpsOrganisation)]; }
@@ -83,6 +95,8 @@ namespace BuildMonitor.UI.Options
             set { this[nameof(PersonalAccessTokenEntropy)] = value; }
         }
 
+        // ** Settings Management
+
         [UserScopedSetting]
         [DefaultSettingValue("false")]
         public bool ValidOptions
@@ -98,6 +112,8 @@ namespace BuildMonitor.UI.Options
             get { return (bool)this[nameof(SettingsUpgradeRequired)]; }
             set { this[nameof(SettingsUpgradeRequired)] = value; }
         }
+
+        // ** Encryption and Protection
 
         public string PersonalAccessTokenPlainText =>
             ProtectionMethods.Unprotect(PersonalAccessTokenProtected);
@@ -126,14 +142,21 @@ namespace BuildMonitor.UI.Options
         {
             IncludeRunningBuilds = existingOptions.IncludeRunningBuilds;
             IntervalSeconds = existingOptions.IntervalSeconds;
+
             RefreshDefintions = existingOptions.RefreshDefintions;
             RefreshDefinitionIntervalSeconds = existingOptions.RefreshDefinitionIntervalSeconds;
+
+            HideStaleDefinitions = existingOptions.HideStaleDefinitions;
+            StaleDefinitionDays = existingOptions.StaleDefinitionDays;
+
+            OrderByMostRecent = existingOptions.OrderByMostRecent;
 
             AzureDevOpsOrganisation = existingOptions.AzureDevOpsOrganisation;
             ProjectName = existingOptions.ProjectName;
 
             PersonalAccessTokenCipher = existingOptions.PersonalAccessTokenCipher;
             PersonalAccessTokenEntropy = existingOptions.PersonalAccessTokenEntropy;
+
             ValidOptions = existingOptions.ValidOptions;
         }
     }
