@@ -126,7 +126,7 @@ namespace BuildMonitor.Core
 
                 Debug.WriteLine("Monitor getting store...");
 
-                var buildStore = m_BuildStoreFactory.GetBuildStore(Options);
+                var buildStore = m_BuildStoreFactory.GetBuildStore(Options, false);
 
                 try
                 {

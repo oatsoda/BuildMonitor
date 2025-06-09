@@ -2,9 +2,9 @@
 {
     public class ADOBuildStoreFactory : IBuildStoreFactory
     {
-        public IBuildStore GetBuildStore(IMonitorOptions options)
+        public IBuildStore GetBuildStore(IMonitorOptions options, bool forValidatingOnly)
         {
-            return new ADOBuildStore(options);
+            return new ADOBuildStore(options, forValidatingOnly);
         }
     }
 }

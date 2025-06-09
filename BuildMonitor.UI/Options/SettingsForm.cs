@@ -132,7 +132,7 @@ namespace BuildMonitor.UI.Options
             cboAdoProjectName.Items.Clear();
             try
             {
-                var store = m_BuildStoreFactory.GetBuildStore(tempOptions);
+                var store = m_BuildStoreFactory.GetBuildStore(tempOptions, true);
                 var projects = await store.GetProjects();
                 cboAdoProjectName.Items.AddRange(projects.Cast<object>().ToArray());
                 imgBox.Image = Status.Succeeded.ToBitmap(new Size(24, 24));

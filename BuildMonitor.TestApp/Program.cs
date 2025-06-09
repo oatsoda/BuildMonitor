@@ -59,7 +59,7 @@ namespace BuildMonitor.TestApp
 
             var factoryMoq = new Mock<IBuildStoreFactory>();
             factoryMoq
-                .Setup(f => f.GetBuildStore(It.IsAny<IMonitorOptions>()))
+                .Setup(f => f.GetBuildStore(It.IsAny<IMonitorOptions>(), It.IsAny<bool>()))
                 .Returns(storeMoq.Object);
 
             var appUpdaterMoq = new Mock<IAppUpdater>();
