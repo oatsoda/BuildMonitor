@@ -12,6 +12,5 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\BuildMonitor.App\BuildMonitor.App.csproj" Publish="true" />
-    <!--<BindPath Include="obj\$(Platform)\$(Configuration)\publish\BuildMonitor.App" />-->
   </ItemGroup>
 </Project>
