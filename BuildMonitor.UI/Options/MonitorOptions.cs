@@ -11,92 +11,92 @@ namespace BuildMonitor.UI.Options
         [DefaultSettingValue("true")]
         public bool IncludeRunningBuilds
         {
-            get { return (bool)this["IncludeRunningBuilds"]; }
-            set { this["IncludeRunningBuilds"] = value; }
+            get { return (bool)this[nameof(IncludeRunningBuilds)]; }
+            set { this[nameof(IncludeRunningBuilds)] = value; }
         }
 
         [UserScopedSetting]
         [DefaultSettingValue("60")]
         public int IntervalSeconds
         {
-            get { return (int)this["IntervalSeconds"]; }
-            set { this["IntervalSeconds"] = value; }
+            get { return (int)this[nameof(IntervalSeconds)]; }
+            set { this[nameof(IntervalSeconds)] = value; }
         }
 
         [UserScopedSetting]
         [DefaultSettingValue("false")]
         public bool RefreshDefintions
         {
-            get { return (bool)this["RefreshDefintions"]; }
-            set { this["RefreshDefintions"] = value; }
+            get { return (bool)this[nameof(RefreshDefintions)]; }
+            set { this[nameof(RefreshDefintions)] = value; }
         }
 
         [UserScopedSetting]
         [DefaultSettingValue("3600")]
         public int RefreshDefinitionIntervalSeconds
         {
-            get { return (int)this["RefreshDefinitionIntervalSeconds"]; }
-            set { this["RefreshDefinitionIntervalSeconds"] = value; }
+            get { return (int)this[nameof(RefreshDefinitionIntervalSeconds)]; }
+            set { this[nameof(RefreshDefinitionIntervalSeconds)] = value; }
         }
 
         [UserScopedSetting]
         [DefaultSettingValue("true")]
         public bool HideStaleDefinitions
         {
-            get { return (bool)this["HideStaleDefinitions"]; }
-            set { this["HideStaleDefinitions"] = value; }
+            get { return (bool)this[nameof(HideStaleDefinitions)]; }
+            set { this[nameof(HideStaleDefinitions)] = value; }
         }
 
         [UserScopedSetting]
         [DefaultSettingValue("90")]
         public int StaleDefinitionDays
         {
-            get { return (int)this["StaleDefinitionDays"]; }
-            set { this["StaleDefinitionDays"] = value; }
+            get { return (int)this[nameof(StaleDefinitionDays)]; }
+            set { this[nameof(StaleDefinitionDays)] = value; }
         }
 
         [UserScopedSetting]
         public string AzureDevOpsOrganisation
         {
-            get { return (string)this["AzureDevOpsOrganisation"]; }
-            set { this["AzureDevOpsOrganisation"] = value; }
+            get { return (string)this[nameof(AzureDevOpsOrganisation)]; }
+            set { this[nameof(AzureDevOpsOrganisation)] = value; }
         }
 
         [UserScopedSetting]
         public string ProjectName
         {
-            get { return (string)this["ProjectName"]; }
-            set { this["ProjectName"] = value; }
+            get { return (string)this[nameof(ProjectName)]; }
+            set { this[nameof(ProjectName)] = value; }
         }
 
         [UserScopedSetting]
         public string? PersonalAccessTokenCipher
         {
-            get { return (string?)this["PersonalAccessTokenCipher"]; }
-            set { this["PersonalAccessTokenCipher"] = value; }
+            get { return (string?)this[nameof(PersonalAccessTokenCipher)]; }
+            set { this[nameof(PersonalAccessTokenCipher)] = value; }
         }
 
         [UserScopedSetting]
         public string? PersonalAccessTokenEntropy
         {
-            get { return (string?)this["PersonalAccessTokenEntropy"]; }
-            set { this["PersonalAccessTokenEntropy"] = value; }
+            get { return (string?)this[nameof(PersonalAccessTokenEntropy)]; }
+            set { this[nameof(PersonalAccessTokenEntropy)] = value; }
         }
 
         [UserScopedSetting]
         [DefaultSettingValue("false")]
         public bool ValidOptions
         {
-            get { return (bool)this["ValidOptions"]; }
-            set { this["ValidOptions"] = value; }
+            get { return (bool)this[nameof(ValidOptions)]; }
+            set { this[nameof(ValidOptions)] = value; }
         }
 
         [UserScopedSetting]
         [DefaultSettingValue("true")]
         public bool SettingsUpgradeRequired
         {
-            get { return (bool)this["SettingsUpgradeRequired"]; }
-            set { this["SettingsUpgradeRequired"] = value; }
+            get { return (bool)this[nameof(SettingsUpgradeRequired)]; }
+            set { this[nameof(SettingsUpgradeRequired)] = value; }
         }
 
         public string PersonalAccessTokenPlainText =>
