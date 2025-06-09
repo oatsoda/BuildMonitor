@@ -19,7 +19,7 @@ namespace BuildMonitor.Core.ADO
         private readonly bool m_IncludeRunningBuilds;
         private readonly string m_ProjectNameUrlEncoded;
 
-        public ADOBuildStore(IMonitorOptions options)
+        public ADOBuildStore(IMonitorOptions options, bool forValidatingOnly)
         {
             var baseUrl = new Uri(
                 string.Format($"https://dev.azure.com/{Uri.EscapeDataString(options.AzureDevOpsOrganisation)}/")
@@ -35,7 +35,7 @@ namespace BuildMonitor.Core.ADO
                         $"{options.PersonalAccessTokenPlainText}:")));
 
             m_IncludeRunningBuilds = options.IncludeRunningBuilds;
-            m_ProjectNameUrlEncoded = Uri.EscapeDataString(options.ProjectName);
+            m_ProjectNameUrlEncoded = forValidatingOnly ? "" : Uri.EscapeDataString(options.ProjectName);
         }
 
         public record ADOProject(string Name);

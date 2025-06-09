@@ -2,6 +2,6 @@
 {
     public interface IBuildStoreFactory
     {
-        IBuildStore GetBuildStore(IMonitorOptions options);
+        IBuildStore GetBuildStore(IMonitorOptions options, bool forValidatingOnly);
     }
 }
