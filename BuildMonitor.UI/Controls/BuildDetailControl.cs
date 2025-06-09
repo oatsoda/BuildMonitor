@@ -13,6 +13,7 @@ namespace BuildMonitor.UI.Controls
         public BuildDetailControl()
         {
             InitializeComponent();
+            ScreenLayout.SetToSectionSizeFixed(this);
 
             ToolTip = new();
             imgErrors.Image = Status.Failed.ToBitmap(imgErrors.Size);
