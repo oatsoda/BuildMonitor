@@ -26,7 +26,7 @@ namespace BuildMonitor.UI.Updater
             if (latestVersion <= VersionHelper.Version)
                 return false;
 
-            var msg = $"A newer version ({latestVersion}) of {VersionHelper.AppName} is available? Do you want to download and install it?";
+            var msg = $"A newer version ({latestVersion.ToString(3)}) of {VersionHelper.AppName} is available? Do you want to download and install it?";
 
             if (DialogResult.Cancel == MessageBox.Show(
                 msg,
