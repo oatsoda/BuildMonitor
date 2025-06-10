@@ -1,5 +1,6 @@
 ﻿using BuildMonitor.Core;
 using BuildMonitor.UI.Controls;
+using BuildMonitor.UI.Options;
 using BuildMonitor.UI.Updater;
 using Moq;
 using System;
@@ -43,19 +44,12 @@ namespace BuildMonitor.TestApp
                 .Setup(s => s.GetLatestBuild(It.IsAny<BuildDefinition>()))
                 .ReturnsAsync((BuildDefinition defn) => GetRandomStatus(defn));
 
-            var optionsMoq = new Mock<IMonitorOptions>();
-            optionsMoq
-                .SetupGet(o => o.IntervalSeconds)
-                .Returns(20);
-            optionsMoq
-                .SetupGet(o => o.RefreshDefintions)
-                .Returns(true);
-            optionsMoq
-                .SetupGet(o => o.RefreshDefinitionIntervalSeconds)
-                .Returns(45);
-            optionsMoq
-                .SetupGet(o => o.ValidOptions)
-                .Returns(true);
+            var options = new MonitorOptions();
+            options.Reset();
+            options.IntervalSeconds = 20;
+            options.RefreshDefintions = true;
+            options.RefreshDefinitionIntervalSeconds = 45;
+            options.ValidOptions = true;
 
             var factoryMoq = new Mock<IBuildStoreFactory>();
             factoryMoq
@@ -68,7 +62,7 @@ namespace BuildMonitor.TestApp
 
             Application.Run(
                 new BuildDefinitionsListForm(monitor,
-                                             optionsMoq.Object,
+                                             options,
                                              factoryMoq.Object,
                                              appUpdaterMoq.Object)
                 );
