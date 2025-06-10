@@ -38,6 +38,8 @@ namespace BuildMonitor.UI.Controls
 
         public void DisplayDetail(BuildDetail buildDetail)
         {
+            SuspendLayout();
+
             var url = buildDetail.Status == null
                 ? buildDetail.Definition.Url
                 : buildDetail.Status.Url;
@@ -68,6 +70,8 @@ namespace BuildMonitor.UI.Controls
             }
 
             picStatus.Image = buildDetail.Status?.Status.ToBitmap(picStatus.Size);
+
+            ResumeLayout();
         }
 
         private void lblLinkTitle_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)

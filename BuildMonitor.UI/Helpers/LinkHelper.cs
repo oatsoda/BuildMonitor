@@ -20,11 +20,17 @@ namespace BuildMonitor.UI.Helpers
     {
         public static void SetUrl(this LinkLabel linkLabel, string url, string? changeText = null)
         {
+            linkLabel.SuspendLayout();
+
+            var was = linkLabel.Text;
+
             if (changeText != null)
                 linkLabel.Text = changeText;
 
             linkLabel.Links.Clear();
             linkLabel.Links.Add(0, linkLabel.Text.Length, url);
+
+            linkLabel.ResumeLayout();
         }
 
         public static void VisitUrl(this LinkLabelLinkClickedEventArgs e, object sender)

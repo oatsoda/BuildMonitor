@@ -98,6 +98,7 @@ namespace BuildMonitor.UI.Controls
 
         private void UpdateBuildControls(IEnumerable<BuildDetail> buildDetails)
         {
+            SuspendLayout();
             RemoveLabels();
 
             var controlHeight = 0;
@@ -141,6 +142,8 @@ namespace BuildMonitor.UI.Controls
 
             if (x == 0)
                 SetMessageOnly("No builds found.");
+
+            ResumeLayout();
 
             if (x >= buildDetailControls.Count) // original count
                 return;
@@ -388,6 +391,8 @@ namespace BuildMonitor.UI.Controls
 
             Debug.WriteLine($"NotifyItem Click {WindowState} [{m_CalculatedWidth},{m_CalculatedHeight} / {Width},{Height}]");
 
+            SuspendLayout();
+
             if (WindowState == FormWindowState.Normal)
             {
                 Debug.WriteLine($"NotifyItem Hiding...");
@@ -412,6 +417,8 @@ namespace BuildMonitor.UI.Controls
                     WindowState = FormWindowState.Normal;
                 }
             }
+
+            ResumeLayout();
         }
 
         #endregion

@@ -39,7 +39,7 @@ namespace BuildMonitor.Core.ADO
         }
 
         public record ADOProject(string Name);
-        public record ADOListResult<T>(int Count, T[] Value);
+        public record ADOListResult<T>(int Count, T[] Value, string? ContinuationToken);
 
         public async Task<IEnumerable<string>> GetProjects()
         {
@@ -60,14 +60,35 @@ namespace BuildMonitor.Core.ADO
         public record ADOBuildDefinition(int Id, string Name, DefinitionType Type,
             [property: JsonPropertyName("_links")] ADOLinks Links);
 
-        public async Task<IEnumerable<BuildDefinition>> GetDefinitions()
+        public async Task<IEnumerable<BuildDefinition>> GetDefinitions(DateTimeOffset? builtAfter = null)
         {
             // https://learn.microsoft.com/en-us/rest/api/azure/devops/build/definitions/list?view=azure-devops-rest-7.1
             var queryPath = $"{m_ProjectNameUrlEncoded}/_apis/build/definitions?api-version=7.1";
 
-            var definitions = await GetADOResult<ADOListResult<ADOBuildDefinition>>(queryPath);
+            if (builtAfter.HasValue)
+                queryPath += $"&builtAfter={builtAfter.Value:yyyy-MM-ddTHH:mm:ss}";
 
-            return definitions.Value.Select(d
+            List<ADOBuildDefinition> definitions = new(20);
+
+            var definitionsPage = await GetADOResult<ADOListResult<ADOBuildDefinition>>(queryPath);
+
+            if (definitionsPage.Value.Length == 0)
+                return [];
+
+            definitions.AddRange(definitionsPage.Value);
+
+            while (definitionsPage.ContinuationToken != null)
+            {
+                var continuationQueryPath = $"{queryPath}&continuationToken={definitionsPage.ContinuationToken}";
+                definitionsPage = await GetADOResult<ADOListResult<ADOBuildDefinition>>(continuationQueryPath);
+
+                if (definitionsPage.Value.Length == 0)
+                    break;
+
+                definitions.AddRange(definitionsPage.Value);
+            }
+
+            return definitions.Select(d
                 => new BuildDefinition
                 {
                     Id = d.Id,

@@ -38,7 +38,7 @@ namespace BuildMonitor.TestApp
 
             var storeMoq = new Mock<IBuildStore>();
             storeMoq
-                .Setup(s => s.GetDefinitions())
+                .Setup(s => s.GetDefinitions(It.IsAny<DateTimeOffset?>()))
                 .ReturnsAsync(() => definitions.Take(RandomBetween(1, 8)));
             storeMoq
                 .Setup(s => s.GetLatestBuild(It.IsAny<BuildDefinition>()))
