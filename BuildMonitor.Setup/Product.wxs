@@ -2,7 +2,7 @@
 	<Package 
 			Name="Azure DevOps Pipeline Monitor"
       Language="1033" 
-      Version="2.0.2.0" 
+      Version="2.0.3.0" 
       Manufacturer="Andrew Milne"
       UpgradeCode="D946D59E-49BA-4DCC-96A9-50B81C4BD2BA" 
       InstallerVersion="500"
