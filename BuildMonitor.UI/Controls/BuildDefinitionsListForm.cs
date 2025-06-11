@@ -139,28 +139,20 @@ namespace BuildMonitor.UI.Controls
             if (x == 0)
                 SetMessageOnly("No builds found.");
 
-            if (x < buildDetailControls.Count)
-                RemoveUnusedControls(buildDetailControls.Count - x);
+            foreach (var c in buildDetailControls.Where(c => !buildDetailsList.Any(d => d.Definition.Id == c.BuildDefinitionId)))
+            {
+                Controls.Remove(c);
+                c.Dispose();
+            }
 
             ResumeLayout();
         }
 
-        private void RemoveUnusedControls(int numberToRemove)
-        {
-            while (numberToRemove > 0)
-            {
-                var lastControl = Controls.OfType<BuildDetailControl>().Last();
-                Controls.Remove(lastControl);
-                lastControl.Dispose();
-                numberToRemove--;
-            }
-        }
-
         private void RemoveLabels()
         {
-            while (Controls.OfType<Label>().Any())
+            foreach (var label in Controls.OfType<Label>())
             {
-                Controls.Remove(Controls.OfType<Label>().Last());
+                Controls.Remove(label);
             }
         }
 

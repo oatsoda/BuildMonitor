@@ -73,7 +73,7 @@ namespace BuildMonitor.TestApp
             return new()
             {
                 Id = forDefintion.Id,
-                Name = forDefintion.Name,
+                Name = $"{forDefintion.Name}-build",
                 Url = $"{forDefintion.Url}/build/{RandomBetween(1, 24)}",
                 RequestedBy = $"User{s_Random.Next(1, 100)}",
                 Status = (Status)s_Random.Next(1, 5),

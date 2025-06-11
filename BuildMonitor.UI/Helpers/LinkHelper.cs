@@ -22,8 +22,6 @@ namespace BuildMonitor.UI.Helpers
         {
             linkLabel.SuspendLayout();
 
-            var was = linkLabel.Text;
-
             if (changeText != null)
                 linkLabel.Text = changeText;
 
