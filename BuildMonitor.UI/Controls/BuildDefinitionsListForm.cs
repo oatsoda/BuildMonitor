@@ -115,21 +115,17 @@ namespace BuildMonitor.UI.Controls
             {
                 x++;
 
-                BuildDetailControl c;
+                BuildDetailControl? c = buildDetailControls.FirstOrDefault(b => b.BuildDefinitionId == detail.Definition.Id);
 
-                if (x <= buildDetailControls.Count)
-                {
-                    c = buildDetailControls[x - 1];
-                    c.DisplayDetail(detail);
-                }
-                else
+                if (c == null)
                 {
                     c = new BuildDetailControl();
-                    c.Top = ((x - 1) * c.Height);
-                    c.ToolTip = m_ToolTip;
-                    c.DisplayDetail(detail);
                     Controls.Add(c);
                 }
+
+                c.Top = ((x - 1) * c.Height);
+                c.ToolTip = m_ToolTip;
+                c.DisplayDetail(detail); // TODO: make it clearer we re-use same control to avoid re-painting (Link URL error)
 
                 controlHeight = c.Height; // Need this later
                 controlWidth = c.Width;
@@ -143,12 +139,10 @@ namespace BuildMonitor.UI.Controls
             if (x == 0)
                 SetMessageOnly("No builds found.");
 
+            if (x < buildDetailControls.Count)
+                RemoveUnusedControls(buildDetailControls.Count - x);
+
             ResumeLayout();
-
-            if (x >= buildDetailControls.Count) // original count
-                return;
-
-            RemoveUnusedControls(buildDetailControls.Count - x);
         }
 
         private void RemoveUnusedControls(int numberToRemove)

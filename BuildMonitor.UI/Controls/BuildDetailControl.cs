@@ -7,8 +7,12 @@ namespace BuildMonitor.UI.Controls
 {
     public partial class BuildDetailControl : UserControl
     {
+        // TODO: Why is this not on the Designer?
         [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
         public ToolTip ToolTip { get; set; }
+
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        public int BuildDefinitionId { get; private set; }
 
         public BuildDetailControl()
         {
@@ -39,6 +43,8 @@ namespace BuildMonitor.UI.Controls
         public void DisplayDetail(BuildDetail buildDetail)
         {
             SuspendLayout();
+
+            BuildDefinitionId = buildDetail.Definition.Id;
 
             var url = buildDetail.Status == null
                 ? buildDetail.Definition.Url
