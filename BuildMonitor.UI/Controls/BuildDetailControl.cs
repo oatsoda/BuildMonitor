@@ -8,14 +8,13 @@ namespace BuildMonitor.UI.Controls
     public partial class BuildDetailControl : UserControl
     {
         [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-        public ToolTip ToolTip { get; set; }
+        public int BuildDefinitionId { get; private set; }
 
         public BuildDetailControl()
         {
             InitializeComponent();
             ScreenLayout.SetToSectionSizeFixed(this);
 
-            ToolTip = new();
             imgErrors.Image = Status.Failed.ToBitmap(imgErrors.Size);
             imgWarnings.Image = Status.PartiallySucceeded.ToBitmap(imgErrors.Size);
         }
@@ -38,6 +37,10 @@ namespace BuildMonitor.UI.Controls
 
         public void DisplayDetail(BuildDetail buildDetail)
         {
+            SuspendLayout();
+
+            BuildDefinitionId = buildDetail.Definition.Id;
+
             var url = buildDetail.Status == null
                 ? buildDetail.Definition.Url
                 : buildDetail.Status.Url;
@@ -45,7 +48,9 @@ namespace BuildMonitor.UI.Controls
             lblLinkTitle.SetUrl(url, buildDetail.Definition.Name);
 
             if (buildDetail.Status != null)
-                ToolTip.SetToolTip(lblLinkTitle, buildDetail.Status.Name);
+            {
+                tipLink.SetToolTip(lblLinkTitle, buildDetail.Status.Name);
+            }
 
             lblRequestedBy.Text = buildDetail.Status?.ToRequestedByDescription(30);
             lblStart.Text = buildDetail.Status?.ToCurrentTimeDescription();
@@ -68,6 +73,8 @@ namespace BuildMonitor.UI.Controls
             }
 
             picStatus.Image = buildDetail.Status?.Status.ToBitmap(picStatus.Size);
+
+            ResumeLayout();
         }
 
         private void lblLinkTitle_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)

@@ -26,11 +26,6 @@ namespace BuildMonitor.UI.Controls
 
             TopMost = true;
 
-            buildDetailControl.ToolTip = new ToolTip()
-            {
-                ShowAlways = true,
-                IsBalloon = true
-            };
             buildDetailControl.BackColor = System.Drawing.Color.FromArgb(
                 buildDetailControl.BackColor.R + 20,
                 buildDetailControl.BackColor.G + 20,

@@ -1,5 +1,6 @@
 ﻿using BuildMonitor.Core;
 using BuildMonitor.UI.Controls;
+using BuildMonitor.UI.Options;
 using BuildMonitor.UI.Updater;
 using Moq;
 using System;
@@ -37,25 +38,19 @@ namespace BuildMonitor.TestApp
 
             var storeMoq = new Mock<IBuildStore>();
             storeMoq
-                .Setup(s => s.GetDefinitions())
+                .Setup(s => s.GetDefinitions(It.IsAny<DateTimeOffset?>()))
                 .ReturnsAsync(() => definitions.Take(RandomBetween(1, 8)));
             storeMoq
                 .Setup(s => s.GetLatestBuild(It.IsAny<BuildDefinition>()))
-                .ReturnsAsync((BuildDefinition defn) => GetRandomStatus(defn));
+                //.ThrowsAsync(new InvalidOperationException("This is a test exception to simulate a failure in the build store."));
+            	.ReturnsAsync((BuildDefinition defn) => GetRandomStatus(defn));
 
-            var optionsMoq = new Mock<IMonitorOptions>();
-            optionsMoq
-                .SetupGet(o => o.IntervalSeconds)
-                .Returns(20);
-            optionsMoq
-                .SetupGet(o => o.RefreshDefintions)
-                .Returns(true);
-            optionsMoq
-                .SetupGet(o => o.RefreshDefinitionIntervalSeconds)
-                .Returns(45);
-            optionsMoq
-                .SetupGet(o => o.ValidOptions)
-                .Returns(true);
+            var options = new MonitorOptions();
+            options.Reset();
+            options.IntervalSeconds = 20;
+            options.RefreshDefintions = true;
+            options.RefreshDefinitionIntervalSeconds = 45;
+            options.ValidOptions = true;
 
             var factoryMoq = new Mock<IBuildStoreFactory>();
             factoryMoq
@@ -68,7 +63,7 @@ namespace BuildMonitor.TestApp
 
             Application.Run(
                 new BuildDefinitionsListForm(monitor,
-                                             optionsMoq.Object,
+                                             options,
                                              factoryMoq.Object,
                                              appUpdaterMoq.Object)
                 );
@@ -79,7 +74,7 @@ namespace BuildMonitor.TestApp
             return new()
             {
                 Id = forDefintion.Id,
-                Name = forDefintion.Name,
+                Name = $"{forDefintion.Name}-build",
                 Url = $"{forDefintion.Url}/build/{RandomBetween(1, 24)}",
                 RequestedBy = $"User{s_Random.Next(1, 100)}",
                 Status = (Status)s_Random.Next(1, 5),

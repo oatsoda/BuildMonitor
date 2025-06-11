@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Linq;
 using System.Security.Authentication;
@@ -11,6 +10,8 @@ namespace BuildMonitor.Core
 {
     public sealed class BuildDefinitionMonitor : IDisposable
     {
+        private const int _NOTIFY_AFTER_CONSECUTIVE_EXCEPTIONS = 3;
+
         private bool m_RequestStop;
         private bool m_Stopped;
         private readonly ManualResetEvent m_StopWaitHandle;
@@ -27,33 +28,24 @@ namespace BuildMonitor.Core
             }
         }
 
-        private Status m_OverallStatus;
+        // ** Option Extras
+        private TimeSpan m_RefreshDefinitionInterval;
+        private TimeSpan m_RefreshBuildInterval;
+
+        // ** State
+        private DateTimeOffset m_LastDefinitionRefresh;
+        private DateTimeOffset m_LastBuildRefresh;
+        private Status m_LastWorstStatus;
+        private int m_ConsecutiveExceptions;
+
         private List<BuildDefinition> m_MonitoredDefinitions = [];
         private Dictionary<int, BuildStatus> m_LatestStatuses = [];
-        private DateTime m_LastDefinitionRefresh;
 
+        // * Events
+        public event EventHandler<List<BuildDetail>>? Updated;
         public event EventHandler<BuildDetail>? OverallStatusChanged;
         public event EventHandler<Exception>? ExceptionOccurred;
         public event EventHandler<string>? MonitoringStopped;
-        public event EventHandler<List<BuildDetail>>? Updated;
-
-        private ReadOnlyDictionary<int, BuildStatus> LatestStatuses
-        {
-            get
-            {
-                if (!Options.HideStaleDefinitions) // Option is not enabled
-                    return new ReadOnlyDictionary<int, BuildStatus>(m_LatestStatuses);
-
-                return
-                    new ReadOnlyDictionary<int, BuildStatus>(
-                        m_LatestStatuses
-                        .Where(kvp =>
-                            kvp.Value.TimeSpanSinceStart().TotalDays < Options.StaleDefinitionDays // Status is within days
-                        )
-                        .ToDictionary(pair => pair.Key, pair => pair.Value)
-                    );
-            }
-        }
 
         public BuildDefinitionMonitor(IBuildStoreFactory buildStoreFactory)
         {
@@ -77,8 +69,10 @@ namespace BuildMonitor.Core
             Debug.WriteLine("Monitor setting options...");
 
             m_Options = options;
+            m_RefreshDefinitionInterval = TimeSpan.FromSeconds(Options.RefreshDefinitionIntervalSeconds);
+            m_RefreshBuildInterval = TimeSpan.FromSeconds(Options.IntervalSeconds);
 
-            m_OverallStatus = Status.Unknown;
+            m_LastWorstStatus = Status.Unknown;
 
             if (m_MonitoredDefinitions.Count > 0)
                 m_MonitoredDefinitions = [];
@@ -86,7 +80,9 @@ namespace BuildMonitor.Core
             if (m_LatestStatuses.Count > 0)
                 m_LatestStatuses = [];
 
-            m_LastDefinitionRefresh = DateTime.MinValue;
+            m_LastDefinitionRefresh = DateTimeOffset.MinValue;
+            m_LastBuildRefresh = DateTimeOffset.MinValue;
+            m_ConsecutiveExceptions = 0;
 
             m_RequestStop = false;
             m_Stopped = false;
@@ -98,7 +94,7 @@ namespace BuildMonitor.Core
                 return;
             }
 
-            Debug.WriteLine("Monitor running...");
+            Debug.WriteLine("Monitor starting...");
 
             await Run();
         }
@@ -111,18 +107,15 @@ namespace BuildMonitor.Core
 
         private async Task Run()
         {
-            var restartAfterException = false;
+            bool restartAfterException;
 
             do
             {
+                restartAfterException = false;
+
                 Debug.WriteLine("Monitor Run...");
 
                 m_StopWaitHandle.Reset();
-
-
-                var sw = new Stopwatch();
-                var intervalMilliseconds = Options.IntervalSeconds * 1000;
-                // TODO: Defn refresh interval isn't considered here so it ends up being constrained by the other interval
 
                 Debug.WriteLine("Monitor getting store...");
 
@@ -134,26 +127,22 @@ namespace BuildMonitor.Core
                     {
                         Debug.WriteLine("Monitor checking now...");
 
-                        if (!m_RequestStop)
-                            await RefreshDefinitionsIfRequired(buildStore);
+                        var requireDefinitionRefresh = RequiresDefinitionRefresh();
+                        var requireBuildRefresh = requireDefinitionRefresh || RequiresBuildRefresh();
 
-                        if (!m_RequestStop)
+                        if (!m_RequestStop && requireDefinitionRefresh)
+                            await RefreshDefinitions(buildStore);
+
+                        if (!m_RequestStop && requireBuildRefresh)
                             await RefreshStatuses(buildStore);
 
-                        if (!m_RequestStop)
-                            RaiseUpdated();
+                        if (!m_RequestStop && (requireDefinitionRefresh || requireBuildRefresh))
+                            RaiseEvents();
 
                         if (!m_RequestStop)
-                        {
-                            sw.Start();
+                            await Task.Delay(1000);
 
-                            while (!m_RequestStop && sw.ElapsedMilliseconds < intervalMilliseconds)
-                            {
-                                await Task.Delay(1000);
-                            }
-
-                            sw.Reset();
-                        }
+                        m_ConsecutiveExceptions = 0;
                     }
                 }
                 catch (AuthenticationException)
@@ -162,15 +151,21 @@ namespace BuildMonitor.Core
                 }
                 catch (Exception ex)
                 {
-                    ExceptionOccurred?.Invoke(this, ex);
+                    m_ConsecutiveExceptions++;
 
-                    if (!m_RequestStop && !m_Stopped)
+                    if (!m_RequestStop)
                         restartAfterException = true;
+
+                    if (m_ConsecutiveExceptions >= _NOTIFY_AFTER_CONSECUTIVE_EXCEPTIONS)
+                    {
+                        ExceptionOccurred?.Invoke(this, ex);
+                        m_ConsecutiveExceptions = 0;
+                    }
                 }
 
                 if (restartAfterException)
                 {
-                    Thread.Sleep(10000); // Wait for 10 secs before starting again                        
+                    await Task.Delay(10000);
                 }
                 else
                 {
@@ -183,45 +178,34 @@ namespace BuildMonitor.Core
             } while (restartAfterException);
         }
 
-        private void RaiseUpdated()
+        private bool RequiresDefinitionRefresh()
         {
-            Debug.WriteLine("Monitor raising updated event...");
+            // Require if a) None loaded OR b) option to refresh is on AND interval exceeded
+            if (m_MonitoredDefinitions.Count == 0)
+                return true;
 
-            Updated?.Invoke(this, GetBuildDetails());
+            if (!Options.RefreshDefintions)
+                return false;
+
+            return DateTimeOffset.UtcNow - m_LastDefinitionRefresh >= m_RefreshDefinitionInterval;
         }
 
-
-        private List<BuildDetail> GetBuildDetails()
+        private bool RequiresBuildRefresh()
         {
-            return m_MonitoredDefinitions
-                .Where(d =>
-                    !Options.HideStaleDefinitions || // Option is disabled
-                    LatestStatuses.ContainsKey(d.Id) // No status means either no status or stale status
-                    )
-                .Select(d => new BuildDetail(d, LatestStatuses.TryGetValue(d.Id, out var value) ? value : null))
-                .OrderBy(d => d.Definition.Name)
-                .ToList();
-        }
-
-        private async Task RefreshDefinitionsIfRequired(IBuildStore buildStore)
-        {
-            // Don't refresh defns if: a) already loaded AND 
-            // ( b) option to refresh is off OR c) option is on but interval not exceeded
-
-            if (m_MonitoredDefinitions.Count > 0 &&
-                (!Options.RefreshDefintions || DateTime.UtcNow.Subtract(m_LastDefinitionRefresh).Seconds < Options.RefreshDefinitionIntervalSeconds))
-                return;
-
-            await RefreshDefinitions(buildStore);
+            return DateTimeOffset.UtcNow - m_LastBuildRefresh >= m_RefreshBuildInterval;
         }
 
         private async Task RefreshDefinitions(IBuildStore buildStore)
         {
             Debug.WriteLine("Monitor refreshing definitions...");
 
-            var definitions = await buildStore.GetDefinitions();
+            var definitionsBuiltSince = !Options.HideStaleDefinitions
+                ? (DateTimeOffset?)null
+                : DateTimeOffset.UtcNow.AddDays(-Options.StaleDefinitionDays);
+
+            var definitions = await buildStore.GetDefinitions(definitionsBuiltSince);
             m_MonitoredDefinitions = [.. definitions];
-            m_LastDefinitionRefresh = DateTime.UtcNow;
+            m_LastDefinitionRefresh = DateTimeOffset.UtcNow;
         }
 
         private async Task RefreshStatuses(IBuildStore buildStore)
@@ -238,46 +222,55 @@ namespace BuildMonitor.Core
                 m_LatestStatuses[definition.Id] = status;
             }
 
-            var worstList = LatestStatuses
-                .OrderByDescending(s => s.Value.Status)
-                .ThenByDescending(s => s.Value.Finish)
-                .ToList();
-
-            if (!worstList.Any())
-                return;
-
-            var worst = worstList.First();
-
-            var worstDefn = m_MonitoredDefinitions.Single(d => d.Id == worst.Key);
-            var worstStatus = worst.Value;
-
-            UpdateOverallStatus(
-                new BuildDetail(worstDefn, worstStatus)
-                );
+            m_LastBuildRefresh = DateTimeOffset.UtcNow;
         }
 
-        private void UpdateOverallStatus(BuildDetail updatedStatus)
+        private void RaiseEvents()
         {
-            var currentWorstStatus = LatestStatuses.Any()
-                                            ? LatestStatuses.Values.Max(s => s.Status)
-                                            : Status.Unknown;
+            Debug.WriteLine("Monitor raising updated event...");
 
-            if (currentWorstStatus != m_OverallStatus)
-                OnOverallStatusChanged(updatedStatus);
+            var buildDetails = m_MonitoredDefinitions
+               // TODO: If HideStaleDefinitions is enabled, filter out stale definitions if we're not refreshing them?
+               .Select(d => new BuildDetail(d, m_LatestStatuses.TryGetValue(d.Id, out var value) ? value : null))
+               .ToList();
+            OnUpdated(buildDetails);
 
-            m_OverallStatus = currentWorstStatus;
+            // Raise OverallStatusChanged with the worst status, if changed
+            var worstStatus = m_LatestStatuses
+                .OrderByDescending(s => s.Value.Status)
+                .ThenByDescending(s => s.Value.Finish)
+                .FirstOrDefault();
+
+            if (worstStatus.Key == 0)
+                return;
+
+            // TODO: Does it make sense to only raise Worst status. If you want to monitor all builds then overlapping InProgress
+            // won't all trigger individually. Maybe this should just be the most recent?
+            if (worstStatus.Value.Status == m_LastWorstStatus)
+                return;
+
+            var worstDefn = m_MonitoredDefinitions.Single(d => d.Id == worstStatus.Key);
+
+            m_LastWorstStatus = worstStatus.Value.Status;
+
+            OnOverallStatusChanged(
+                new BuildDetail(worstDefn, worstStatus.Value)
+            );
+        }
+
+        private void OnUpdated(List<BuildDetail> e)
+        {
+            Updated?.Invoke(this, e);
         }
 
         private void OnOverallStatusChanged(BuildDetail e)
         {
-            var handler = OverallStatusChanged;
-            handler?.Invoke(this, e);
+            OverallStatusChanged?.Invoke(this, e);
         }
 
         private void OnMonitoringStopped(string e)
         {
-            var handler = MonitoringStopped;
-            handler?.Invoke(this, e);
+            MonitoringStopped?.Invoke(this, e);
         }
 
         public void Dispose()

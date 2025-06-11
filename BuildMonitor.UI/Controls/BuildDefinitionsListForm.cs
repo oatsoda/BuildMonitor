@@ -30,8 +30,6 @@ namespace BuildMonitor.UI.Controls
 
         private IEnumerable<BuildDetailControl> BuildDetailControls => Controls.OfType<BuildDetailControl>();
 
-        private readonly ToolTip m_ToolTip;
-
         private bool m_IsSettingsOpen;
         private bool m_IsAboutOpen;
 
@@ -70,12 +68,6 @@ namespace BuildMonitor.UI.Controls
             Controls.Clear();
 
             ApplyOptions();
-
-            m_ToolTip = new ToolTip()
-            {
-                ShowAlways = true,
-                IsBalloon = true
-            };
         }
 
         #endregion
@@ -98,6 +90,7 @@ namespace BuildMonitor.UI.Controls
 
         private void UpdateBuildControls(IEnumerable<BuildDetail> buildDetails)
         {
+            SuspendLayout();
             RemoveLabels();
 
             var controlHeight = 0;
@@ -114,21 +107,16 @@ namespace BuildMonitor.UI.Controls
             {
                 x++;
 
-                BuildDetailControl c;
+                BuildDetailControl? c = buildDetailControls.FirstOrDefault(b => b.BuildDefinitionId == detail.Definition.Id);
 
-                if (x <= buildDetailControls.Count)
-                {
-                    c = buildDetailControls[x - 1];
-                    c.DisplayDetail(detail);
-                }
-                else
+                if (c == null)
                 {
                     c = new BuildDetailControl();
-                    c.Top = ((x - 1) * c.Height);
-                    c.ToolTip = m_ToolTip;
-                    c.DisplayDetail(detail);
                     Controls.Add(c);
                 }
+
+                c.Top = ((x - 1) * c.Height);
+                c.DisplayDetail(detail); // TODO: make it clearer we re-use same control to avoid re-painting (Link URL error)
 
                 controlHeight = c.Height; // Need this later
                 controlWidth = c.Width;
@@ -142,28 +130,20 @@ namespace BuildMonitor.UI.Controls
             if (x == 0)
                 SetMessageOnly("No builds found.");
 
-            if (x >= buildDetailControls.Count) // original count
-                return;
-
-            RemoveUnusedControls(buildDetailControls.Count - x);
-        }
-
-        private void RemoveUnusedControls(int numberToRemove)
-        {
-            while (numberToRemove > 0)
+            foreach (var c in buildDetailControls.Where(c => !buildDetailsList.Any(d => d.Definition.Id == c.BuildDefinitionId)))
             {
-                var lastControl = Controls.OfType<BuildDetailControl>().Last();
-                Controls.Remove(lastControl);
-                lastControl.Dispose();
-                numberToRemove--;
+                Controls.Remove(c);
+                c.Dispose();
             }
+
+            ResumeLayout();
         }
 
         private void RemoveLabels()
         {
-            while (Controls.OfType<Label>().Any())
+            foreach (var label in Controls.OfType<Label>())
             {
-                Controls.Remove(Controls.OfType<Label>().Last());
+                Controls.Remove(label);
             }
         }
 
@@ -298,12 +278,10 @@ namespace BuildMonitor.UI.Controls
         {
             this.InvokeIfRequired(() =>
             {
-                var aggEx = exception as AggregateException;
-                if (aggEx != null)
+                if (exception is AggregateException aggEx)
                     exception = aggEx.Flatten();
 
-                SetMessageOnly(exception.ToString());
-                SetSizeAndPosition();
+                AboutForm.AddException(exception);
                 notifyIcon.BalloonTipText = $"Monitor error: {exception}";
                 notifyIcon.ShowBalloonTip(20000);
             });
@@ -388,6 +366,8 @@ namespace BuildMonitor.UI.Controls
 
             Debug.WriteLine($"NotifyItem Click {WindowState} [{m_CalculatedWidth},{m_CalculatedHeight} / {Width},{Height}]");
 
+            SuspendLayout();
+
             if (WindowState == FormWindowState.Normal)
             {
                 Debug.WriteLine($"NotifyItem Hiding...");
@@ -412,6 +392,8 @@ namespace BuildMonitor.UI.Controls
                     WindowState = FormWindowState.Normal;
                 }
             }
+
+            ResumeLayout();
         }
 
         #endregion
