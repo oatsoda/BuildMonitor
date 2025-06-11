@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            components = new System.ComponentModel.Container();
             lblLinkTitle = new System.Windows.Forms.LinkLabel();
             lblRequestedBy = new System.Windows.Forms.Label();
             lblStart = new System.Windows.Forms.Label();
@@ -37,6 +38,7 @@
             lblWarnings = new System.Windows.Forms.Label();
             imgErrors = new System.Windows.Forms.PictureBox();
             imgWarnings = new System.Windows.Forms.PictureBox();
+            tipLink = new System.Windows.Forms.ToolTip(components);
             ((System.ComponentModel.ISupportInitialize)picStatus).BeginInit();
             ((System.ComponentModel.ISupportInitialize)imgErrors).BeginInit();
             ((System.ComponentModel.ISupportInitialize)imgWarnings).BeginInit();
@@ -146,6 +148,11 @@
             imgWarnings.TabStop = false;
             imgWarnings.Visible = false;
             // 
+            // tipLink
+            // 
+            tipLink.IsBalloon = true;
+            tipLink.ShowAlways = true;
+            // 
             // BuildDetailControl
             // 
             AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
@@ -182,5 +189,6 @@
         private System.Windows.Forms.Label lblWarnings;
         private System.Windows.Forms.PictureBox imgErrors;
         private System.Windows.Forms.PictureBox imgWarnings;
+        private System.Windows.Forms.ToolTip tipLink;
     }
 }

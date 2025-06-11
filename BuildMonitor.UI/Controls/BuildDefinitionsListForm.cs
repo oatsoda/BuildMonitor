@@ -30,8 +30,6 @@ namespace BuildMonitor.UI.Controls
 
         private IEnumerable<BuildDetailControl> BuildDetailControls => Controls.OfType<BuildDetailControl>();
 
-        private readonly ToolTip m_ToolTip;
-
         private bool m_IsSettingsOpen;
         private bool m_IsAboutOpen;
 
@@ -70,12 +68,6 @@ namespace BuildMonitor.UI.Controls
             Controls.Clear();
 
             ApplyOptions();
-
-            m_ToolTip = new ToolTip()
-            {
-                ShowAlways = true,
-                IsBalloon = true
-            };
         }
 
         #endregion
@@ -124,7 +116,6 @@ namespace BuildMonitor.UI.Controls
                 }
 
                 c.Top = ((x - 1) * c.Height);
-                c.ToolTip = m_ToolTip;
                 c.DisplayDetail(detail); // TODO: make it clearer we re-use same control to avoid re-painting (Link URL error)
 
                 controlHeight = c.Height; // Need this later
