@@ -10,6 +10,8 @@ namespace BuildMonitor.Core
 {
     public sealed class BuildDefinitionMonitor : IDisposable
     {
+        private const int _NOTIFY_AFTER_CONSECUTIVE_EXCEPTIONS = 3;
+
         private bool m_RequestStop;
         private bool m_Stopped;
         private readonly ManualResetEvent m_StopWaitHandle;
@@ -31,36 +33,19 @@ namespace BuildMonitor.Core
         private TimeSpan m_RefreshBuildInterval;
 
         // ** State
-        private Status m_LastWorstStatus;
-        private List<BuildDefinition> m_MonitoredDefinitions = [];
-        private Dictionary<int, BuildStatus> m_LatestStatuses = [];
         private DateTimeOffset m_LastDefinitionRefresh;
         private DateTimeOffset m_LastBuildRefresh;
+        private Status m_LastWorstStatus;
+        private int m_ConsecutiveExceptions;
+
+        private List<BuildDefinition> m_MonitoredDefinitions = [];
+        private Dictionary<int, BuildStatus> m_LatestStatuses = [];
 
         // * Events
+        public event EventHandler<List<BuildDetail>>? Updated;
         public event EventHandler<BuildDetail>? OverallStatusChanged;
         public event EventHandler<Exception>? ExceptionOccurred;
         public event EventHandler<string>? MonitoringStopped;
-        public event EventHandler<List<BuildDetail>>? Updated;
-
-        // TODO: Get rid of this.
-        //private ReadOnlyDictionary<int, BuildStatus> LatestStatuses
-        //{
-        //    get
-        //    {
-        //        if (!Options.HideStaleDefinitions) // Option is not enabled
-        //            return new ReadOnlyDictionary<int, BuildStatus>(m_LatestStatuses);
-
-        //        return
-        //            new ReadOnlyDictionary<int, BuildStatus>(
-        //                m_LatestStatuses
-        //                .Where(kvp =>
-        //                    kvp.Value.TimeSpanSinceStart().TotalDays < Options.StaleDefinitionDays // Status is within days
-        //                )
-        //                .ToDictionary(pair => pair.Key, pair => pair.Value)
-        //            );
-        //    }
-        //}
 
         public BuildDefinitionMonitor(IBuildStoreFactory buildStoreFactory)
         {
@@ -97,6 +82,7 @@ namespace BuildMonitor.Core
 
             m_LastDefinitionRefresh = DateTimeOffset.MinValue;
             m_LastBuildRefresh = DateTimeOffset.MinValue;
+            m_ConsecutiveExceptions = 0;
 
             m_RequestStop = false;
             m_Stopped = false;
@@ -108,7 +94,7 @@ namespace BuildMonitor.Core
                 return;
             }
 
-            Debug.WriteLine("Monitor running...");
+            Debug.WriteLine("Monitor starting...");
 
             await Run();
         }
@@ -155,6 +141,8 @@ namespace BuildMonitor.Core
 
                         if (!m_RequestStop)
                             await Task.Delay(1000);
+
+                        m_ConsecutiveExceptions = 0;
                     }
                 }
                 catch (AuthenticationException)
@@ -163,15 +151,21 @@ namespace BuildMonitor.Core
                 }
                 catch (Exception ex)
                 {
-                    ExceptionOccurred?.Invoke(this, ex);
+                    m_ConsecutiveExceptions++;
 
                     if (!m_RequestStop)
                         restartAfterException = true;
+
+                    if (m_ConsecutiveExceptions >= _NOTIFY_AFTER_CONSECUTIVE_EXCEPTIONS)
+                    {
+                        ExceptionOccurred?.Invoke(this, ex);
+                        m_ConsecutiveExceptions = 0;
+                    }
                 }
 
                 if (restartAfterException)
                 {
-                    await Task.Delay(10000); // Wait for 10 secs before starting again                        
+                    await Task.Delay(10000);
                 }
                 else
                 {
@@ -186,7 +180,7 @@ namespace BuildMonitor.Core
 
         private bool RequiresDefinitionRefresh()
         {
-            // Requuire if a) None loaded OR b) option to refresh is on AND interval exceeded
+            // Require if a) None loaded OR b) option to refresh is on AND interval exceeded
             if (m_MonitoredDefinitions.Count == 0)
                 return true;
 

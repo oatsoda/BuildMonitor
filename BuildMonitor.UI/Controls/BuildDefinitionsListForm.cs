@@ -278,12 +278,10 @@ namespace BuildMonitor.UI.Controls
         {
             this.InvokeIfRequired(() =>
             {
-                var aggEx = exception as AggregateException;
-                if (aggEx != null)
+                if (exception is AggregateException aggEx)
                     exception = aggEx.Flatten();
 
-                SetMessageOnly(exception.ToString());
-                SetSizeAndPosition();
+                AboutForm.AddException(exception);
                 notifyIcon.BalloonTipText = $"Monitor error: {exception}";
                 notifyIcon.ShowBalloonTip(20000);
             });
