@@ -1,0 +1,6 @@
+Current.ver must match the version of the binaries checked into .\Binaries
+
+The Directory.Build.props versions should match the version detailed in Setup > Product.wxs
+
+- Update Product.wxs and Directory.Build.props to newer version number while working on the next release
+- Once version is ready for Release - Build Release version, copy to Binaries folder and update Current.ver

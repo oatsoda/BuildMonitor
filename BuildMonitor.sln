@@ -19,7 +19,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		Directory.Build.props = Directory.Build.props
 		README.md = README.md
 		screenshot.png = screenshot.png
-		VersionNotes.txt = VersionNotes.txt
+		Versioning.md = Versioning.md
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BuildMonitor.App", "BuildMonitor.App\BuildMonitor.App.csproj", "{8EBC2911-7950-4E5E-90E2-31EF866E8E89}"
