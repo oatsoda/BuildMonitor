@@ -203,7 +203,7 @@ namespace BuildMonitor.Core
                 ? (DateTimeOffset?)null
                 : DateTimeOffset.UtcNow.AddDays(-Options.StaleDefinitionDays);
 
-            var definitions = await buildStore.GetDefinitions(definitionsBuiltSince);
+            var definitions = await buildStore.GetDefinitions(definitionsBuiltSince, Options.SpecificDefinitionIds ?? []);
             m_MonitoredDefinitions = [.. definitions];
             m_LastDefinitionRefresh = DateTimeOffset.UtcNow;
         }

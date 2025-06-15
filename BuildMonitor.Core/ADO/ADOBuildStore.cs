@@ -60,13 +60,16 @@ namespace BuildMonitor.Core.ADO
         public record ADOBuildDefinition(int Id, string Name, DefinitionType Type,
             [property: JsonPropertyName("_links")] ADOLinks Links);
 
-        public async Task<IEnumerable<BuildDefinition>> GetDefinitions(DateTimeOffset? builtAfter = null)
+        public async Task<IEnumerable<BuildDefinition>> GetDefinitions(DateTimeOffset? builtAfter, IList<int> definitionIds)
         {
             // https://learn.microsoft.com/en-us/rest/api/azure/devops/build/definitions/list?view=azure-devops-rest-7.1
             var queryPath = $"{m_ProjectNameUrlEncoded}/_apis/build/definitions?api-version=7.1";
 
             if (builtAfter.HasValue)
                 queryPath += $"&builtAfter={builtAfter.Value:yyyy-MM-ddTHH:mm:ss}";
+
+            if (definitionIds.Count > 0)
+                queryPath += $"&definitionIds={string.Join(",", definitionIds)}";
 
             List<ADOBuildDefinition> definitions = new(20);
 

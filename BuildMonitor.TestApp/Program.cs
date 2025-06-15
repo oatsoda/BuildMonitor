@@ -38,12 +38,12 @@ namespace BuildMonitor.TestApp
 
             var storeMoq = new Mock<IBuildStore>();
             storeMoq
-                .Setup(s => s.GetDefinitions(It.IsAny<DateTimeOffset?>()))
+                .Setup(s => s.GetDefinitions(It.IsAny<DateTimeOffset?>(), It.IsAny<int[]>()))
                 .ReturnsAsync(() => definitions.Take(RandomBetween(1, 8)));
             storeMoq
                 .Setup(s => s.GetLatestBuild(It.IsAny<BuildDefinition>()))
                 //.ThrowsAsync(new InvalidOperationException("This is a test exception to simulate a failure in the build store."));
-            	.ReturnsAsync((BuildDefinition defn) => GetRandomStatus(defn));
+                .ReturnsAsync((BuildDefinition defn) => GetRandomStatus(defn));
 
             var options = new MonitorOptions();
             options.Reset();

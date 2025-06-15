@@ -7,7 +7,7 @@ namespace BuildMonitor.Core
     public interface IBuildStore
     {
         Task<IEnumerable<string>> GetProjects();
-        Task<IEnumerable<BuildDefinition>> GetDefinitions(DateTimeOffset? builtAfter = null);
+        Task<IEnumerable<BuildDefinition>> GetDefinitions(DateTimeOffset? builtAfter, IList<int> definitionIds);
         Task<BuildStatus?> GetLatestBuild(BuildDefinition definition);
     }
 }
