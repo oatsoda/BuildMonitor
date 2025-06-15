@@ -79,7 +79,7 @@
             // 
             btnOk.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right;
             btnOk.DialogResult = System.Windows.Forms.DialogResult.OK;
-            btnOk.Location = new System.Drawing.Point(435, 253);
+            btnOk.Location = new System.Drawing.Point(435, 292);
             btnOk.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             btnOk.Name = "btnOk";
             btnOk.Size = new System.Drawing.Size(88, 27);
@@ -91,7 +91,7 @@
             // 
             btnCancel.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right;
             btnCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            btnCancel.Location = new System.Drawing.Point(530, 253);
+            btnCancel.Location = new System.Drawing.Point(530, 292);
             btnCancel.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             btnCancel.Name = "btnCancel";
             btnCancel.Size = new System.Drawing.Size(88, 27);
@@ -139,7 +139,7 @@
             tabControl.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             tabControl.Name = "tabControl";
             tabControl.SelectedIndex = 0;
-            tabControl.Size = new System.Drawing.Size(603, 232);
+            tabControl.Size = new System.Drawing.Size(603, 271);
             tabControl.TabIndex = 0;
             tabControl.SelectedIndexChanged += tabControl_SelectedIndexChanged;
             // 
@@ -150,7 +150,7 @@
             tabWindows.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             tabWindows.Name = "tabWindows";
             tabWindows.Padding = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            tabWindows.Size = new System.Drawing.Size(595, 204);
+            tabWindows.Size = new System.Drawing.Size(595, 243);
             tabWindows.TabIndex = 2;
             tabWindows.Text = "Windows Preferences";
             tabWindows.UseVisualStyleBackColor = true;
@@ -182,7 +182,7 @@
             tabGeneral.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             tabGeneral.Name = "tabGeneral";
             tabGeneral.Padding = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            tabGeneral.Size = new System.Drawing.Size(595, 204);
+            tabGeneral.Size = new System.Drawing.Size(595, 243);
             tabGeneral.TabIndex = 0;
             tabGeneral.Text = "General Settings";
             tabGeneral.UseVisualStyleBackColor = true;
@@ -299,7 +299,7 @@
             tabADO.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             tabADO.Name = "tabADO";
             tabADO.Padding = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            tabADO.Size = new System.Drawing.Size(595, 204);
+            tabADO.Size = new System.Drawing.Size(595, 243);
             tabADO.TabIndex = 1;
             tabADO.Text = "Azure DevOps";
             tabADO.UseVisualStyleBackColor = true;
@@ -377,7 +377,7 @@
             // btnReset
             // 
             btnReset.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right;
-            btnReset.Location = new System.Drawing.Point(13, 254);
+            btnReset.Location = new System.Drawing.Point(13, 293);
             btnReset.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             btnReset.Name = "btnReset";
             btnReset.Size = new System.Drawing.Size(88, 27);
@@ -390,7 +390,7 @@
             // 
             AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            ClientSize = new System.Drawing.Size(631, 293);
+            ClientSize = new System.Drawing.Size(631, 332);
             ControlBox = false;
             Controls.Add(btnReset);
             Controls.Add(tabControl);

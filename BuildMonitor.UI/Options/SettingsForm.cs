@@ -29,7 +29,7 @@ namespace BuildMonitor.UI.Options
             public bool RunOnStartup { get; set; }
         }
 
-        private class ViewModel()
+        private class ViewModel
         {
             public required MonitorOptions Options { get; init; }
             public required WindowsOptions Windows { get; init; }
