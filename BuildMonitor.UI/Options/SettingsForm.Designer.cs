@@ -56,6 +56,9 @@
             label5 = new System.Windows.Forms.Label();
             txtAdoPat = new System.Windows.Forms.TextBox();
             btnReset = new System.Windows.Forms.Button();
+            label4 = new System.Windows.Forms.Label();
+            txtPipelines = new System.Windows.Forms.TextBox();
+            btnPipelines = new System.Windows.Forms.Button();
             tabControl.SuspendLayout();
             tabWindows.SuspendLayout();
             tabGeneral.SuspendLayout();
@@ -285,6 +288,9 @@
             // 
             // tabADO
             // 
+            tabADO.Controls.Add(btnPipelines);
+            tabADO.Controls.Add(txtPipelines);
+            tabADO.Controls.Add(label4);
             tabADO.Controls.Add(lblLinkPat);
             tabADO.Controls.Add(label8);
             tabADO.Controls.Add(imgBox);
@@ -386,6 +392,33 @@
             btnReset.UseVisualStyleBackColor = true;
             btnReset.Click += btnReset_Click;
             // 
+            // label4
+            // 
+            label4.AutoSize = true;
+            label4.Location = new System.Drawing.Point(105, 187);
+            label4.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            label4.Name = "label4";
+            label4.Size = new System.Drawing.Size(54, 15);
+            label4.TabIndex = 17;
+            label4.Text = "Pipelines";
+            // 
+            // txtPipelines
+            // 
+            txtPipelines.Location = new System.Drawing.Point(180, 184);
+            txtPipelines.Name = "txtPipelines";
+            txtPipelines.ReadOnly = true;
+            txtPipelines.Size = new System.Drawing.Size(319, 23);
+            txtPipelines.TabIndex = 18;
+            // 
+            // btnPipelines
+            // 
+            btnPipelines.Location = new System.Drawing.Point(498, 184);
+            btnPipelines.Name = "btnPipelines";
+            btnPipelines.Size = new System.Drawing.Size(40, 23);
+            btnPipelines.TabIndex = 19;
+            btnPipelines.Text = "...";
+            btnPipelines.UseVisualStyleBackColor = true;
+            // 
             // SettingsForm
             // 
             AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
@@ -446,5 +479,8 @@
         private System.Windows.Forms.NumericUpDown numStaleDays;
         private System.Windows.Forms.NumericUpDown numDefinitionInterval;
         private System.Windows.Forms.CheckBox cbOrderByMostRecent;
+        private System.Windows.Forms.Label label4;
+        private System.Windows.Forms.TextBox txtPipelines;
+        private System.Windows.Forms.Button btnPipelines;
     }
 }

@@ -23,7 +23,7 @@ namespace BuildMonitor.UI.Options
         public IMonitorOptions Options => m_ViewModel.Options;
 
         // Types        
-        private record ADOValidationModel(bool IsValid, string? ErrorMessage, IList<string>? ProjectNames);
+        private record ADOValidationModel(bool IsValid, IList<string>? ProjectNames);
         private class WindowsOptions
         {
             public bool RunOnStartup { get; set; }
@@ -34,8 +34,6 @@ namespace BuildMonitor.UI.Options
             public required MonitorOptions Options { get; init; }
             public required WindowsOptions Windows { get; init; }
             public ADOValidationModel? ADOValidationResult { get; set; }
-
-            public bool HasLoadedADOTab => ADOValidationResult != null;
         }
 
         public SettingsForm(IMonitorOptions currentOptions, IBuildStoreFactory buildStoreFactory)
@@ -45,13 +43,13 @@ namespace BuildMonitor.UI.Options
 
             m_ViewModel = new ViewModel
             {
-                Options = new MonitorOptions(currentOptions),
+                Options = new MonitorOptions(currentOptions), // Make a copy of the options to avoid referential updating
                 Windows = new WindowsOptions { RunOnStartup = StartupSettingHelper.RunOnStartup }
             };
 
             m_BuildStoreFactory = buildStoreFactory;
 
-            UpdateViewFromOptionsModel(m_ViewModel);
+            UpdateViewFromModel(m_ViewModel);
         }
 
         protected override void OnFormClosing(FormClosingEventArgs e)
@@ -62,14 +60,14 @@ namespace BuildMonitor.UI.Options
                 return;
 
             // View-to-Model
-            UpdateOptionsModelFromView(m_ViewModel);
+            UpdateModelFromView(m_ViewModel);
 
             // Save Model
             StartupSettingHelper.SetStartup(cbStartup.Checked);
             m_ViewModel.Options.Save();
         }
 
-        private void UpdateViewFromOptionsModel(ViewModel viewModel)
+        private void UpdateViewFromModel(ViewModel viewModel)
         {
             SuspendLayout();
 
@@ -104,39 +102,38 @@ namespace BuildMonitor.UI.Options
                 txtAdoPat.Text = ProtectionMethods.Unprotect(viewModel.Options.PersonalAccessTokenProtected);
             }
 
-            cboAdoProjectName.SelectedItem = viewModel.Options.ProjectName;
+            cboAdoProjectName.Items.Clear();
 
-            btnOk.Enabled = viewModel.Options.ValidOptions;
-
-            ResumeLayout();
-        }
-
-        private void UpdateADOViewFromModel(ViewModel viewModel)
-        {
-            SuspendLayout();
-
-            // There's two kinds of validation going on here: ADO creds, and whether we can save settings (i.e. > 1 Project returned)
-
-            cboAdoProjectName.Enabled =
-                btnOk.Enabled = viewModel.ADOValidationResult!.IsValid && viewModel.ADOValidationResult.ProjectNames!.Count > 0;
-
-            cboAdoProjectName.Items.AddRange([.. viewModel.ADOValidationResult.ProjectNames!.Cast<object>()]);
-
-            cboAdoProjectName.SelectedItem = viewModel.Options.ProjectName ?? viewModel.ADOValidationResult.ProjectNames!.FirstOrDefault();
-
-            imgBox.Image = viewModel.ADOValidationResult.IsValid
-                ? Status.Succeeded.ToBitmap(new Size(24, 24))
-                : Status.Failed.ToBitmap(new Size(24, 24));
-
-            if (viewModel.ADOValidationResult.ErrorMessage != null)
+            if (viewModel.ADOValidationResult != null) // Values dependent on having validated are not updated until that time
             {
-                MessageBox.Show(viewModel.ADOValidationResult.ErrorMessage, @"Failed to fetch ADO Projects", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                if (viewModel.ADOValidationResult.IsValid)
+                {
+                    cboAdoProjectName.Enabled = viewModel.ADOValidationResult.ProjectNames!.Count > 0;
+                    cboAdoProjectName.Items.AddRange([.. viewModel.ADOValidationResult.ProjectNames!.Cast<object>()]);
+                    cboAdoProjectName.SelectedItem = viewModel.Options.ProjectName ?? viewModel.ADOValidationResult.ProjectNames!.FirstOrDefault();
+                }
+                else
+                {
+                    cboAdoProjectName.Enabled = false;
+                    cboAdoProjectName.SelectedItem = null;
+                }
+
+                imgBox.Image = viewModel.ADOValidationResult.IsValid
+                    ? Status.Succeeded.ToBitmap(new Size(24, 24))
+                    : Status.Failed.ToBitmap(new Size(24, 24));
+
+                txtPipelines.Text = viewModel.Options.SpecificDefinitionIds == null || viewModel.Options.SpecificDefinitionIds.Length == 0
+                    ? "All Pipelines"
+                    : $"{viewModel.Options.SpecificDefinitionIds.Length} Selected Pipeline(s)";
             }
 
+            btnOk.Enabled =
+                btnPipelines.Enabled = viewModel.Options.ValidOptions;
+
             ResumeLayout();
         }
 
-        private void UpdateOptionsModelFromView(ViewModel viewModel)
+        private void UpdateModelFromView(ViewModel viewModel)
         {
             // Windows Tab
             viewModel.Windows.RunOnStartup = cbStartup.Checked;
@@ -158,8 +155,10 @@ namespace BuildMonitor.UI.Options
             viewModel.Options.AzureDevOpsOrganisation = txtAdoOrganisation.Text;
             viewModel.Options.PersonalAccessTokenProtected = ProtectionMethods.Protect(txtAdoPat.Text);
 
-            if (viewModel.HasLoadedADOTab) // Tab never loaded, so don't overwrite this setting because it will not be loaded
+            if (viewModel.ADOValidationResult != null) // Tab never loaded, so don't overwrite this setting because it will not be loaded
+            {
                 viewModel.Options.ProjectName = (string)cboAdoProjectName.SelectedItem!;
+            }
 
             viewModel.Options.ValidOptions = cboAdoProjectName.Enabled;
         }
@@ -168,32 +167,32 @@ namespace BuildMonitor.UI.Options
         {
             tabADO.Enabled = false;
 
+            UpdateModelFromView(m_ViewModel);
             m_ViewModel.ADOValidationResult = await ValidateADOSettings();
-            UpdateADOViewFromModel(m_ViewModel);
+            m_ViewModel.Options.ValidOptions = m_ViewModel.ADOValidationResult.IsValid; // TODO: Improve interplay between IsValid and ValidOptions
+            UpdateViewFromModel(m_ViewModel);
 
             tabADO.Enabled = true;
         }
 
         private async Task<ADOValidationModel> ValidateADOSettings()
         {
-            var tempViewModel = new ViewModel { Options = new(), Windows = new() };
-            UpdateOptionsModelFromView(tempViewModel);
-
             try
             {
-                var store = m_BuildStoreFactory.GetBuildStore(tempViewModel.Options, true);
+                var store = m_BuildStoreFactory.GetBuildStore(m_ViewModel.Options, true);
                 var projects = await store.GetProjects();
-                return new ADOValidationModel(true, null, [.. projects]);
+                return new ADOValidationModel(true, [.. projects]);
             }
             // filters handle Aggregation Exception
             catch (Exception ex) when (ex is AuthenticationException ||
                     ex.GetBaseException() is AuthenticationException)
             {
-                return new ADOValidationModel(false, null, null);
+                return new ADOValidationModel(false, null);
             }
             catch (Exception ex)
             {
-                return new ADOValidationModel(false, ex.ToString(), null);
+                MessageBox.Show(ex.ToString(), @"Failed to fetch ADO Projects", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return new ADOValidationModel(false, null);
             }
         }
 
@@ -237,7 +236,7 @@ namespace BuildMonitor.UI.Options
             if (tabControl.SelectedTab != tabADO)
                 return;
 
-            if (m_ViewModel.HasLoadedADOTab)
+            if (m_ViewModel.ADOValidationResult != null)
                 return;
 
             await RunADOValidation();
