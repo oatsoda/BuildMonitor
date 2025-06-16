@@ -48,6 +48,9 @@
             cbRefreshDefinitions = new System.Windows.Forms.CheckBox();
             cbIncludeRunning = new System.Windows.Forms.CheckBox();
             tabADO = new System.Windows.Forms.TabPage();
+            btnPipelines = new System.Windows.Forms.Button();
+            txtPipelines = new System.Windows.Forms.TextBox();
+            label4 = new System.Windows.Forms.Label();
             lblLinkPat = new System.Windows.Forms.LinkLabel();
             label8 = new System.Windows.Forms.Label();
             imgBox = new System.Windows.Forms.PictureBox();
@@ -56,9 +59,6 @@
             label5 = new System.Windows.Forms.Label();
             txtAdoPat = new System.Windows.Forms.TextBox();
             btnReset = new System.Windows.Forms.Button();
-            label4 = new System.Windows.Forms.Label();
-            txtPipelines = new System.Windows.Forms.TextBox();
-            btnPipelines = new System.Windows.Forms.Button();
             tabControl.SuspendLayout();
             tabWindows.SuspendLayout();
             tabGeneral.SuspendLayout();
@@ -310,6 +310,34 @@
             tabADO.Text = "Azure DevOps";
             tabADO.UseVisualStyleBackColor = true;
             // 
+            // btnPipelines
+            // 
+            btnPipelines.Location = new System.Drawing.Point(498, 184);
+            btnPipelines.Name = "btnPipelines";
+            btnPipelines.Size = new System.Drawing.Size(40, 23);
+            btnPipelines.TabIndex = 19;
+            btnPipelines.Text = "...";
+            btnPipelines.UseVisualStyleBackColor = true;
+            btnPipelines.Click += btnPipelines_Click;
+            // 
+            // txtPipelines
+            // 
+            txtPipelines.Location = new System.Drawing.Point(180, 184);
+            txtPipelines.Name = "txtPipelines";
+            txtPipelines.ReadOnly = true;
+            txtPipelines.Size = new System.Drawing.Size(319, 23);
+            txtPipelines.TabIndex = 18;
+            // 
+            // label4
+            // 
+            label4.AutoSize = true;
+            label4.Location = new System.Drawing.Point(105, 187);
+            label4.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            label4.Name = "label4";
+            label4.Size = new System.Drawing.Size(54, 15);
+            label4.TabIndex = 17;
+            label4.Text = "Pipelines";
+            // 
             // lblLinkPat
             // 
             lblLinkPat.AutoSize = true;
@@ -391,33 +419,6 @@
             btnReset.Text = "Reset All";
             btnReset.UseVisualStyleBackColor = true;
             btnReset.Click += btnReset_Click;
-            // 
-            // label4
-            // 
-            label4.AutoSize = true;
-            label4.Location = new System.Drawing.Point(105, 187);
-            label4.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
-            label4.Name = "label4";
-            label4.Size = new System.Drawing.Size(54, 15);
-            label4.TabIndex = 17;
-            label4.Text = "Pipelines";
-            // 
-            // txtPipelines
-            // 
-            txtPipelines.Location = new System.Drawing.Point(180, 184);
-            txtPipelines.Name = "txtPipelines";
-            txtPipelines.ReadOnly = true;
-            txtPipelines.Size = new System.Drawing.Size(319, 23);
-            txtPipelines.TabIndex = 18;
-            // 
-            // btnPipelines
-            // 
-            btnPipelines.Location = new System.Drawing.Point(498, 184);
-            btnPipelines.Name = "btnPipelines";
-            btnPipelines.Size = new System.Drawing.Size(40, 23);
-            btnPipelines.TabIndex = 19;
-            btnPipelines.Text = "...";
-            btnPipelines.UseVisualStyleBackColor = true;
             // 
             // SettingsForm
             // 

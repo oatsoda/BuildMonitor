@@ -231,6 +231,19 @@ namespace BuildMonitor.UI.Options
             await RunADOValidation();
         }
 
+        private void btnPipelines_Click(object sender, EventArgs e)
+        {
+            using (var selectorForm = new PipelineSelectorForm(m_ViewModel.Options, m_BuildStoreFactory))
+            {
+                selectorForm.ShowDialog(this);
+
+                if (selectorForm.DialogResult != DialogResult.OK)
+                    return;
+
+                m_ViewModel.Options.SpecificDefinitionIds = selectorForm.SelectedPipelineIds?.ToArray();
+            }
+        }
+
         private async void tabControl_SelectedIndexChanged(object sender, EventArgs e)
         {
             if (tabControl.SelectedTab != tabADO)
