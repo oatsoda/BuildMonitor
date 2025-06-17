@@ -47,18 +47,21 @@ namespace BuildMonitor.UI.Options
             try
             {
                 var buildDefinitions = await buildStore.GetDefinitions(null, []);
-                lbPipelines.Items.Clear();
-                lbPipelines.Items.AddRange([.. buildDefinitions.Cast<object>()]);
-                var selectedIndexes = m_ViewModel.SelectedPipelineIds.Count == 0
-                    ? buildDefinitions.Select((b, i) => i)
-                    : buildDefinitions.Select((b, i) => (b.Id, i))
-                        .Where(t => m_ViewModel.SelectedPipelineIds.Contains(t.Id))
-                        .Select(t => t.i);
-                lbPipelines.SelectedIndices.Clear();
-                foreach (var selectedIndex in selectedIndexes)
-                {
-                    lbPipelines.SelectedIndices.Add(selectedIndex);
-                }
+
+                bool checkAll = m_ViewModel.SelectedPipelineIds.Count == 0;
+
+                var listViewItems = buildDefinitions
+                    .OrderBy(b => b.Name)
+                    .Select(b => new ListViewItem
+                    {
+                        Text = b.Name,
+                        Tag = b.Id,
+                        Checked = checkAll || m_ViewModel.SelectedPipelineIds.Contains(b.Id)
+                    });
+
+                lvPipelines.Items.Clear();
+                lvPipelines.Items.AddRange([.. listViewItems]);
+                lvPipelines.AutoResizeColumn(0, ColumnHeaderAutoResizeStyle.ColumnContent);
             }
             catch (Exception ex)
             {
@@ -69,6 +72,7 @@ namespace BuildMonitor.UI.Options
                     MessageBoxIcon.Error
                 );
 
+                DialogResult = DialogResult.Abort;
                 Close();
                 return;
             }
@@ -81,11 +85,32 @@ namespace BuildMonitor.UI.Options
         {
             base.OnFormClosing(e);
 
-            m_ViewModel.SelectedPipelineIds.Clear();
+            if (DialogResult != DialogResult.OK)
+                return;
 
-            var selectedPipelines = lbPipelines.SelectedItems.Cast<BuildDefinition>().ToList();
-            if (selectedPipelines.Count < lbPipelines.Items.Count)
-                m_ViewModel.SelectedPipelineIds.AddRange(selectedPipelines.Select(p => p.Id));
+
+            var selectedPipelines = lvPipelines.CheckedItems;
+
+            if (selectedPipelines.Count == 0)
+            {
+                MessageBox.Show(
+                  "You must select at least one pipeline.",
+                  "No pipelines selected",
+                  MessageBoxButtons.OK,
+                  MessageBoxIcon.Error
+                );
+
+                e.Cancel = true;
+            }
+
+            m_ViewModel.SelectedPipelineIds.Clear();
+            if (selectedPipelines.Count < lvPipelines.Items.Count)
+                m_ViewModel.SelectedPipelineIds.AddRange(selectedPipelines.OfType<ListViewItem>().Select(p => (int)p.Tag!));
+        }
+
+        private void lvPipelines_ItemSelectionChanged(object sender, ListViewItemSelectionChangedEventArgs e)
+        {
+            lvPipelines.SelectedItems.Clear(); // Disable selecting
         }
     }
 }

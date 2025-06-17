@@ -68,7 +68,7 @@ namespace BuildMonitor.Core.ADO
             if (builtAfter.HasValue)
                 queryPath += $"&builtAfter={builtAfter.Value:yyyy-MM-ddTHH:mm:ss}";
 
-            if (definitionIds.Count > 0)
+            if (!builtAfter.HasValue && definitionIds.Count > 0) // Cannot combine, so filter later
                 queryPath += $"&definitionIds={string.Join(",", definitionIds)}";
 
             List<ADOBuildDefinition> definitions = new(20);
@@ -91,14 +91,15 @@ namespace BuildMonitor.Core.ADO
                 definitions.AddRange(definitionsPage.Value);
             }
 
-            return definitions.Select(d
-                => new BuildDefinition
+            return definitions
+                .Select(d => new BuildDefinition
                 {
                     Id = d.Id,
                     Name = d.Name,
                     IsVNext = d.Type == DefinitionType.Build,
                     Url = d.Links.Web.Href
-                });
+                })
+                .Where(d => definitionIds.Count == 0 || definitionIds.Contains(d.Id));
         }
 
         public record ADOBuildRequestedFor(string DisplayName);
