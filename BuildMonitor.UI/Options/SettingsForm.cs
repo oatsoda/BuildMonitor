@@ -241,6 +241,7 @@ namespace BuildMonitor.UI.Options
                     return;
 
                 m_ViewModel.Options.SpecificDefinitionIds = selectorForm.SelectedPipelineIds?.ToArray();
+                UpdateViewFromModel(m_ViewModel);
             }
         }
 
