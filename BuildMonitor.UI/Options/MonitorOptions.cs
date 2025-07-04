@@ -82,6 +82,13 @@ namespace BuildMonitor.UI.Options
         }
 
         [UserScopedSetting]
+        public int[]? SpecificDefinitionIds
+        {
+            get { return (int[]?)this[nameof(SpecificDefinitionIds)]; }
+            set { this[nameof(SpecificDefinitionIds)] = value; }
+        }
+
+        [UserScopedSetting]
         public string? PersonalAccessTokenCipher
         {
             get { return (string?)this[nameof(PersonalAccessTokenCipher)]; }

@@ -4,6 +4,7 @@ using BuildMonitor.UI.Options;
 using BuildMonitor.UI.Updater;
 using Moq;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
 
@@ -38,12 +39,12 @@ namespace BuildMonitor.TestApp
 
             var storeMoq = new Mock<IBuildStore>();
             storeMoq
-                .Setup(s => s.GetDefinitions(It.IsAny<DateTimeOffset?>()))
+                .Setup(s => s.GetDefinitions(It.IsAny<DateTimeOffset?>(), It.IsAny<IList<int>>()))
                 .ReturnsAsync(() => definitions.Take(RandomBetween(1, 8)));
             storeMoq
                 .Setup(s => s.GetLatestBuild(It.IsAny<BuildDefinition>()))
                 //.ThrowsAsync(new InvalidOperationException("This is a test exception to simulate a failure in the build store."));
-            	.ReturnsAsync((BuildDefinition defn) => GetRandomStatus(defn));
+                .ReturnsAsync((BuildDefinition defn) => GetRandomStatus(defn));
 
             var options = new MonitorOptions();
             options.Reset();
@@ -55,7 +56,7 @@ namespace BuildMonitor.TestApp
             var factoryMoq = new Mock<IBuildStoreFactory>();
             factoryMoq
                 .Setup(f => f.GetBuildStore(It.IsAny<IMonitorOptions>(), It.IsAny<bool>()))
-                .Returns(storeMoq.Object);
+                .Returns(() => storeMoq.Object);
 
             var appUpdaterMoq = new Mock<IAppUpdater>();
 

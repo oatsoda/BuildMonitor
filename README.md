@@ -14,6 +14,11 @@ Use Personal Access Tokens:
 - Create Personal Access Token in Azure DevOps by going to the Account Menu item on the top toolbar -> Personal Access Tokens
 - Require Read permission for Pipelines only.
 
+# Approach
+
+The app will give you an overall status of your pipelines. That is, it will display the worst status of your monitored pipeline definitions. It will popup a 
+notification if that changes.  This means it is not informing you of every pipeline run, but rather the overall status of your pipelines.
+
 # Build Dependencies
 
 - Heatwave Wix Toolset

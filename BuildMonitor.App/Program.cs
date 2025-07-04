@@ -11,10 +11,11 @@ namespace BuildMonitor.App
 {
     static class Program
     {
-        private const string _BASE_URL = "https://raw.githubusercontent.com/oatsoda/BuildMonitor/master/";
+        private const string _BASE_URL = "https://raw.githubusercontent.com/oatsoda/BuildMonitor/main/";
+        private const string _FALLBACK_BASE_URL = "https://raw.githubusercontent.com/oatsoda/BuildMonitor/master/";
 
-        private const string _VERSION_URL = _BASE_URL + "Current.ver";
-        private const string _INSTALL_URL = _BASE_URL + "Binaries/BuildMonitor.Setup.msi";
+        private const string _VERSION_URL = "Current.ver";
+        private const string _INSTALL_URL = "Binaries/BuildMonitor.Setup.msi";
 
         /// <summary>
         /// The main entry point for the application.
@@ -25,7 +26,7 @@ namespace BuildMonitor.App
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
 
-            var updater = new AppUpdater(_VERSION_URL, _INSTALL_URL);
+            var updater = new AppUpdater([_BASE_URL, _FALLBACK_BASE_URL], _VERSION_URL, _INSTALL_URL);
             if (await updater.CheckForUpdates())
                 return;
 
