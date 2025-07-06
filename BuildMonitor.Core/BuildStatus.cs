@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 
 namespace BuildMonitor.Core
 {
@@ -43,8 +43,11 @@ namespace BuildMonitor.Core
             if (RequestedBy == null)
                 return "-";
 
+            if (RequestedBy.StartsWith("Microsoft.VisualStudio", StringComparison.InvariantCultureIgnoreCase))
+                return "~ADO Agent";
+
             return RequestedBy.Length > trimLen
-                ? $"{RequestedBy.Substring(0, trimLen)}..."
+                ? $"{RequestedBy[..trimLen]}..."
                 : RequestedBy;
         }
     }
