@@ -388,6 +388,7 @@
             cboAdoProjectName.Name = "cboAdoProjectName";
             cboAdoProjectName.Size = new System.Drawing.Size(236, 23);
             cboAdoProjectName.TabIndex = 12;
+            cboAdoProjectName.SelectedIndexChanged += cboAdoProjectName_SelectedIndexChanged;
             // 
             // label5
             // 
