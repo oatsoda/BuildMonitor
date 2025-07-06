@@ -160,7 +160,7 @@ namespace BuildMonitor.UI.Options
                 viewModel.Options.ProjectName = (string)cboAdoProjectName.SelectedItem!;
             }
 
-            viewModel.Options.ValidOptions = cboAdoProjectName.Enabled;
+            viewModel.Options.ValidOptions = btnOk.Enabled;
         }
 
         private async Task RunADOValidation()
@@ -226,6 +226,18 @@ namespace BuildMonitor.UI.Options
             e.VisitUrl(sender);
         }
 
+        private void cboAdoProjectName_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            var beforeProjectName = m_ViewModel.Options.ProjectName;
+            UpdateModelFromView(m_ViewModel);
+            if (m_ViewModel.Options.ProjectName != beforeProjectName)
+            {
+                // If the project name changed, reset the pipelines to all pipelines
+                m_ViewModel.Options.SpecificDefinitionIds = null;
+                UpdateViewFromModel(m_ViewModel);
+            }
+        }
+
         private async void btnValidate_Click(object sender, EventArgs e)
         {
             await RunADOValidation();
@@ -233,6 +245,7 @@ namespace BuildMonitor.UI.Options
 
         private void btnPipelines_Click(object sender, EventArgs e)
         {
+            UpdateModelFromView(m_ViewModel);
             using (var selectorForm = new PipelineSelectorForm(m_ViewModel.Options, m_BuildStoreFactory))
             {
                 selectorForm.ShowDialog(this);
