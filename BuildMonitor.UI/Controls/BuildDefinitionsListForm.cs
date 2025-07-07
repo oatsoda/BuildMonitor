@@ -67,25 +67,36 @@ namespace BuildMonitor.UI.Controls
             m_CalculatedHeight = m_CalculatedWidth = 0;
             Controls.Clear();
 
-            ApplyOptions();
+            Start();
         }
 
         #endregion
 
         #region Private Methods
 
-        private void ApplyOptions()
+        private void Start()
         {
             Debug.WriteLine("ApplyOptions...");
 
             m_FirstStatusUpdate = true;
-            notifyIcon.Icon = Icon;
+            notifyIcon.Icon = Icon; // This Icon is the default tools icon
             SetMessageOnly("Waiting for builds...");
             SetSizeAndPosition();
 
             Debug.WriteLine("Triggering start...");
 
-            Task.Run(() => m_Monitor.Start(m_CurrentMonitorOptions));
+            Task.Run(() =>
+            {
+                try
+                {
+                    return m_Monitor.Start(m_CurrentMonitorOptions);
+                }
+                catch (Exception ex)
+                {
+                    HandleException(ex, "App Error");
+                    return Task.CompletedTask;
+                }
+            });
         }
 
         private void UpdateBuildControls(IEnumerable<BuildDetail> buildDetails)
@@ -206,9 +217,6 @@ namespace BuildMonitor.UI.Controls
 
             m_IsSettingsOpen = true;
 
-            // Stop monitoring while changing settings
-            m_Monitor.Stop();
-
             using (var settingsForm = new SettingsForm(m_CurrentMonitorOptions, m_BuildStoreFactory))
             {
                 settingsForm.ShowDialog(this);
@@ -227,7 +235,7 @@ namespace BuildMonitor.UI.Controls
             }
 
             Hide();
-            ApplyOptions();
+            Start();
         }
 
         private void ShowAboutForm()
@@ -241,6 +249,19 @@ namespace BuildMonitor.UI.Controls
                 aboutForm.ShowDialog(this);
 
             m_IsAboutOpen = false;
+        }
+
+        private void HandleException(Exception exception, string prefix)
+        {
+            this.InvokeIfRequired(() =>
+            {
+                if (exception is AggregateException aggEx)
+                    exception = aggEx.Flatten();
+
+                AboutForm.AddException(exception);
+                notifyIcon.BalloonTipText = $"{prefix}: {exception}";
+                notifyIcon.ShowBalloonTip(20000);
+            });
         }
 
         #endregion
@@ -276,15 +297,7 @@ namespace BuildMonitor.UI.Controls
 
         private void OnBuildMonitorOnExceptionOccurred(object? sender, Exception exception)
         {
-            this.InvokeIfRequired(() =>
-            {
-                if (exception is AggregateException aggEx)
-                    exception = aggEx.Flatten();
-
-                AboutForm.AddException(exception);
-                notifyIcon.BalloonTipText = $"Monitor error: {exception}";
-                notifyIcon.ShowBalloonTip(20000);
-            });
+            HandleException(exception, "Monitor error");
         }
 
         private void OnBuildMonitorMonitoringStopped(object? sender, string stoppedReason)
