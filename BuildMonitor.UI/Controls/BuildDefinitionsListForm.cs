@@ -245,6 +245,8 @@ namespace BuildMonitor.UI.Controls
 
             m_IsAboutOpen = true;
 
+            AboutForm.MonitorStateOutput = m_Monitor.GetState();
+
             using (var aboutForm = new AboutForm())
                 aboutForm.ShowDialog(this);
 
