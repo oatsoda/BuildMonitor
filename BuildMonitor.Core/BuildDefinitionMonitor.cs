@@ -273,6 +273,24 @@ namespace BuildMonitor.Core
             MonitoringStopped?.Invoke(this, e);
         }
 
+        public string[] GetState()
+        {
+            return
+            [
+                $"RequestStop: {m_RequestStop}",
+                $"Stopped: {m_Stopped}",
+                $"StopWaitHandle Signalled: {m_StopWaitHandle.WaitOne(0)}",
+                $"RefreshDefinitionInterval: {m_RefreshDefinitionInterval}",
+                $"RefreshBuildInterval: {m_RefreshBuildInterval}",
+                $"LastDefinitionRefresh: {m_LastDefinitionRefresh}",
+                $"LastBuildRefresh: {m_LastBuildRefresh}",
+                $"ConsecutiveExceptions: {m_ConsecutiveExceptions}",
+                $"LastWorstStatus: {m_LastWorstStatus}",
+                $"MonitoredDefinitions: {m_MonitoredDefinitions.Count} {string.Join(",", m_MonitoredDefinitions.Select(d => $"{d.Id}:{d.Name}"))}",
+                $"LatestStatuses: {m_LatestStatuses.Count} {string.Join(",", m_LatestStatuses.Select(p => $"{p.Key}: {string.Join(",", p.Value.Status)}"))}"
+            ];
+        }
+
         public void Dispose()
         {
             Stop();

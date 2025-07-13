@@ -1,6 +1,7 @@
 ﻿using BuildMonitor.UI.Helpers;
 using System;
 using System.Collections.Concurrent;
+using System.ComponentModel;
 using System.Linq;
 using System.Windows.Forms;
 
@@ -37,6 +38,14 @@ namespace BuildMonitor.UI.Controls
                 if (!s_Exceptions.TryDequeue(out _))
                     return;
             }
+        }
+
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        public static string[] MonitorStateOutput { private get; set; } = [];
+
+        private void btnPrintState_Click(object sender, EventArgs e)
+        {
+            txtErrors.Text += $"\r\n\r\n-------------------\r\nMonitor State:\r\n{string.Join("\r\n", MonitorStateOutput)}";
         }
     }
 }

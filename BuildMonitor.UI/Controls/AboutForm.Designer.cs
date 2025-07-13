@@ -35,6 +35,7 @@
             btnOk = new System.Windows.Forms.Button();
             txtErrors = new System.Windows.Forms.TextBox();
             label2 = new System.Windows.Forms.Label();
+            btnPrintState = new System.Windows.Forms.Button();
             SuspendLayout();
             // 
             // label1
@@ -105,6 +106,18 @@
             label2.TabIndex = 6;
             label2.Text = "Errors:";
             // 
+            // btnPrintState
+            // 
+            btnPrintState.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right;
+            btnPrintState.Location = new System.Drawing.Point(13, 413);
+            btnPrintState.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            btnPrintState.Name = "btnPrintState";
+            btnPrintState.Size = new System.Drawing.Size(88, 27);
+            btnPrintState.TabIndex = 7;
+            btnPrintState.Text = "Print State";
+            btnPrintState.UseVisualStyleBackColor = true;
+            btnPrintState.Click += btnPrintState_Click;
+            // 
             // AboutForm
             // 
             AcceptButton = btnOk;
@@ -112,6 +125,7 @@
             AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             ClientSize = new System.Drawing.Size(671, 452);
             ControlBox = false;
+            Controls.Add(btnPrintState);
             Controls.Add(label2);
             Controls.Add(txtErrors);
             Controls.Add(btnOk);
@@ -136,5 +150,6 @@
         private System.Windows.Forms.Button btnOk;
         private System.Windows.Forms.TextBox txtErrors;
         private System.Windows.Forms.Label label2;
+        private System.Windows.Forms.Button btnPrintState;
     }
 }
