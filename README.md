@@ -1,12 +1,12 @@
 # Azure DevOps Pipeline Monitor
 
-[![Build Status](https://oatsoda.visualstudio.com/buildmonitor/_apis/build/status/oatsoda.BuildMonitor?branchName=master)](https://oatsoda.visualstudio.com/buildmonitor/_build/latest?definitionId=1&branchName=master)
+[![Build Status](https://oatsoda.visualstudio.com/buildmonitor/_apis/build/status/oatsoda.BuildMonitor?branchName=main)](https://oatsoda.visualstudio.com/buildmonitor/_build/latest?definitionId=1&branchName=main)
 
 A tray application to monitor Pipeline statuses on your Azure DevOps project.
 
-[Latest installer](https://github.com/oatsoda/BuildMonitor/raw/master/Binaries/BuildMonitor.Setup.msi)
+[Latest installer](https://github.com/oatsoda/BuildMonitor/raw/main/Binaries/BuildMonitor.Setup.msi)
 
-![Screenshot](https://raw.githubusercontent.com/oatsoda/BuildMonitor/master/screenshot.png)
+![Screenshot](https://raw.githubusercontent.com/oatsoda/BuildMonitor/main/screenshot.png)
 
 # Authentication
 
