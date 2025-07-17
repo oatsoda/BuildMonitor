@@ -70,6 +70,7 @@ namespace BuildMonitor.UI.Options
         private void UpdateViewFromModel(ViewModel viewModel)
         {
             SuspendLayout();
+            cboAdoProjectName.SelectedIndexChanged -= cboAdoProjectName_SelectedIndexChanged;
 
             // Windows Tab
             cbStartup.Checked = viewModel.Windows.RunOnStartup;
@@ -130,6 +131,7 @@ namespace BuildMonitor.UI.Options
             btnOk.Enabled =
                 btnPipelines.Enabled = viewModel.Options.ValidOptions;
 
+            cboAdoProjectName.SelectedIndexChanged += cboAdoProjectName_SelectedIndexChanged;
             ResumeLayout();
         }
 
@@ -168,8 +170,12 @@ namespace BuildMonitor.UI.Options
             tabADO.Enabled = false;
 
             UpdateModelFromView(m_ViewModel);
-            m_ViewModel.ADOValidationResult = await ValidateADOSettings();
-            m_ViewModel.Options.ValidOptions = m_ViewModel.ADOValidationResult.IsValid; // TODO: Improve interplay between IsValid and ValidOptions
+            if (!string.IsNullOrWhiteSpace(m_ViewModel.Options.AzureDevOpsOrganisation) &&
+                !string.IsNullOrWhiteSpace(m_ViewModel.Options.PersonalAccessTokenPlainText))
+            {
+                m_ViewModel.ADOValidationResult = await ValidateADOSettings();
+                m_ViewModel.Options.ValidOptions = m_ViewModel.ADOValidationResult.IsValid; // TODO: Improve interplay between IsValid and ValidOptions
+            }
             UpdateViewFromModel(m_ViewModel);
 
             tabADO.Enabled = true;
@@ -226,7 +232,7 @@ namespace BuildMonitor.UI.Options
             e.VisitUrl(sender);
         }
 
-        private void cboAdoProjectName_SelectedIndexChanged(object sender, EventArgs e)
+        private void cboAdoProjectName_SelectedIndexChanged(object? sender, EventArgs e)
         {
             var beforeProjectName = m_ViewModel.Options.ProjectName;
             UpdateModelFromView(m_ViewModel);
