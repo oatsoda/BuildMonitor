@@ -1,0 +1,58 @@
+trigger: none
+ 
+pool:
+  vmImage: 'windows-latest'
+
+variables:
+  solution: '**/BuildMonitor.sln'
+  buildPlatform: 'Any CPU with x64 Installer'
+  buildConfiguration: 'Release'
+  NUGET_PACKAGES: $(Pipeline.Workspace)/.nuget/packages
+
+stages:
+- stage: Build
+  displayName: 'Build Stage'
+  jobs:
+  - job: BuildJob1
+    displayName: 'Build Job1'
+    steps:
+    - task: NuGetToolInstaller@1
+
+    - task: NuGetCommand@2
+      inputs:
+        restoreSolution: '$(solution)'
+    - task: VSBuild@1
+    inputs:
+      solution: '$(solution)'
+      platform: '$(buildPlatform)'
+      configuration: '$(buildConfiguration)'
+  - job: BuildJob2
+    displayName: 'Build Job2'
+    steps:
+    - task: NuGetToolInstaller@1
+
+    - task: NuGetCommand@2
+      inputs:
+        restoreSolution: '$(solution)'
+    - task: VSBuild@1
+    inputs:
+      solution: '$(solution)'
+      platform: '$(buildPlatform)'
+      configuration: '$(buildConfiguration)'
+
+# create a stage with an approval
+- stage: ApprovalStage
+  displayName: 'Approval Stage'
+  dependsOn: Build
+  jobs:
+  - deployment: ApprovalJob
+    displayName: 'Approval Job'
+    pool:
+      vmImage: 'windows-latest'
+    environment: Development
+    strategy:
+      runOnce:
+        deploy:
+        steps:
+        - script: echo "Deploy here"
+        
