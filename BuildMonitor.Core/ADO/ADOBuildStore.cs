@@ -111,14 +111,18 @@ namespace BuildMonitor.Core.ADO
 
         public async Task<BuildStatus?> GetLatestBuild(BuildDefinition definition)
         {
-            // https://learn.microsoft.com/en-us/rest/api/azure/devops/build/builds/get?view=azure-devops-rest-7.1
-            var statuses = m_IncludeRunningBuilds ? "completed,inProgress" : "completed";
-            var queryPath = $"{m_ProjectNameUrlEncoded}/_apis/build/builds?api-version=2.0";
+            // https://learn.microsoft.com/en-us/rest/api/azure/devops/build/builds/list?view=azure-devops-rest-7.1
+            var queryPath = $"{m_ProjectNameUrlEncoded}/_apis/build/builds?api-version=7.1";
+
+            var statusFilter = m_IncludeRunningBuilds ? "completed,inProgress" : "completed";
 
             queryPath = string.Join("&",
                 queryPath,
                 $"definitions={definition.Id}",
-                $"statusFilter={statuses}"
+                $"statusFilter={statusFilter}",
+                $"resultFilter=suceeded,partiallySucceeded,failed", // No canceled builds
+                "queryOrder=startTimeDescending",
+                "$top=1"
                 );
 
             var result = await GetADOResult<ADOListResult<ADOBuild>>(queryPath);
@@ -128,12 +132,7 @@ namespace BuildMonitor.Core.ADO
             if (builds.Length == 0)
                 return null;
 
-            var b = builds
-                // This should leave: succeeded, partiallySucceeded, failed and, if
-                // the option was added above, builds without a result - i.e. inProgress status
-                .Where(t => t.Result != ADOResult.Canceled)
-                .OrderByDescending(t => t.StartTime)
-                .FirstOrDefault();
+            var b = builds.SingleOrDefault();
 
             if (b == null)
                 return null;
@@ -161,7 +160,7 @@ namespace BuildMonitor.Core.ADO
         private async Task<BuildStatus> GetBuildTimeline(BuildStatus buildStatus)
         {
             // https://learn.microsoft.com/en-us/rest/api/azure/devops/build/timeline/get?view=azure-devops-rest-7.1
-            var queryPath = $"{m_ProjectNameUrlEncoded}/_apis/build/builds/{buildStatus.Id}/timeline?api-version=2.0";
+            var queryPath = $"{m_ProjectNameUrlEncoded}/_apis/build/builds/{buildStatus.Id}/timeline?api-version=7.1";
 
             var buildTimeline = await GetADOResult<ADOTimeline>(queryPath);
 
