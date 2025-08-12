@@ -41,28 +41,21 @@ namespace BuildMonitor.UI.Controls
 
             BuildDefinitionId = buildDetail.Definition.Id;
 
-            var url = buildDetail.Status == null
-                ? buildDetail.Definition.Url
-                : buildDetail.Status.Url;
+            lblLinkTitle.SetUrl(buildDetail.Status.Url, buildDetail.Definition.Name);
 
-            lblLinkTitle.SetUrl(url, buildDetail.Definition.Name);
+            tipLink.SetToolTip(lblLinkTitle, buildDetail.Status.Name);
 
-            if (buildDetail.Status != null)
-            {
-                tipLink.SetToolTip(lblLinkTitle, buildDetail.Status.Name);
-            }
-
-            lblRequestedBy.Text = buildDetail.Status?.ToRequestedByDescription(30);
-            lblStart.Text = buildDetail.Status?.ToCurrentTimeDescription();
+            lblRequestedBy.Text = buildDetail.Status.ToRequestedByDescription(30);
+            lblStart.Text = buildDetail.Status.ToCurrentTimeDescription();
 
             if (buildDetail.Definition.IsVNext)
             {
-                var errorCount = buildDetail.Status?.ErrorCount ?? 0;
+                var errorCount = buildDetail.Status.ErrorCount;
                 var hasErrors = errorCount > 0;
                 lblErrors.Text = errorCount.ToString();
                 lblErrors.Visible = imgErrors.Visible = hasErrors;
-                lblWarnings.Text = buildDetail.Status?.WarningCount.ToString() ?? "0";
-                lblWarnings.Visible = imgWarnings.Visible = hasErrors || buildDetail.Status?.WarningCount > 0;
+                lblWarnings.Text = buildDetail.Status.WarningCount.ToString();
+                lblWarnings.Visible = imgWarnings.Visible = hasErrors || buildDetail.Status.WarningCount > 0;
             }
             else
             {
@@ -72,7 +65,7 @@ namespace BuildMonitor.UI.Controls
                     imgWarnings.Visible = false;
             }
 
-            picStatus.Image = buildDetail.Status?.Status.ToBitmap(picStatus.Size);
+            picStatus.Image = buildDetail.Status.Status.ToBitmap(picStatus.Size);
 
             ResumeLayout();
         }

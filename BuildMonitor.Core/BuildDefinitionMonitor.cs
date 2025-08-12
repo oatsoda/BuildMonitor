@@ -231,7 +231,9 @@ namespace BuildMonitor.Core
 
             var buildDetails = m_MonitoredDefinitions
                // TODO: If HideStaleDefinitions is enabled, filter out stale definitions if we're not refreshing them?
-               .Select(d => new BuildDetail(d, m_LatestStatuses.TryGetValue(d.Id, out var value) ? value : null))
+               .Select(d => (d, m_LatestStatuses.TryGetValue(d.Id, out var value) ? value : null))
+               .Where(p => p.Item2 != null)
+               .Select(p => new BuildDetail(p.d, p.Item2!))
                .ToList();
             OnUpdated(buildDetails);
 

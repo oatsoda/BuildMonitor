@@ -65,6 +65,8 @@ namespace BuildMonitor.Core.ADO
             // https://learn.microsoft.com/en-us/rest/api/azure/devops/build/definitions/list?view=azure-devops-rest-7.1
             var queryPath = $"{m_ProjectNameUrlEncoded}/_apis/build/definitions?api-version=7.1";
 
+            // TODO: This filter has issues when pipeline is new. It seems to change/wipe. May be better
+            // to remove this and instead filter the builds - as definitions are now hidden if no build is found.
             if (builtAfter.HasValue)
                 queryPath += $"&builtAfter={builtAfter.Value:yyyy-MM-ddTHH:mm:ss}";
 
@@ -112,27 +114,38 @@ namespace BuildMonitor.Core.ADO
         public async Task<BuildStatus?> GetLatestBuild(BuildDefinition definition)
         {
             // https://learn.microsoft.com/en-us/rest/api/azure/devops/build/builds/list?view=azure-devops-rest-7.1
-            var queryPath = $"{m_ProjectNameUrlEncoded}/_apis/build/builds?api-version=7.1";
+            var baseUrlPath = $"{m_ProjectNameUrlEncoded}/_apis/build/builds?api-version=7.1";
 
-            var statusFilter = m_IncludeRunningBuilds ? "completed,inProgress" : "completed";
+            ADOBuild[] builds;
+            ADOBuild[] ignoredBuilds;
+            var top = 0;
 
-            queryPath = string.Join("&",
-                queryPath,
-                $"definitions={definition.Id}",
-                $"statusFilter={statusFilter}",
-                $"resultFilter=suceeded,partiallySucceeded,failed", // No canceled builds
-                "queryOrder=startTimeDescending",
-                "$top=1"
-                );
+            do
+            {
+                top += 5;
 
-            var result = await GetADOResult<ADOListResult<ADOBuild>>(queryPath);
+                var queryPath = string.Join("&",
+                    baseUrlPath,
+                    $"definitions={definition.Id}",
+                    "queryOrder=startTimeDescending",
+                    $"$top={top}"
+                    );
 
-            var builds = result.Value;
+                builds = (await GetADOResult<ADOListResult<ADOBuild>>(queryPath)).Value;
 
-            if (builds.Length == 0)
-                return null;
+                ignoredBuilds =
+                [
+                    .. builds.Where(b =>
+                        b.Result == ADOResult.Canceled ||
+                        (!m_IncludeRunningBuilds && s_InProgressStatuses.Contains(b.Status)))
+                ];
+            }
+            while (builds.Length > 0 && builds.Length == top && ignoredBuilds.Length == builds.Length);
 
-            var b = builds.SingleOrDefault();
+            var b = builds
+                .Where(b => b.Result != ADOResult.Canceled &&
+                (m_IncludeRunningBuilds || !s_InProgressStatuses.Contains(b.Status)))
+                .FirstOrDefault();
 
             if (b == null)
                 return null;
@@ -144,7 +157,7 @@ namespace BuildMonitor.Core.ADO
                 Url = b.Links.Web.Href,
                 Start = b.StartTime,
                 Finish = b.FinishTime,
-                Status = b.Status == ADOStatus.InProgress ? Status.InProgress : ToStatus(b.Result),
+                Status = ToStatus(b.Status, b.Result),
                 RequestedBy = b.RequestedFor.DisplayName
             };
 
@@ -201,13 +214,24 @@ namespace BuildMonitor.Core.ADO
             return await response.Content.ReadAsStringAsync();
         }
 
-        private static Status ToStatus(ADOResult result)
+        private static ADOStatus[] s_InProgressStatuses =
+        [
+            ADOStatus.InProgress,
+            ADOStatus.NotStarted,
+            ADOStatus.Postponed
+        ];
+
+        private static Status ToStatus(ADOStatus status, ADOResult result)
         {
+            if (s_InProgressStatuses.Contains(status))
+                return Status.InProgress;
+
             return result switch
             {
                 ADOResult.Succeeded => Status.Succeeded,
                 ADOResult.PartiallySucceeded => Status.PartiallySucceeded,
                 ADOResult.Failed => Status.Failed,
+                ADOResult.Canceled => Status.Failed,
                 _ => throw new ArgumentOutOfRangeException(nameof(result), result, $"Result '{result}' is not expected."),
             };
         }
