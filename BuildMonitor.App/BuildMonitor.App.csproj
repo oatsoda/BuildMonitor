@@ -9,11 +9,6 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
-    <PackageReference Include="System.Data.DataSetExtensions" Version="4.5.0" />
-    <PackageReference Include="System.Configuration.ConfigurationManager" Version="9.0.5" />
-  </ItemGroup>
-  <ItemGroup>
     <ProjectReference Include="..\BuildMonitor.Core\BuildMonitor.Core.csproj" />
     <ProjectReference Include="..\BuildMonitor.UI\BuildMonitor.UI.csproj" />
   </ItemGroup>
