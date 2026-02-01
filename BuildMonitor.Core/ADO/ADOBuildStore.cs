@@ -1,9 +1,12 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
+using System.Net.NetworkInformation;
 using System.Security.Authentication;
 using System.Text;
 using System.Text.Json;
@@ -109,7 +112,7 @@ namespace BuildMonitor.Core.ADO
             DateTimeOffset StartTime, DateTimeOffset? FinishTime, ADOBuildRequestedFor RequestedFor,
             [property: JsonPropertyName("_links")] ADOLinks Links);
         public enum ADOResult { None, Succeeded, PartiallySucceeded, Canceled, Failed };
-        public enum ADOStatus { None, InProgress, Completed, NotStarted, Postponed, Canceling, All };
+        public enum ADOStatus { None, InProgress, Completed, NotStarted, Postponed, Cancelling, All };
 
         public async Task<BuildStatus?> GetLatestBuild(BuildDefinition definition)
         {
@@ -214,11 +217,12 @@ namespace BuildMonitor.Core.ADO
             return await response.Content.ReadAsStringAsync();
         }
 
-        private static ADOStatus[] s_InProgressStatuses =
+        private static readonly ADOStatus[] s_InProgressStatuses =
         [
             ADOStatus.InProgress,
             ADOStatus.NotStarted,
-            ADOStatus.Postponed
+            ADOStatus.Postponed,
+            ADOStatus.Cancelling
         ];
 
         private static Status ToStatus(ADOStatus status, ADOResult result)
