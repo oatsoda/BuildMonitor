@@ -79,7 +79,7 @@ namespace BuildMonitor.TestApp
                 Url = $"{forDefintion.Url}/build/{RandomBetween(1, 24)}",
                 RequestedBy = $"User{s_Random.Next(1, 100)}",
                 Status = (Status)s_Random.Next(1, 5),
-                Start = DateTimeOffset.Now.AddHours(-RandomBetween(1, 4)),
+                Start = RandomBetween(1, 10) == 1 ? null : DateTimeOffset.Now.AddHours(-RandomBetween(1, 4)),
                 WarningCount = RandomBetween(0, 20),
                 ErrorCount = RandomBetween(0, 1)
             };

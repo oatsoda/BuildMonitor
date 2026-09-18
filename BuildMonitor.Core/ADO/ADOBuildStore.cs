@@ -1,12 +1,9 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
-using System.Net.NetworkInformation;
 using System.Security.Authentication;
 using System.Text;
 using System.Text.Json;
@@ -109,7 +106,7 @@ namespace BuildMonitor.Core.ADO
 
         public record ADOBuildRequestedFor(string DisplayName);
         public record ADOBuild(int Id, string BuildNumber, ADOStatus Status, ADOResult Result,
-            DateTimeOffset StartTime, DateTimeOffset? FinishTime, ADOBuildRequestedFor RequestedFor,
+            DateTimeOffset? StartTime, DateTimeOffset? FinishTime, ADOBuildRequestedFor RequestedFor,
             [property: JsonPropertyName("_links")] ADOLinks Links);
         public enum ADOResult { None, Succeeded, PartiallySucceeded, Canceled, Failed };
         public enum ADOStatus { None, InProgress, Completed, NotStarted, Postponed, Cancelling, All };
@@ -146,9 +143,8 @@ namespace BuildMonitor.Core.ADO
             while (builds.Length > 0 && builds.Length == top && ignoredBuilds.Length == builds.Length);
 
             var b = builds
-                .Where(b => b.Result != ADOResult.Canceled &&
-                (m_IncludeRunningBuilds || !s_InProgressStatuses.Contains(b.Status)))
-                .FirstOrDefault();
+                .FirstOrDefault(b => b.Result != ADOResult.Canceled &&
+                (m_IncludeRunningBuilds || !s_InProgressStatuses.Contains(b.Status)));
 
             if (b == null)
                 return null;
@@ -178,7 +174,7 @@ namespace BuildMonitor.Core.ADO
             // https://learn.microsoft.com/en-us/rest/api/azure/devops/build/timeline/get?view=azure-devops-rest-7.1
             var queryPath = $"{m_ProjectNameUrlEncoded}/_apis/build/builds/{buildStatus.Id}/timeline?api-version=7.1";
 
-            var buildTimeline = await GetADOResult<ADOTimeline>(queryPath);
+            var buildTimeline = await GetADOResult<ADOTimeline?>(queryPath, true);
 
             if (buildTimeline == null)
                 return buildStatus;
@@ -199,9 +195,12 @@ namespace BuildMonitor.Core.ADO
             }
         };
 
-        private async Task<T> GetADOResult<T>(string queryPath)
+        private async Task<T> GetADOResult<T>(string queryPath, bool expectEmptyStringResponseBody = false)
         {
             var json = await GetADOJsonResult(queryPath);
+
+            if (expectEmptyStringResponseBody && string.IsNullOrWhiteSpace(json))
+                return default!;
 
             return JsonSerializer.Deserialize<T>(json, s_JsonOptions)!;
         }
