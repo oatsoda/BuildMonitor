@@ -110,7 +110,7 @@ namespace BuildMonitor.UI.Controls
             var buildDetailControls = BuildDetailControls.ToList();
 
             var buildDetailsList = m_CurrentMonitorOptions.OrderByMostRecent
-                ? buildDetails.OrderBy(b => b.Status.Start ?? DateTimeOffset.MinValue).ToList()
+                ? buildDetails.OrderBy(b => b.Status.Start ?? DateTimeOffset.UtcNow).ToList()
                 : [.. buildDetails.OrderBy(b => b.Definition.Name)];
 
             var x = 0;
