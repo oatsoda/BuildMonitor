@@ -7,7 +7,7 @@ namespace BuildMonitor.Core
         public int Id { get; set; }
         public required string Name { get; set; }
         public required string Url { get; set; }
-        public DateTimeOffset Start { get; set; }
+        public DateTimeOffset? Start { get; set; }
         public DateTimeOffset? Finish { get; set; }
         public Status Status { get; set; }
         public required string RequestedBy { get; set; }
@@ -16,7 +16,7 @@ namespace BuildMonitor.Core
 
         public TimeSpan TimeSpanSinceStart()
         {
-            return DateTimeOffset.UtcNow.Subtract(Start);
+            return !Start.HasValue ? TimeSpan.Zero : DateTimeOffset.UtcNow.Subtract(Start.Value);
         }
 
         public string ToCurrentTimeDescription()
